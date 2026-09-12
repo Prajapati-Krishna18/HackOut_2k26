@@ -345,36 +345,24 @@ export const SignupPage = () => {
           
           <div className="bg-white rounded-3xl border border-slate-200/80 shadow-[0_16px_50px_rgba(0,0,0,0.12)] p-5 sm:p-6 max-w-md w-full space-y-3 relative z-10">
             
-            {/* Card Header & Cursive Badge */}
-            <div className="flex items-start justify-between">
-              <div className="space-y-0.5">
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-[#e8f5ed] text-[#0e6245] flex items-center justify-center">
-                    <Leaf className="w-3.5 h-3.5 fill-current" />
-                  </div>
-                  <span className="text-lg font-black text-slate-900 tracking-tight">CarbonSphere</span>
+            {/* Card Header */}
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-[#e8f5ed] text-[#0e6245] flex items-center justify-center">
+                  <Leaf className="w-3.5 h-3.5 fill-current" />
                 </div>
-                <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight pt-0.5">
-                  {currentStep === 1 && 'Create Your Account'}
-                  {currentStep === 2 && 'Verify Your Email'}
-                  {currentStep === 3 && 'Choose Your Role'}
-                </h2>
-                <p className="text-[11px] text-slate-500">
-                  {currentStep === 1 && 'Join CarbonSphere and be part of a sustainable future.'}
-                  {currentStep === 2 && `Enter the 6-digit code sent to ${registeredEmail || 'your email'}.`}
-                  {currentStep === 3 && 'Select your organization role to start onboarding.'}
-                </p>
+                <span className="text-lg font-black text-slate-900 tracking-tight">CarbonSphere</span>
               </div>
-
-              {/* Floating Cursive Script */}
-              <div className="text-right hidden sm:block">
-                <span className="font-serif italic text-slate-700 text-[11px] font-semibold block leading-tight">
-                  Same<br />Planet<br />
-                  <span className="text-[#0e6245]">Brighter</span><br />
-                  Possibilities
-                </span>
-                <div className="w-10 h-0.5 bg-[#0e6245] rounded-full ml-auto mt-0.5" />
-              </div>
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight pt-0.5">
+                {currentStep === 1 && 'Create Your Account'}
+                {currentStep === 2 && 'Verify Your Email'}
+                {currentStep === 3 && 'Choose Your Role'}
+              </h2>
+              <p className="text-[11px] text-slate-500">
+                {currentStep === 1 && 'Join CarbonSphere and be part of a sustainable future.'}
+                {currentStep === 2 && `Enter the 6-digit code sent to ${registeredEmail || 'your email'}.`}
+                {currentStep === 3 && 'Select your organization role to start onboarding.'}
+              </p>
             </div>
 
             {/* Stepper Progress Bar (1. Account Details, 2. Verification, 3. Choose Role) */}

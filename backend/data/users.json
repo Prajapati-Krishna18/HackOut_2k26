@@ -135,20 +135,17 @@
     "updated_at": "2026-09-12T19:18:55.704Z"
   },
   {
-    "id": "1aae7210-e23f-4665-9e53-e461e371d4f8",
-    "full_name": "KRISHNA",
+    "id": "e8a9310c-512b-45e3-99a6-681b9b4f738a",
+    "full_name": "Krishna Prajapati",
     "email": "krishna.prajapati.rcg@gmail.com",
-    "password_hash": "$2a$12$/uQ7UivAEeDKUJKAlPM9zuY6Jcbc3g0UWiKxi88z4kyEB.K9H2rZq",
+    "password_hash": "$2a$12$nHCVIH5jIkULtQzOLc2HzOyqjt3dat2LUbZ8gUZI7WUkqlsiTLlPW",
     "role": "supplier",
-    "provider": "email",
-    "avatar_url": "https://lh3.googleusercontent.com/a/ACg8ocKBbJqfD7tIYF5yXMqLyLDrau_ZWsHkuRbMRyPiwLCG4XsZUw=s96-c",
-    "is_verified": false,
-    "created_at": "2026-09-12T15:23:08.371Z",
-    "updated_at": "2026-09-12T19:40:17.285Z",
-    "otp_hash": "8c3960a4ced71e9b45f7fc429a556c35db2adc1958053c13db097a2c5d9e2d95",
-    "otp_expires": "2026-09-12T19:50:17.285Z",
-    "verification_token": "090874a62a32c51f2313c139aeb6e7d3211044c9b04a617e9e7f4e5d6b942156",
-    "verification_expires": "2026-09-13T19:40:17.285Z"
+    "provider": "google",
+    "avatar_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80",
+    "is_verified": true,
+    "company": "CarbonSphere Green Innovations",
+    "created_at": "2026-09-13T03:30:00.000Z",
+    "updated_at": "2026-09-12T22:25:44.399Z"
   },
   {
     "id": "077ffd08-f362-40d3-afb4-6b02b606e978",

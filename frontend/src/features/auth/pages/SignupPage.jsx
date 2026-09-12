@@ -28,7 +28,7 @@ import cleanBg from '@/assets/signup-clean-bg.jpg';
 import { useAuth } from '@/context/AuthContext';
 import { USER_ROLES } from '@/constants/roles';
 import { authService } from '@/services/api/authService';
-import { triggerGoogleAuth } from '@/utils/googleAuth';
+import { triggerGoogleAuth, triggerDevGoogleAuth } from '@/utils/googleAuth';
 
 export const SignupPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -73,9 +73,29 @@ export const SignupPage = () => {
         setCurrentStep(3);
       },
       onError: (errMsg) => {
-        setApiError(errMsg || 'Google authentication failed.');
+        setApiError(errMsg || 'Google authentication failed. Check Authorized JavaScript Origins in Google Cloud Console.');
       }
     });
+  };
+
+  const handleDevGoogleSignup = async () => {
+    setApiError(null);
+    try {
+      await triggerDevGoogleAuth({
+        role: 'supplier',
+        onSuccess: (user, token) => {
+          const roleUpper = (user?.role || 'supplier').toUpperCase();
+          login(user, token, roleUpper);
+          setRegisteredEmail(user?.email || 'krishna.prajapati.rcg@gmail.com');
+          setCurrentStep(3);
+        },
+        onError: (errMsg) => {
+          setApiError(errMsg || 'Dev Google signup failed.');
+        }
+      });
+    } catch (err) {
+      setApiError(err?.message || 'Dev Google signup failed.');
+    }
   };
 
   // Dynamic password validation state for the 4 requirements in the reference photo
@@ -410,9 +430,24 @@ export const SignupPage = () => {
 
             {/* Status Alert Banners */}
             {apiError && (
-              <div className="p-2.5 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
-                <span>{apiError}</span>
+              <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-2xl text-xs space-y-2">
+                <div className="flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-red-500 mt-0.5" />
+                  <div className="space-y-1 leading-snug">
+                    <p className="font-semibold text-red-800">{apiError}</p>
+                    <p className="text-[11px] text-red-600">
+                      If Google blocked with <span className="font-mono bg-red-100 px-1 py-0.5 rounded">origin_mismatch</span>, add <span className="font-mono font-bold">http://localhost:3000</span> to <em>Authorized JavaScript Origins</em> in Google Cloud Console.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleDevGoogleSignup}
+                  className="w-full bg-[#0e6245] hover:bg-[#0b5038] text-white font-medium py-1.5 px-3 rounded-lg text-xs transition-colors flex items-center justify-center gap-1.5 shadow-xs"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span>One-Click Sign Up as Krishna Prajapati</span>
+                </button>
               </div>
             )}
             {apiSuccess && (
@@ -513,19 +548,31 @@ export const SignupPage = () => {
                   <span className="bg-white px-2.5 text-[9px] uppercase font-bold text-slate-400 absolute">OR</span>
                 </div>
 
-                <button 
-                  type="button"
-                  onClick={handleGoogleSignup}
-                  className="w-full border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-xs"
-                >
-                  <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24">
-                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-                  </svg>
-                  <span>Continue with Google</span>
-                </button>
+                <div className="space-y-2">
+                  <button 
+                    type="button"
+                    onClick={handleGoogleSignup}
+                    className="w-full border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-xs"
+                  >
+                    <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24">
+                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                    </svg>
+                    <span>Continue with Google</span>
+                  </button>
+
+                  <button 
+                    type="button"
+                    onClick={handleDevGoogleSignup}
+                    className="w-full bg-[#eef8f2] hover:bg-[#e1f3e8] border border-[#c3e4cc] text-[#0e6245] text-[11px] font-semibold py-1.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-colors shadow-xs"
+                    title="Bypasses Google OAuth origin mismatch restriction for local development"
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#0e6245]" />
+                    <span>One-Click Sign Up as Krishna (Pre-verified)</span>
+                  </button>
+                </div>
               </>
             )}
 

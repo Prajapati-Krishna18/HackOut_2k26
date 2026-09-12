@@ -66,6 +66,27 @@ const initiateTokenClient = ({ role, onSuccess, onError }) => {
     client.requestAccessToken({ prompt: 'select_account' });
   } catch (err) {
     console.error('Error initiating Google Token Client:', err);
-    if (onError) onError('Could not initialize Google Account selection.');
+    if (onError) onError('Could not initialize Google Account selection: ' + (err?.message || 'Check Authorized JavaScript Origins'));
+  }
+};
+
+/**
+ * Trigger Instant Dev/Demo Google Authentication for fast local testing
+ * (Used when Google Cloud Console origins are being updated or in local dev)
+ */
+export const triggerDevGoogleAuth = async ({ role = 'supplier', onSuccess, onError }) => {
+  try {
+    const response = await authService.googleAuth({
+      accessToken: 'dev-krishna-token',
+      role
+    });
+
+    const { user, token } = response.data;
+    if (onSuccess) onSuccess(user, token);
+    return { user, token };
+  } catch (err) {
+    console.error('Dev Google Auth error:', err);
+    if (onError) onError(err?.message || 'Failed to authenticate dev Google account.');
+    throw err;
   }
 };

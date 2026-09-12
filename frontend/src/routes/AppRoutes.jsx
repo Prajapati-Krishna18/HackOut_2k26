@@ -18,6 +18,8 @@ import LoginPage from '@/features/auth/pages/LoginPage';
 import SignupPage from '@/features/auth/pages/SignupPage';
 import ForgotPasswordPage from '@/features/auth/pages/ForgotPasswordPage';
 import SupplierOnboardingPage from '@/features/supplier/pages/SupplierOnboardingPage';
+import BuyerOnboardingPage from '@/features/buyer/pages/BuyerOnboardingPage';
+import AdminOnboardingPage from '@/features/admin/pages/AdminOnboardingPage';
 import SupplierDashboardPage from '@/features/supplier/pages/SupplierDashboardPage';
 import BuyerDashboardPage from '@/features/buyer/pages/BuyerDashboardPage';
 import MatchingEnginePage from '@/features/matching-engine/pages/MatchingEnginePage';
@@ -47,6 +49,10 @@ export const AppRoutes = () => {
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/supplier/onboarding" element={<SupplierOnboardingPage />} />
         <Route path="/onboarding/supplier" element={<SupplierOnboardingPage />} />
+        <Route path="/buyer/onboarding" element={<BuyerOnboardingPage />} />
+        <Route path="/onboarding/buyer" element={<BuyerOnboardingPage />} />
+        <Route path="/admin/onboarding" element={<AdminOnboardingPage />} />
+        <Route path="/onboarding/admin" element={<AdminOnboardingPage />} />
         <Route path="/supplier/dashboard" element={<SupplierDashboardPage />} />
       </Route>
 

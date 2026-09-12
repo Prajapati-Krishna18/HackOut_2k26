@@ -115,7 +115,7 @@ export const LandingPage = () => {
                 Login
               </button>
             </Link>
-            <Link to="/role-selection">
+            <Link to="/signup">
               <button className="px-5 py-2 text-sm font-semibold text-white bg-[#0e6245] hover:bg-[#0b5038] rounded-lg shadow-sm transition-all">
                 Sign Up
               </button>
@@ -165,7 +165,7 @@ export const LandingPage = () => {
 
             {/* CTA Buttons */}
             <div className="mt-8 flex flex-wrap items-center gap-4">
-              <Link to="/role-selection">
+              <Link to="/signup">
                 <button className="inline-flex items-center gap-2.5 px-6 py-3.5 bg-[#0e6245] hover:bg-[#0b5038] text-white font-semibold rounded-lg shadow-md transition-all">
                   <span>Get Started</span>
                   <ArrowRight className="w-4 h-4" />
@@ -878,7 +878,7 @@ export const LandingPage = () => {
           </div>
 
           <div className="flex items-center gap-4 relative z-10 shrink-0">
-            <Link to="/role-selection">
+            <Link to="/signup">
               <button className="inline-flex items-center gap-2 px-6 py-3 bg-[#0e6245] hover:bg-[#0b5038] text-white font-semibold text-xs rounded-lg shadow-sm transition-all">
                 <span>Get Started</span>
                 <ArrowRight className="w-3.5 h-3.5" />

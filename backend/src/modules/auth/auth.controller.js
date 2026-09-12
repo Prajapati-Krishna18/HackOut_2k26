@@ -93,6 +93,43 @@ class AuthController {
   }
 
   /**
+   * POST /api/auth/send-otp
+   */
+  async sendOtp(req, res, next) {
+    try {
+      const { email } = req.body;
+      const result = await authService.sendOtp(email);
+
+      return res
+        .status(HTTP_STATUS.OK)
+        .json(new ApiResponse(HTTP_STATUS.OK, result, result.message));
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * POST /api/auth/verify-otp
+   */
+  async verifyOtp(req, res, next) {
+    try {
+      const { email, otp } = req.body;
+      const result = await authService.verifyOtp({ email, otp });
+
+      // Attach HTTP-Only secure cookie
+      if (result.token) {
+        setAuthCookie(res, result.token);
+      }
+
+      return res
+        .status(HTTP_STATUS.OK)
+        .json(new ApiResponse(HTTP_STATUS.OK, result, result.message));
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
    * POST /api/auth/forgot-password
    */
   async forgotPassword(req, res, next) {
@@ -131,6 +168,45 @@ class AuthController {
       return res
         .status(HTTP_STATUS.OK)
         .json(new ApiResponse(HTTP_STATUS.OK, { user: req.user }, 'Current user profile retrieved.'));
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * PUT /api/auth/profile
+   */
+  async updateProfile(req, res, next) {
+    try {
+      const result = await authService.updateProfile(req.user.id, req.body);
+
+      if (result.token) {
+        setAuthCookie(res, result.token);
+      }
+
+      return res
+        .status(HTTP_STATUS.OK)
+        .json(new ApiResponse(HTTP_STATUS.OK, { user: result.user, token: result.token }, result.message));
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * PUT /api/auth/role
+   */
+  async updateRole(req, res, next) {
+    try {
+      const { role } = req.body;
+      const result = await authService.updateRole(req.user.id, role);
+
+      if (result.token) {
+        setAuthCookie(res, result.token);
+      }
+
+      return res
+        .status(HTTP_STATUS.OK)
+        .json(new ApiResponse(HTTP_STATUS.OK, { user: result.user, token: result.token }, 'Workspace role updated.'));
     } catch (error) {
       next(error);
     }

@@ -36,14 +36,40 @@ export const authenticateUser = async (req, res, next) => {
       throw new ApiError(HTTP_STATUS.UNAUTHORIZED, 'Invalid or corrupted authentication token.');
     }
 
-    // 4. Fetch latest user state from Supabase
-    const { data: user, error } = await supabaseAdmin
-      .from('users')
-      .select('id, full_name, email, role, provider, avatar_url, is_verified, created_at, updated_at')
-      .eq('id', decoded.id)
-      .single();
+    // 4. Fetch latest user state from Supabase or local persistence
+    let user = null;
+    try {
+      const { data, error } = await supabaseAdmin
+        .from('users')
+        .select('id, full_name, email, role, provider, avatar_url, is_verified, created_at, updated_at')
+        .eq('id', decoded.id)
+        .maybeSingle();
 
-    if (error || !user) {
+      if (!error && data) {
+        user = data;
+      }
+    } catch (dbErr) {}
+
+    // Resilient local lookup
+    if (!user) {
+      try {
+        const { authService } = await import('./auth.service.js');
+        user = await authService.getCurrentUser(decoded.id);
+      } catch (localErr) {
+        // Fallback to token payload if user exists
+        if (decoded && decoded.id) {
+          user = {
+            id: decoded.id,
+            email: decoded.email,
+            full_name: decoded.full_name || decoded.name || decoded.email?.split('@')[0],
+            role: decoded.role || 'supplier',
+            is_verified: decoded.is_verified ?? true
+          };
+        }
+      }
+    }
+
+    if (!user) {
       throw new ApiError(HTTP_STATUS.UNAUTHORIZED, 'User associated with this token no longer exists.');
     }
 

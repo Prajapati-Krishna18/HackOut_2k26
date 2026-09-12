@@ -3,54 +3,69 @@ import { MetricCard } from '@/components/common/MetricCard';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { ShieldCheck, Target, TrendingDown, ShoppingBag } from 'lucide-react';
+import { ShieldCheck, Target, TrendingDown, ShoppingBag, Sparkles, Activity, ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useSocket } from '@/context/SocketContext';
 
 export const BuyerDashboardPage = () => {
+  const { isConnected, marketMetrics, latestMatch } = useSocket();
+
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900 text-white p-5 rounded-3xl border border-slate-800 shadow-md">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Corporate Offtake & Insetting Desk</h1>
-          <p className="text-xs text-slate-500 dark:text-carbon-300 mt-1">
-            Scope 1, 2, and 3 Net-Zero Insetting Portfolio
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-2xl font-black text-white tracking-tight">Corporate Offtake & Insetting Desk</h1>
+            <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase border ${
+              isConnected 
+                ? 'bg-cyan-950/80 border-cyan-500/50 text-cyan-400' 
+                : 'bg-amber-950/80 border-amber-500/50 text-amber-400'
+            }`}>
+              <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-cyan-400 animate-ping' : 'bg-amber-400'}`} />
+              <span>{isConnected ? 'MARKET TICKER LIVE' : 'CONNECTING...'}</span>
+            </div>
+          </div>
+          <p className="text-xs text-slate-400 mt-1">
+            Scope 1, 2, and 3 Net-Zero Insetting Portfolio & Live Spot Exchange
           </p>
         </div>
         <div className="flex items-center gap-3">
           <Link to="/marketplace">
-            <Button size="sm" className="gap-2">
+            <Button size="sm" className="bg-[#0e6245] hover:bg-[#0b5038] text-white gap-2 text-xs">
               <ShoppingBag className="w-4 h-4" /> Browse Verified Credits
             </Button>
           </Link>
         </div>
       </div>
 
+      {/* Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <MetricCard
-          title="Total Offtake Secured"
-          value="4,250"
+          title="Spot Index Price"
+          value={marketMetrics ? `$${marketMetrics.spotPriceAvg.toFixed(2)}` : '$52.40'}
+          unit="/tCO2e"
+          change={marketMetrics ? `${marketMetrics.priceChange24h >= 0 ? '+' : ''}${marketMetrics.priceChange24h}%` : '+3.8%'}
+          isPositive={marketMetrics ? marketMetrics.priceChange24h >= 0 : true}
+          icon={Activity}
+          subtitle="Real-time WebSocket price"
+        />
+        <MetricCard
+          title="Available Spot Volume"
+          value={marketMetrics ? `${marketMetrics.totalAvailableTons.toLocaleString()}` : '14,250'}
           unit="tCO2e"
-          change="+32%"
+          change="+14.2%"
           isPositive={true}
           icon={Target}
-          subtitle="Annual compliance quota: 85%"
+          subtitle="Ready for instant procurement"
         />
         <MetricCard
-          title="Emissions Inset"
-          value="-22.5%"
-          unit="Scope 1 & 2"
-          change="-4.2%"
-          isPositive={true}
-          icon={TrendingDown}
-          subtitle="YoY carbon footprint drop"
-        />
-        <MetricCard
-          title="Average Cost / Tonne"
-          value="$138.50"
+          title="24h Trading Volume"
+          value={marketMetrics ? `$${(marketMetrics.activeTradingVolume24h / 1000).toFixed(0)}k` : '$382k'}
           unit="USD"
-          change="-6.4%"
+          change="+24.5%"
           isPositive={true}
-          subtitle="AI Arbitrage savings"
+          subtitle="Verified batch liquidations"
         />
         <MetricCard
           title="Audit Compliance"
@@ -69,9 +84,9 @@ export const BuyerDashboardPage = () => {
           </div>
           <div className="space-y-3">
             {[
-              { project: 'Nordic Biochar Pyrolysis Facility', tonnes: '1,200 tCO2e', status: 'Delivered', price: '$142/t' },
-              { project: 'Iceland Direct Air Mineralization', tonnes: '850 tCO2e', status: 'Pending MRV', price: '$210/t' },
-              { project: 'Indo-Gangetic Agroforestry Project', tonnes: '2,200 tCO2e', status: 'In Escrow', price: '$85/t' },
+              { project: 'Nordic Biochar Pyrolysis Facility', tonnes: '1,200 tCO2e', status: 'Delivered', price: '$52.40/t' },
+              { project: 'Iceland Direct Air Mineralization', tonnes: '850 tCO2e', status: 'Pending MRV', price: '$85.00/t' },
+              { project: 'Indo-Gangetic Agroforestry Project', tonnes: '2,200 tCO2e', status: 'In Escrow', price: '$48.50/t' },
             ].map((contract, i) => (
               <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-carbon-800/60 border border-slate-200 dark:border-carbon-700/50 text-xs">
                 <div>
@@ -88,19 +103,28 @@ export const BuyerDashboardPage = () => {
 
         <Card className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white">AI Smart Match Recommendations</h3>
-            <Badge variant="emerald">Live Match Engine</Badge>
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white">AI Smart Match Stream</h3>
+            <Badge variant="emerald" className="animate-pulse">Live Socket Matcher</Badge>
           </div>
           <p className="text-xs text-slate-400">
-            Based on your Scope 3 profile, the algorithm discovered 2 biochar suppliers matching your exact geographic corridor.
+            Real-time multi-variable compatibility engine scanning carbon purity, proximity, and credit permanence.
           </p>
-          <div className="p-4 rounded-xl bg-eco-emerald/5 border border-eco-emerald/20 flex items-center justify-between">
+          <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold text-eco-emerald">High Compatibility Match (98.4%)</p>
-              <p className="text-xs text-slate-300 mt-0.5">Biochar Agritech Ltd • 1,500 tCO2e available</p>
+              <div className="flex items-center gap-2">
+                <p className="text-xs font-bold text-emerald-400">
+                  {latestMatch ? `High Compatibility Match (${latestMatch.compatibilityScore}%)` : 'Live Match Stream Connected (98.4%)'}
+                </p>
+                <Sparkles className="w-3.5 h-3.5 text-emerald-400 animate-spin" />
+              </div>
+              <p className="text-xs text-slate-300 mt-0.5">
+                {latestMatch ? `${latestMatch.buyer} • ${latestMatch.requiredVolume} tCO2e required` : 'Apex Point-Source Facility • 1,500 tCO2e available'}
+              </p>
             </div>
             <Link to="/matching-engine">
-              <Button size="sm" variant="outline">View Match</Button>
+              <Button size="sm" variant="outline" className="text-xs border-emerald-500/50 text-emerald-400 hover:bg-emerald-950/50">
+                View Match
+              </Button>
             </Link>
           </div>
         </Card>
@@ -108,4 +132,5 @@ export const BuyerDashboardPage = () => {
     </div>
   );
 };
+
 export default BuyerDashboardPage;

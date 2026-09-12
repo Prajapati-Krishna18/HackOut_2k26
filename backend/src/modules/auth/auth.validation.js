@@ -8,24 +8,33 @@ const passwordValidation = z
   .regex(/[0-9!@#$%^&*(),.?":{}|<>]/, 'Password must contain at least one number or special character');
 
 export const signupSchema = {
-  body: z.object({
-    full_name: z
-      .string({ required_error: 'Full name is required' })
-      .trim()
-      .min(2, 'Full name must be at least 2 characters')
-      .max(100, 'Full name cannot exceed 100 characters'),
-    email: z
-      .string({ required_error: 'Email is required' })
-      .trim()
-      .email('Invalid email address')
-      .toLowerCase(),
-    password: passwordValidation,
-    role: z
-      .enum(['supplier', 'buyer', 'logistics', 'admin'], {
-        errorMap: () => ({ message: "Role must be one of 'supplier', 'buyer', 'logistics', or 'admin'" })
-      })
-      .default('buyer')
-  })
+  body: z
+    .object({
+      full_name: z.string().trim().min(2, 'Full name must be at least 2 characters').max(100).optional(),
+      fullName: z.string().trim().min(2, 'Full name must be at least 2 characters').max(100).optional(),
+      email: z
+        .string({ required_error: 'Email is required' })
+        .trim()
+        .email('Invalid email address')
+        .toLowerCase(),
+      password: passwordValidation,
+      role: z
+        .string()
+        .optional()
+        .transform((val) => (val ? val.toLowerCase() : 'supplier'))
+        .pipe(z.enum(['supplier', 'buyer', 'logistics', 'admin', 'verifier']))
+        .default('supplier')
+    })
+    .transform((data) => {
+      const resolvedName = data.full_name || data.fullName;
+      if (!resolvedName) {
+        throw new Error('Full name is required');
+      }
+      return {
+        ...data,
+        full_name: resolvedName
+      };
+    })
 };
 
 export const loginSchema = {
@@ -40,13 +49,21 @@ export const loginSchema = {
 };
 
 export const googleAuthSchema = {
-  body: z.object({
-    idToken: z.string({ required_error: 'Google ID Token is required' }).min(10, 'Invalid Google ID Token format'),
-    role: z
-      .enum(['supplier', 'buyer', 'logistics', 'admin'])
-      .optional()
-      .default('buyer')
-  })
+  body: z
+    .object({
+      idToken: z.string().optional(),
+      credential: z.string().optional(),
+      accessToken: z.string().optional(),
+      role: z
+        .string()
+        .optional()
+        .transform((val) => (val ? val.toLowerCase() : 'supplier'))
+        .pipe(z.enum(['supplier', 'buyer', 'logistics', 'admin', 'verifier']))
+        .default('supplier')
+    })
+    .refine((data) => data.idToken || data.credential || data.accessToken, {
+      message: 'Google ID token, credential, or access token is required'
+    })
 };
 
 export const forgotPasswordSchema = {

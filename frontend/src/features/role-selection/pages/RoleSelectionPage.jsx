@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { 
-  Leaf, 
-  HelpCircle, 
-  ChevronDown, 
-  Check, 
-  ArrowRight, 
-  UploadCloud, 
-  BarChart3, 
-  IndianRupee, 
-  Search, 
-  ShoppingCart, 
-  Footprints, 
-  Users, 
-  ShieldCheck, 
+import {
+  Leaf,
+  HelpCircle,
+  ChevronDown,
+  Check,
+  ArrowRight,
+  UploadCloud,
+  BarChart3,
+  IndianRupee,
+  Search,
+  ShoppingCart,
+  Footprints,
+  Users,
+  ShieldCheck,
   Settings,
   Info
 } from 'lucide-react';
@@ -43,7 +43,7 @@ export const RoleSelectionPage = () => {
   };
 
   return (
-    <div 
+    <div
       className="min-h-screen w-full relative bg-cover bg-center font-sans text-slate-900 selection:bg-[#0e9f6e] selection:text-white flex flex-col justify-between"
       style={{ backgroundImage: `url(${roleSelectBg})` }}
     >
@@ -54,7 +54,7 @@ export const RoleSelectionPage = () => {
       {/* 1. TOP HEADER NAVIGATION BAR                                              */}
       {/* ========================================================================= */}
       <header className="w-full bg-white border-b border-slate-200/80 px-6 sm:px-12 py-3 flex items-center justify-between relative z-30 shrink-0">
-        
+
         {/* Brand Logo & Tagline */}
         <Link to="/" className="flex items-center gap-2.5 group">
           <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#0e6245] to-[#10a37f] flex items-center justify-center text-white shadow-sm">
@@ -72,8 +72,8 @@ export const RoleSelectionPage = () => {
 
         {/* Right Controls: Need Help & User Avatar Badge */}
         <div className="flex items-center gap-5">
-          <a 
-            href="#help" 
+          <a
+            href="#help"
             className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors"
           >
             <HelpCircle className="w-4 h-4 text-slate-400" />
@@ -95,12 +95,12 @@ export const RoleSelectionPage = () => {
       {/* 2. MAIN LAYOUT: LEFT CALLOUT STORY & RIGHT ROLE SELECTION CARD             */}
       {/* ========================================================================= */}
       <main className="max-w-[1536px] w-full mx-auto px-6 sm:px-12 py-4 lg:py-6 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-20">
-        
+
         {/* ======================================================================= */}
         {/* LEFT COLUMN: BRAND STORY & FROSTED REALISM CARD                         */}
         {/* ======================================================================= */}
         <div className="lg:col-span-4 xl:col-span-4 flex flex-col justify-between h-full py-2 space-y-6">
-          
+
           {/* Main Left Headline */}
           <div className="space-y-3 pt-2">
             <h1 className="text-3xl sm:text-4xl xl:text-5xl font-black text-slate-900 tracking-tight leading-[1.08]">
@@ -141,15 +141,15 @@ export const RoleSelectionPage = () => {
         {/* RIGHT COLUMN: MAIN WHITE ROLE SELECTION CARD                            */}
         {/* ======================================================================= */}
         <div className="lg:col-span-8 xl:col-span-8 flex justify-center lg:justify-end">
-          
+
           <div className="bg-white rounded-3xl sm:rounded-[2rem] border border-slate-200/90 shadow-[0_20px_60px_rgba(0,0,0,0.12)] p-6 sm:p-8 max-w-4xl w-full space-y-5">
-            
+
             {/* =================================================================== */}
             {/* 5-STEP PROGRESS STEPPER                                             */}
             {/* =================================================================== */}
             <div className="max-w-2xl mx-auto w-full">
               <div className="flex items-center justify-between relative">
-                
+
                 {/* Connecting Lines */}
                 <div className="absolute left-6 right-6 top-3 h-[1.5px] bg-slate-200 -z-0">
                   <div className="h-full bg-[#0e6245] w-[50%] transition-all duration-300" />
@@ -217,23 +217,21 @@ export const RoleSelectionPage = () => {
             {/* 3 ROLE SELECTION CARDS                                              */}
             {/* =================================================================== */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 pt-1">
-              
+
               {/* Role 1: Supplier */}
-              <div 
+              <div
                 onClick={() => setSelectedRole(USER_ROLES.SUPPLIER)}
-                className={`rounded-2xl p-4 cursor-pointer transition-all duration-200 relative flex flex-col justify-between ${
-                  selectedRole === USER_ROLES.SUPPLIER 
-                    ? 'border-2 border-[#0e9f6e] bg-[#f4faf6] shadow-xs' 
+                className={`rounded-2xl p-4 cursor-pointer transition-all duration-200 relative flex flex-col justify-between ${selectedRole === USER_ROLES.SUPPLIER
+                    ? 'border-2 border-[#0e9f6e] bg-[#f4faf6] shadow-xs'
                     : 'border border-slate-200 bg-white hover:border-slate-300 hover:shadow-xs'
-                }`}
+                  }`}
               >
                 {/* Radio Circle Checkmark in Top Right */}
                 <div className="absolute top-3.5 right-3.5">
-                  <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all ${
-                    selectedRole === USER_ROLES.SUPPLIER 
-                      ? 'bg-[#0e6245] text-white shadow-xs' 
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all ${selectedRole === USER_ROLES.SUPPLIER
+                      ? 'bg-[#0e6245] text-white shadow-xs'
                       : 'border-2 border-slate-300 bg-white'
-                  }`}>
+                    }`}>
                     {selectedRole === USER_ROLES.SUPPLIER && <Check className="w-3 h-3 stroke-[3]" />}
                   </div>
                 </div>
@@ -241,18 +239,17 @@ export const RoleSelectionPage = () => {
                 <div className="space-y-3">
                   {/* Circular Illustration */}
                   <div className="w-24 h-24 mx-auto rounded-full overflow-hidden shadow-xs border border-slate-100 bg-slate-50">
-                    <img 
-                      src={supplierArt} 
-                      alt="Supplier Role" 
+                    <img
+                      src={supplierArt}
+                      alt="Supplier Role"
                       className="w-full h-full object-cover"
                     />
                   </div>
 
                   {/* Title & Description */}
                   <div className="text-center space-y-1">
-                    <h3 className={`text-base font-black tracking-tight ${
-                      selectedRole === USER_ROLES.SUPPLIER ? 'text-[#0e9f6e]' : 'text-slate-900'
-                    }`}>
+                    <h3 className={`text-base font-black tracking-tight ${selectedRole === USER_ROLES.SUPPLIER ? 'text-[#0e9f6e]' : 'text-slate-900'
+                      }`}>
                       Supplier
                     </h3>
                     <p className="text-[10.5px] text-slate-500 leading-tight">
@@ -286,21 +283,19 @@ export const RoleSelectionPage = () => {
               </div>
 
               {/* Role 2: Buyer */}
-              <div 
+              <div
                 onClick={() => setSelectedRole(USER_ROLES.BUYER)}
-                className={`rounded-2xl p-4 cursor-pointer transition-all duration-200 relative flex flex-col justify-between ${
-                  selectedRole === USER_ROLES.BUYER 
-                    ? 'border-2 border-[#0e9f6e] bg-[#f4faf6] shadow-xs' 
+                className={`rounded-2xl p-4 cursor-pointer transition-all duration-200 relative flex flex-col justify-between ${selectedRole === USER_ROLES.BUYER
+                    ? 'border-2 border-[#0e9f6e] bg-[#f4faf6] shadow-xs'
                     : 'border border-slate-200 bg-white hover:border-slate-300 hover:shadow-xs'
-                }`}
+                  }`}
               >
                 {/* Radio Circle Checkmark in Top Right */}
                 <div className="absolute top-3.5 right-3.5">
-                  <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all ${
-                    selectedRole === USER_ROLES.BUYER 
-                      ? 'bg-[#0e6245] text-white shadow-xs' 
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all ${selectedRole === USER_ROLES.BUYER
+                      ? 'bg-[#0e6245] text-white shadow-xs'
                       : 'border-2 border-slate-300 bg-white'
-                  }`}>
+                    }`}>
                     {selectedRole === USER_ROLES.BUYER && <Check className="w-3 h-3 stroke-[3]" />}
                   </div>
                 </div>
@@ -308,18 +303,17 @@ export const RoleSelectionPage = () => {
                 <div className="space-y-3">
                   {/* Circular Illustration */}
                   <div className="w-24 h-24 mx-auto rounded-full overflow-hidden shadow-xs border border-slate-100 bg-slate-50">
-                    <img 
-                      src={buyerArt} 
-                      alt="Buyer Role" 
+                    <img
+                      src={buyerArt}
+                      alt="Buyer Role"
                       className="w-full h-full object-cover"
                     />
                   </div>
 
                   {/* Title & Description */}
                   <div className="text-center space-y-1">
-                    <h3 className={`text-base font-black tracking-tight ${
-                      selectedRole === USER_ROLES.BUYER ? 'text-[#0e9f6e]' : 'text-slate-900'
-                    }`}>
+                    <h3 className={`text-base font-black tracking-tight ${selectedRole === USER_ROLES.BUYER ? 'text-[#0e9f6e]' : 'text-slate-900'
+                      }`}>
                       Buyer
                     </h3>
                     <p className="text-[10.5px] text-slate-500 leading-tight">
@@ -353,21 +347,19 @@ export const RoleSelectionPage = () => {
               </div>
 
               {/* Role 3: Admin */}
-              <div 
+              <div
                 onClick={() => setSelectedRole(USER_ROLES.ADMIN)}
-                className={`rounded-2xl p-4 cursor-pointer transition-all duration-200 relative flex flex-col justify-between ${
-                  selectedRole === USER_ROLES.ADMIN 
-                    ? 'border-2 border-[#0e9f6e] bg-[#f4faf6] shadow-xs' 
+                className={`rounded-2xl p-4 cursor-pointer transition-all duration-200 relative flex flex-col justify-between ${selectedRole === USER_ROLES.ADMIN
+                    ? 'border-2 border-[#0e9f6e] bg-[#f4faf6] shadow-xs'
                     : 'border border-slate-200 bg-white hover:border-slate-300 hover:shadow-xs'
-                }`}
+                  }`}
               >
                 {/* Radio Circle Checkmark in Top Right */}
                 <div className="absolute top-3.5 right-3.5">
-                  <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all ${
-                    selectedRole === USER_ROLES.ADMIN 
-                      ? 'bg-[#0e6245] text-white shadow-xs' 
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all ${selectedRole === USER_ROLES.ADMIN
+                      ? 'bg-[#0e6245] text-white shadow-xs'
                       : 'border-2 border-slate-300 bg-white'
-                  }`}>
+                    }`}>
                     {selectedRole === USER_ROLES.ADMIN && <Check className="w-3 h-3 stroke-[3]" />}
                   </div>
                 </div>
@@ -375,18 +367,17 @@ export const RoleSelectionPage = () => {
                 <div className="space-y-3">
                   {/* Circular Illustration */}
                   <div className="w-24 h-24 mx-auto rounded-full overflow-hidden shadow-xs border border-slate-100 bg-slate-50">
-                    <img 
-                      src={adminArt} 
-                      alt="Admin Role" 
+                    <img
+                      src={adminArt}
+                      alt="Admin Role"
                       className="w-full h-full object-cover"
                     />
                   </div>
 
                   {/* Title & Description */}
                   <div className="text-center space-y-1">
-                    <h3 className={`text-base font-black tracking-tight ${
-                      selectedRole === USER_ROLES.ADMIN ? 'text-[#0e9f6e]' : 'text-slate-900'
-                    }`}>
+                    <h3 className={`text-base font-black tracking-tight ${selectedRole === USER_ROLES.ADMIN ? 'text-[#0e9f6e]' : 'text-slate-900'
+                      }`}>
                       Admin
                     </h3>
                     <p className="text-[10.5px] text-slate-500 leading-tight">
@@ -445,7 +436,7 @@ export const RoleSelectionPage = () => {
             {/* BOTTOM 3 TRUST PILL BADGES                                          */}
             {/* =================================================================== */}
             <div className="pt-2 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-3 gap-3">
-              
+
               {/* Trust 1: Secure & Verified */}
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-full bg-[#e8f5ed] text-[#0e6245] flex items-center justify-center shrink-0">

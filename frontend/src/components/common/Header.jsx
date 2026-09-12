@@ -31,13 +31,30 @@ export const Header = () => {
           {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
         </button>
 
-        {/* Notifications */}
+        {/* User Profile Quick Link */}
         <Link
-          to="/notifications"
-          className="p-2 relative rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-carbon-800 transition-colors"
+          to="/settings"
+          className="flex items-center gap-2.5 pl-2 py-1 pr-3 rounded-full bg-slate-100 dark:bg-carbon-800 hover:bg-slate-200 dark:hover:bg-carbon-700 transition-colors text-xs font-semibold text-slate-800 dark:text-slate-100"
         >
-          <Bell className="w-4 h-4" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-eco-emerald rounded-full"></span>
+          {user?.avatar_url ? (
+            <img 
+              src={user.avatar_url} 
+              alt={user.name || 'User'} 
+              className="w-7 h-7 rounded-full object-cover border border-emerald-500/50"
+            />
+          ) : (
+            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#0e6245] to-[#10b981] text-white flex items-center justify-center font-bold text-xs shadow-xs">
+              {(user?.name || user?.full_name || 'C')[0].toUpperCase()}
+            </div>
+          )}
+          <div className="hidden sm:flex flex-col text-left">
+            <span className="text-xs font-bold leading-tight truncate max-w-[120px]">
+              {user?.name || user?.full_name || 'Member'}
+            </span>
+            <span className="text-[9px] font-semibold text-emerald-600 dark:text-emerald-400 -mt-0.5 uppercase tracking-wider">
+              {user?.role || 'SUPPLIER'}
+            </span>
+          </div>
         </Link>
       </div>
     </header>

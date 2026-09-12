@@ -43,6 +43,12 @@ router.post('/google', validate(googleAuthSchema), authController.googleAuth);
 // 4. Verify Email Token
 router.get('/verify-email', validate(verifyEmailSchema), authController.verifyEmail);
 
+// 4.1 Send Verification OTP
+router.post('/send-otp', authController.sendOtp);
+
+// 4.2 Verify OTP Code
+router.post('/verify-otp', authController.verifyOtp);
+
 // 5. Request Password Reset Link
 router.post('/forgot-password', authLimiter, validate(forgotPasswordSchema), authController.forgotPassword);
 
@@ -54,6 +60,12 @@ router.post('/reset-password', authLimiter, validate(resetPasswordSchema), authC
  */
 // 7. Get Current Authenticated User Profile
 router.get('/me', authenticateUser, authController.getMe);
+
+// 7.1 Update Profile
+router.put('/profile', authenticateUser, authController.updateProfile);
+
+// 7.2 Update Active Role
+router.put('/role', authenticateUser, authController.updateRole);
 
 // 8. Logout / Invalidate Session Cookie
 router.post('/logout', authenticateUser, authController.logout);

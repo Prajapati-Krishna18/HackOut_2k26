@@ -120,19 +120,31 @@ export const Sidebar = () => {
 
       {/* User Profile & Logout footer */}
       <div className="p-4 border-t border-slate-200 dark:border-carbon-800 flex items-center justify-between">
-        <div className="flex items-center gap-3 truncate">
-          <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-carbon-700 flex items-center justify-center font-bold text-xs">
-            {user?.name?.[0] || 'C'}
-          </div>
+        <NavLink to="/settings" className="flex items-center gap-3 truncate hover:opacity-80 transition-opacity">
+          {user?.avatar_url ? (
+            <img 
+              src={user.avatar_url} 
+              alt={user.name || 'User'} 
+              className="w-8 h-8 rounded-full object-cover border border-emerald-500/50 shrink-0" 
+            />
+          ) : (
+            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#0e6245] to-[#10b981] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
+              {(user?.name || user?.full_name || 'C')[0].toUpperCase()}
+            </div>
+          )}
           <div className="truncate">
-            <p className="text-xs font-semibold truncate text-slate-800 dark:text-slate-200">{user?.name || 'Authorized Member'}</p>
-            <p className="text-[10px] text-slate-400 truncate">{role || 'Supplier'}</p>
+            <p className="text-xs font-semibold truncate text-slate-800 dark:text-slate-200">
+              {user?.name || user?.full_name || 'Member'}
+            </p>
+            <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold uppercase truncate">
+              {role || user?.role || 'Supplier'}
+            </p>
           </div>
-        </div>
+        </NavLink>
         <button
           onClick={logout}
           title="Logout"
-          className="p-2 text-slate-400 hover:text-rose-500 rounded-lg transition-colors"
+          className="p-2 text-slate-400 hover:text-rose-500 rounded-lg transition-colors shrink-0"
         >
           <LogOut className="w-4 h-4" />
         </button>

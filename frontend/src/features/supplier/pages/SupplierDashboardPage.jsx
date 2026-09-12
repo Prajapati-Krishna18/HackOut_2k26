@@ -21,13 +21,11 @@ import {
   Gauge, 
   Wifi, 
   WifiOff, 
-  Sparkles 
+  Sparkles,
   FileText, 
   MessageSquare, 
-  Sparkles, 
   Trees, 
   Info, 
-  Zap, 
   Globe, 
   Search,
   Quote,
@@ -70,43 +68,6 @@ const inventoryData = [
 ];
 
 export const SupplierDashboardPage = () => {
-  const { isConnected, telemetry, simulateSpike } = useSocket();
-
-  return (
-    <div className="space-y-6">
-      {/* Top Banner with Real-Time Socket Status */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900 text-white p-5 rounded-3xl border border-slate-800 shadow-md">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-black tracking-tight text-white">Supplier Command Center</h1>
-            <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase border ${
-              isConnected 
-                ? 'bg-emerald-950/80 border-emerald-500/50 text-emerald-400' 
-                : 'bg-amber-950/80 border-amber-500/50 text-amber-400'
-            }`}>
-              <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-400 animate-ping' : 'bg-amber-400'}`} />
-              <span>{isConnected ? 'LIVE WEBSOCKET STREAM' : 'CONNECTING...'}</span>
-            </div>
-          </div>
-          <p className="text-xs text-slate-400">
-            Real-time IoT telemetry from <span className="text-emerald-400 font-semibold">{telemetry?.facilityName || 'Apex Point-Source Capture Array'}</span> ({telemetry?.facilityId || 'FAC-DAC-0941'})
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Button 
-            type="button"
-            onClick={simulateSpike} 
-            variant="outline" 
-            size="sm" 
-            className="border-emerald-500/30 text-emerald-400 hover:bg-emerald-950/50 text-xs flex items-center gap-1.5"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Simulate Live Spike</span>
-          </Button>
-          <Button size="sm" className="bg-[#0e6245] hover:bg-[#0b5038] text-white gap-2 text-xs">
-            <Plus className="w-4 h-4" /> New Batch Listing
-          </Button>
   const [activeTab, setActiveTab] = useState('dashboard');
   const [timeRange, setTimeRange] = useState('Last 6 Months');
   const [metricsPeriod, setMetricsPeriod] = useState('Aug 2025');

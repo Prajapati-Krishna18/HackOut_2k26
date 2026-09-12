@@ -15,23 +15,14 @@ import {
   ChevronDown, 
   MoreVertical, 
   Plus, 
-  Activity, 
-  Zap, 
-  Flame, 
-  Gauge, 
-  Wifi, 
-  WifiOff, 
-  Sparkles,
+  Zap,
   FileText, 
   MessageSquare, 
   Trees, 
   Info, 
   Globe, 
-  Search,
   Quote,
-  Clock,
-  ShieldCheck,
-  DollarSign
+  Clock
 } from 'lucide-react';
 import { 
   BarChart, 
@@ -46,8 +37,6 @@ import {
   Cell
 } from 'recharts';
 import { useSocket } from '@/context/SocketContext';
-import { MetricCard } from '@/components/common/MetricCard';
-import { Badge } from '@/components/ui/Badge';
 
 // Photographic background & vector graphics
 import heroBannerBg from '@/assets/supplier-dashboard-hero.jpg';
@@ -225,124 +214,6 @@ export const SupplierDashboardPage = () => {
         </div>
       </header>
 
-      {/* Real-time Dynamic IoT Sensor Telemetry Strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        <div className="bg-white dark:bg-carbon-900 border border-slate-200 dark:border-carbon-800 p-3.5 rounded-2xl shadow-xs space-y-1">
-          <div className="flex items-center justify-between text-slate-500 text-[10px] uppercase font-bold tracking-wider">
-            <span>CO₂ Capture Rate</span>
-            <Activity className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
-          </div>
-          <div className="text-lg font-black text-slate-900 dark:text-white flex items-baseline gap-1">
-            <span>{telemetry?.co2CaptureRate || 48.6}</span>
-            <span className="text-[10px] font-semibold text-slate-400">kg/hr</span>
-          </div>
-          <div className="text-[9px] text-emerald-600 font-medium flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-            <span>Telemetry active</span>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-carbon-900 border border-slate-200 dark:border-carbon-800 p-3.5 rounded-2xl shadow-xs space-y-1">
-          <div className="flex items-center justify-between text-slate-500 text-[10px] uppercase font-bold tracking-wider">
-            <span>Gas Purity</span>
-            <ShieldCheck className="w-3.5 h-3.5 text-cyan-500" />
-          </div>
-          <div className="text-lg font-black text-slate-900 dark:text-white flex items-baseline gap-1">
-            <span>{telemetry?.purity || 99.72}</span>
-            <span className="text-[10px] font-semibold text-slate-400">%</span>
-          </div>
-          <div className="text-[9px] text-cyan-600 font-medium">Beverage / Food Grade</div>
-        </div>
-
-        <div className="bg-white dark:bg-carbon-900 border border-slate-200 dark:border-carbon-800 p-3.5 rounded-2xl shadow-xs space-y-1">
-          <div className="flex items-center justify-between text-slate-500 text-[10px] uppercase font-bold tracking-wider">
-            <span>Flue Temp</span>
-            <Flame className="w-3.5 h-3.5 text-amber-500" />
-          </div>
-          <div className="text-lg font-black text-slate-900 dark:text-white flex items-baseline gap-1">
-            <span>{telemetry?.temperature || 64.2}</span>
-            <span className="text-[10px] font-semibold text-slate-400">°C</span>
-          </div>
-          <div className="text-[9px] text-slate-400 font-medium">Optimal thermal zone</div>
-        </div>
-
-        <div className="bg-white dark:bg-carbon-900 border border-slate-200 dark:border-carbon-800 p-3.5 rounded-2xl shadow-xs space-y-1">
-          <div className="flex items-center justify-between text-slate-500 text-[10px] uppercase font-bold tracking-wider">
-            <span>Line Pressure</span>
-            <Gauge className="w-3.5 h-3.5 text-indigo-500" />
-          </div>
-          <div className="text-lg font-black text-slate-900 dark:text-white flex items-baseline gap-1">
-            <span>{telemetry?.pressure || 3.42}</span>
-            <span className="text-[10px] font-semibold text-slate-400">bar</span>
-          </div>
-          <div className="text-[9px] text-slate-400 font-medium">Nominal pipeline feed</div>
-        </div>
-
-        <div className="bg-white dark:bg-carbon-900 border border-slate-200 dark:border-carbon-800 p-3.5 rounded-2xl shadow-xs space-y-1">
-          <div className="flex items-center justify-between text-slate-500 text-[10px] uppercase font-bold tracking-wider">
-            <span>Power Load</span>
-            <Zap className="w-3.5 h-3.5 text-yellow-500" />
-          </div>
-          <div className="text-lg font-black text-slate-900 dark:text-white flex items-baseline gap-1">
-            <span>{telemetry?.energyConsumption || 142.8}</span>
-            <span className="text-[10px] font-semibold text-slate-400">kWh</span>
-          </div>
-          <div className="text-[9px] text-emerald-600 font-medium">100% Renewable grid</div>
-        </div>
-
-        <div className="bg-white dark:bg-carbon-900 border border-slate-200 dark:border-carbon-800 p-3.5 rounded-2xl shadow-xs space-y-1">
-          <div className="flex items-center justify-between text-slate-500 text-[10px] uppercase font-bold tracking-wider">
-            <span>Captured Today</span>
-            <Leaf className="w-3.5 h-3.5 text-emerald-500" />
-          </div>
-          <div className="text-lg font-black text-emerald-700 dark:text-emerald-400 flex items-baseline gap-1">
-            <span>{telemetry?.totalCapturedToday || 1.18}</span>
-            <span className="text-[10px] font-semibold text-slate-400">Tons</span>
-          </div>
-          <div className="text-[9px] text-slate-400 font-medium">Real-time accumulation</div>
-        </div>
-      </div>
-
-      {/* Metric Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <MetricCard
-          title="Total Sequestered"
-          value={telemetry?.cumulativeCredits ? `${(telemetry.cumulativeCredits * 0.5).toFixed(0)}` : '1,920'}
-          unit="tCO2e"
-          change="+18.4%"
-          isPositive={true}
-          icon={Leaf}
-          subtitle="Live telemetry verified"
-        />
-        <MetricCard
-          title="Verified Credits"
-          value={telemetry?.cumulativeCredits ? `${telemetry.cumulativeCredits}` : '3,840'}
-          unit="VCUs"
-          change="+12.0%"
-          isPositive={true}
-          icon={ShieldCheck}
-          subtitle="Gold Standard / Puro.earth"
-        />
-        <MetricCard
-          title="Realized Revenue"
-          value={telemetry?.estimatedRevenue ? `$${telemetry.estimatedRevenue.toLocaleString()}` : '$192,000'}
-          unit="USD"
-          change="+24.8%"
-          isPositive={true}
-          icon={DollarSign}
-          subtitle="Escrow smart contracts"
-        />
-        <MetricCard
-          title="Market Clearance Rate"
-          value={`${telemetry?.captureEfficiency || 96.4}%`}
-          unit="Yield"
-          change="+3.1%"
-          isPositive={true}
-          icon={TrendingUp}
-          subtitle="AI Spot match rate"
-        />
-      </div>
-
       {/* ========================================================================= */}
       {/* 2. MAIN DASHBOARD CONTENT AREA                                            */}
       {/* ========================================================================= */}
@@ -378,7 +249,6 @@ export const SupplierDashboardPage = () => {
               </div>
             </div>
           </div>
-          <Badge variant="emerald" className="animate-pulse">Live Socket Synced</Badge>
 
           {/* Floating Cursive Script over the mountain landscape */}
           <div className="absolute left-[54%] top-6 hidden xl:block pointer-events-none transform -rotate-6 z-10">

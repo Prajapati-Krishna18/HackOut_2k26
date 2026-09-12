@@ -51,14 +51,16 @@ export const initSocket = (httpServer) => {
       methods: ['GET', 'POST'],
       credentials: true
     },
-    pingTimeout: 60000,
-    pingInterval: 25000
+    transports: ['websocket', 'polling'],
+    pingTimeout: 30000,
+    pingInterval: 10000,
+    connectTimeout: 20000
   });
 
   ioInstance = io;
 
   io.on('connection', (socket) => {
-    logger.info(`[SOCKET CONNECTED] Client ID: ${socket.id}`);
+    logger.info(`[SOCKET CONNECTED] Client ID: ${socket.id} via ${socket.conn.transport.name}`);
 
     // Send immediate snapshot on connection
     socket.emit('telemetry:update', currentTelemetry);
@@ -84,8 +86,12 @@ export const initSocket = (httpServer) => {
       io.emit('telemetry:update', currentTelemetry);
     });
 
-    socket.on('disconnect', () => {
-      logger.info(`[SOCKET DISCONNECTED] Client ID: ${socket.id}`);
+    socket.on('disconnect', (reason) => {
+      logger.info(`[SOCKET DISCONNECTED] Client ID: ${socket.id} (Reason: ${reason})`);
+    });
+
+    socket.on('error', (err) => {
+      logger.warn(`[SOCKET ERROR] Client ID: ${socket.id}: ${err?.message || err}`);
     });
   });
 

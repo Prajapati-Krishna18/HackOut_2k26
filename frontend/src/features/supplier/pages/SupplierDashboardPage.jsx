@@ -15,19 +15,12 @@ import {
   ChevronDown, 
   MoreVertical, 
   Plus, 
-  Activity, 
-  Zap, 
-  Flame, 
-  Gauge, 
-  Wifi, 
-  WifiOff, 
-  Sparkles,
+  Zap,
   FileText, 
   MessageSquare, 
   Trees, 
   Info, 
   Globe, 
-  Search,
   Quote,
   Clock
 } from 'lucide-react';
@@ -69,6 +62,7 @@ const inventoryData = [
 
 export const SupplierDashboardPage = () => {
   const { isConnected, telemetry, simulateSpike } = useSocket();
+  const { telemetry, isConnected, simulateSpike } = useSocket();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [timeRange, setTimeRange] = useState('Last 6 Months');
   const [metricsPeriod, setMetricsPeriod] = useState('Aug 2025');
@@ -211,6 +205,196 @@ export const SupplierDashboardPage = () => {
                   </div>
 
                 </div>
+  // Mini Sparkline Generator
+  const Sparkline = ({ strokeColor, points }) => (
+    <svg className="w-16 h-7 overflow-visible" viewBox="0 0 70 30" fill="none">
+      <path 
+        d={points} 
+        stroke={strokeColor} 
+        strokeWidth="2.5" 
+        strokeLinecap="round" 
+        strokeLinejoin="round" 
+      />
+    </svg>
+  );
+
+  return (
+    <div className="min-h-screen bg-[#f8faf9] text-slate-900 font-sans selection:bg-[#0e9f6e] selection:text-white flex flex-col justify-between">
+      
+      {/* ========================================================================= */}
+      {/* 1. TOP NAVIGATION BAR                                                     */}
+      {/* ========================================================================= */}
+      <header className="bg-white border-b border-slate-200/80 sticky top-0 z-50 px-4 sm:px-8 lg:px-12 py-3">
+        <div className="max-w-[1536px] mx-auto flex items-center justify-between gap-4">
+          
+          {/* Brand Logo & Slogan */}
+          <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#0e6245] to-[#10a37f] flex items-center justify-center text-white shadow-sm">
+              <Leaf className="w-4 h-4 fill-current" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+                Carbon<span className="text-[#0e9f6e]">Sphere</span>
+              </span>
+              <span className="text-[8.5px] font-medium text-slate-500 -mt-1 hidden sm:block">
+                Cleaner Industries. Brighter Tomorrows.
+              </span>
+            </div>
+          </Link>
+
+          {/* Center Navigation Tabs (Horizontal Pills) */}
+          <nav className="hidden md:flex items-center gap-1.5 lg:gap-2">
+            
+            {/* Dashboard Tab */}
+            <button 
+              onClick={() => setActiveTab('dashboard')}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                activeTab === 'dashboard' 
+                  ? 'bg-[#0e6245] text-white shadow-xs' 
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+            >
+              <LayoutDashboard className="w-3.5 h-3.5" />
+              <span>Dashboard</span>
+            </button>
+
+            {/* My Listings */}
+            <button 
+              onClick={() => setActiveTab('listings')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                activeTab === 'listings' 
+                  ? 'bg-[#0e6245] text-white' 
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+            >
+              <ListTree className="w-3.5 h-3.5" />
+              <span>My Listings</span>
+            </button>
+
+            {/* Inventory */}
+            <button 
+              onClick={() => setActiveTab('inventory')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                activeTab === 'inventory' 
+                  ? 'bg-[#0e6245] text-white' 
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+            >
+              <Boxes className="w-3.5 h-3.5" />
+              <span>Inventory</span>
+            </button>
+
+            {/* Orders */}
+            <button 
+              onClick={() => setActiveTab('orders')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                activeTab === 'orders' 
+                  ? 'bg-[#0e6245] text-white' 
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+            >
+              <ShoppingCart className="w-3.5 h-3.5" />
+              <span>Orders</span>
+            </button>
+
+            {/* Transactions */}
+            <button 
+              onClick={() => setActiveTab('transactions')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                activeTab === 'transactions' 
+                  ? 'bg-[#0e6245] text-white' 
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+            >
+              <Receipt className="w-3.5 h-3.5" />
+              <span>Transactions</span>
+            </button>
+
+            {/* Reports */}
+            <button 
+              onClick={() => setActiveTab('reports')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                activeTab === 'reports' 
+                  ? 'bg-[#0e6245] text-white' 
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+            >
+              <BarChart3 className="w-3.5 h-3.5" />
+              <span>Reports</span>
+            </button>
+
+          </nav>
+
+          {/* Right Action Profile & Notifications */}
+          <div className="flex items-center gap-3 shrink-0">
+            
+            {/* Notification Bell with Badge */}
+            <div className="relative cursor-pointer p-1.5 rounded-full hover:bg-slate-100 text-slate-600 transition-colors">
+              <Bell className="w-5 h-5" />
+              <span className="absolute top-1 right-1 w-4 h-4 bg-rose-500 text-white rounded-full text-[9px] font-bold flex items-center justify-center ring-2 ring-white">
+                2
+              </span>
+            </div>
+
+            {/* User Profile Header */}
+            <Link to="/supplier/profile" className="flex items-center gap-2 pl-2 border-l border-slate-200 cursor-pointer group hover:opacity-90 transition-opacity">
+              <div className="w-8 h-8 rounded-full bg-[#072b1e] text-emerald-300 font-bold text-xs flex items-center justify-center shadow-xs">
+                KP
+              </div>
+              <div className="flex flex-col text-left">
+                <span className="text-xs font-bold text-slate-900 group-hover:text-[#0e9f6e] transition-colors leading-tight">Krishna Prajapati</span>
+                <span className="text-[10px] text-slate-500 leading-tight">Supplier</span>
+              </div>
+            </Link>
+
+          </div>
+
+        </div>
+      </header>
+
+      {/* ========================================================================= */}
+      {/* 2. MAIN DASHBOARD CONTENT AREA                                            */}
+      {/* ========================================================================= */}
+      <main className="max-w-[1536px] w-full mx-auto px-4 sm:px-8 lg:px-12 py-6 space-y-6 flex-1">
+        
+        {/* ======================================================================= */}
+        {/* HERO GREETING BANNER WITH FACTORY & HILLS AMBIENCE                      */}
+        {/* ======================================================================= */}
+        <div 
+          className="w-full rounded-3xl border border-slate-200/90 shadow-sm relative overflow-hidden bg-cover bg-right p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 min-h-[165px]"
+          style={{ backgroundImage: `url(${heroBannerBg})` }}
+        >
+          {/* Subtle daylight gradient fade on the left for crisp text contrast */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent lg:w-[60%] pointer-events-none z-0" />
+
+          {/* Left Greeting Content */}
+          <div className="relative z-10 space-y-2 max-w-xl">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 flex items-center gap-2">
+              <span>Good Morning, <span className="text-[#0e9f6e]">Krishna!</span></span>
+              <span>🌿</span>
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-600 font-medium">
+              Every ton you capture today builds a cleaner, greener tomorrow.
+            </p>
+
+            {/* Translucent Quote Pill */}
+            <div className="pt-2">
+              <div className="bg-white/85 backdrop-blur-md border border-white/70 rounded-xl px-3.5 py-2 shadow-xs flex items-center gap-2 max-w-md">
+                <Quote className="w-3.5 h-3.5 text-slate-700 fill-slate-700 shrink-0 opacity-70" />
+                <p className="text-[11px] font-serif italic text-slate-800 leading-snug">
+                  "Small actions in industry create big changes for our planet."
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Floating Cursive Script over the mountain landscape */}
+          <div className="absolute left-[54%] top-6 hidden xl:block pointer-events-none transform -rotate-6 z-10">
+            <span className="font-serif italic text-slate-800 text-xs font-bold block leading-tight drop-shadow-sm">
+              From<br />Emissions<br />to<br />Opportunities
+            </span>
+            <div className="w-10 h-0.5 bg-[#0e9f6e] rounded-full mt-0.5" />
+          </div>
 
               </div>
             </header>

@@ -21,6 +21,7 @@ import SupplierOnboardingPage from '@/features/supplier/pages/SupplierOnboarding
 import BuyerOnboardingPage from '@/features/buyer/pages/BuyerOnboardingPage';
 import AdminOnboardingPage from '@/features/admin/pages/AdminOnboardingPage';
 import SupplierDashboardPage from '@/features/supplier/pages/SupplierDashboardPage';
+import SupplierProfilePage from '@/features/supplier/pages/SupplierProfilePage';
 import BuyerDashboardPage from '@/features/buyer/pages/BuyerDashboardPage';
 import MatchingEnginePage from '@/features/matching-engine/pages/MatchingEnginePage';
 import OpportunityEnginePage from '@/features/opportunity-engine/pages/OpportunityEnginePage';
@@ -54,6 +55,8 @@ export const AppRoutes = () => {
         <Route path="/admin/onboarding" element={<AdminOnboardingPage />} />
         <Route path="/onboarding/admin" element={<AdminOnboardingPage />} />
         <Route path="/supplier/dashboard" element={<SupplierDashboardPage />} />
+        <Route path="/supplier/profile" element={<SupplierProfilePage />} />
+        <Route path="/profile" element={<SupplierProfilePage />} />
       </Route>
 
       {/* 3. Authenticated App Workspaces */}

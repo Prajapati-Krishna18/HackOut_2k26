@@ -85,6 +85,8 @@ export const CreateListingPage = () => {
     showToast('Document uploaded successfully!');
   };
 
+  const [confirmedDeclaration, setConfirmedDeclaration] = useState(true);
+
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
@@ -92,6 +94,21 @@ export const CreateListingPage = () => {
 
   const handleSaveDraft = () => {
     showToast('Listing saved as draft successfully!');
+  };
+
+  const handleNextToReview = () => {
+    if (!formData.listingTitle.trim()) {
+      showToast('Please enter a listing title.');
+      return;
+    }
+    setCurrentStep(4);
+    window.scrollTo({ top: 380, behavior: 'smooth' });
+    showToast('All parameters verified! Review your listing before publishing.');
+  };
+
+  const handleBackToEdit = (stepNumber = 1) => {
+    setCurrentStep(stepNumber);
+    window.scrollTo({ top: 380, behavior: 'smooth' });
   };
 
   const handleSubmit = (e) => {
@@ -150,10 +167,18 @@ export const CreateListingPage = () => {
 
             <Link 
               to="/supplier/dashboard" 
+              className="px-3 py-1.5 rounded-lg hover:text-slate-900 hover:bg-slate-50 transition-colors flex items-center gap-1.5"
+            >
+              <Boxes className="w-3.5 h-3.5 text-slate-400" />
+              <span>My Listings</span>
+            </Link>
+
+            <Link 
+              to="/supplier/create-listing" 
               className="px-3 py-1.5 rounded-lg text-[#0e6245] bg-[#e8f5ed] font-semibold flex items-center gap-1.5 shadow-xs"
             >
-              <Boxes className="w-3.5 h-3.5 text-[#0e6245]" />
-              <span>My Listings</span>
+              <Plus className="w-3.5 h-3.5 text-[#0e6245]" />
+              <span>Create Listing</span>
             </Link>
 
             <Link 
@@ -297,70 +322,88 @@ export const CreateListingPage = () => {
             
             {/* Step 1: Basic Details */}
             <div 
-              onClick={() => setCurrentStep(1)}
+              onClick={() => handleBackToEdit(1)}
               className="flex items-center gap-3 cursor-pointer group"
             >
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
                 currentStep === 1 
                   ? 'bg-[#0e6245] text-white shadow-sm ring-4 ring-[#0e6245]/10' 
-                  : 'bg-emerald-100 text-[#0e6245]'
+                  : currentStep > 1
+                    ? 'bg-emerald-600 text-white'
+                    : 'bg-slate-100 text-slate-500 border border-slate-200'
               }`}>
-                1
+                {currentStep > 1 ? <Check className="w-4 h-4" /> : '1'}
               </div>
-              <span className={`text-xs font-bold transition-colors ${
-                currentStep === 1 ? 'text-[#0e6245]' : 'text-slate-700 group-hover:text-slate-900'
+              <span className={`text-xs transition-colors ${
+                currentStep === 1 
+                  ? 'text-[#0e6245] font-bold' 
+                  : currentStep > 1 
+                    ? 'text-slate-800 font-bold' 
+                    : 'text-slate-500 group-hover:text-slate-700 font-semibold'
               }`}>
                 Basic Details
               </span>
             </div>
 
-            <div className="flex-1 h-0.5 bg-slate-200 mx-4" />
+            <div className={`flex-1 h-0.5 mx-4 transition-colors ${currentStep > 1 ? 'bg-emerald-500' : 'bg-slate-200'}`} />
 
             {/* Step 2: Project Information */}
             <div 
-              onClick={() => setCurrentStep(2)}
+              onClick={() => handleBackToEdit(2)}
               className="flex items-center gap-3 cursor-pointer group"
             >
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
                 currentStep === 2 
                   ? 'bg-[#0e6245] text-white shadow-sm ring-4 ring-[#0e6245]/10' 
-                  : 'bg-slate-100 text-slate-500 border border-slate-200 group-hover:border-slate-300'
+                  : currentStep > 2
+                    ? 'bg-emerald-600 text-white'
+                    : 'bg-slate-100 text-slate-500 border border-slate-200 group-hover:border-slate-300'
               }`}>
-                2
+                {currentStep > 2 ? <Check className="w-4 h-4" /> : '2'}
               </div>
-              <span className={`text-xs font-semibold transition-colors ${
-                currentStep === 2 ? 'text-[#0e6245] font-bold' : 'text-slate-500 group-hover:text-slate-700'
+              <span className={`text-xs transition-colors ${
+                currentStep === 2 
+                  ? 'text-[#0e6245] font-bold' 
+                  : currentStep > 2 
+                    ? 'text-slate-800 font-bold' 
+                    : 'text-slate-500 group-hover:text-slate-700 font-semibold'
               }`}>
                 Project Information
               </span>
             </div>
 
-            <div className="flex-1 h-0.5 bg-slate-200 mx-4" />
+            <div className={`flex-1 h-0.5 mx-4 transition-colors ${currentStep > 2 ? 'bg-emerald-500' : 'bg-slate-200'}`} />
 
             {/* Step 3: Verification & Documents */}
             <div 
-              onClick={() => setCurrentStep(3)}
+              onClick={() => handleBackToEdit(3)}
               className="flex items-center gap-3 cursor-pointer group"
             >
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
                 currentStep === 3 
                   ? 'bg-[#0e6245] text-white shadow-sm ring-4 ring-[#0e6245]/10' 
-                  : 'bg-slate-100 text-slate-500 border border-slate-200 group-hover:border-slate-300'
+                  : currentStep > 3
+                    ? 'bg-emerald-600 text-white'
+                    : 'bg-slate-100 text-slate-500 border border-slate-200 group-hover:border-slate-300'
               }`}>
-                3
+                {currentStep > 3 ? <Check className="w-4 h-4" /> : '3'}
               </div>
-              <span className={`text-xs font-semibold transition-colors ${
-                currentStep === 3 ? 'text-[#0e6245] font-bold' : 'text-slate-500 group-hover:text-slate-700'
+              <span className={`text-xs transition-colors ${
+                currentStep === 3 
+                  ? 'text-[#0e6245] font-bold' 
+                  : currentStep > 3 
+                    ? 'text-slate-800 font-bold' 
+                    : 'text-slate-500 group-hover:text-slate-700 font-semibold'
               }`}>
                 Verification & Documents
               </span>
             </div>
 
-            <div className="flex-1 h-0.5 bg-slate-200 mx-4" />
+            <div className={`flex-1 h-0.5 mx-4 transition-colors ${currentStep === 4 ? 'bg-emerald-500' : 'bg-slate-200'}`} />
 
             {/* Step 4: Review & Publish */}
             <div 
-              onClick={() => setCurrentStep(4)}
+              onClick={() => handleNextToReview()}
               className="flex items-center gap-3 cursor-pointer group"
             >
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
@@ -370,8 +413,8 @@ export const CreateListingPage = () => {
               }`}>
                 4
               </div>
-              <span className={`text-xs font-semibold transition-colors ${
-                currentStep === 4 ? 'text-[#0e6245] font-bold' : 'text-slate-500 group-hover:text-slate-700'
+              <span className={`text-xs transition-colors ${
+                currentStep === 4 ? 'text-[#0e6245] font-bold' : 'text-slate-500 group-hover:text-slate-700 font-semibold'
               }`}>
                 Review & Publish
               </span>
@@ -394,408 +437,624 @@ export const CreateListingPage = () => {
           {/* ===================================================================== */}
           <div className="lg:col-span-8 space-y-6">
             
-            {/* ----------------------------------------------------------------- */}
-            {/* SECTION 1: BASIC DETAILS                                          */}
-            {/* ----------------------------------------------------------------- */}
-            <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-7 space-y-6">
-              
-              {/* Header */}
-              <div className="flex items-start gap-3.5 pb-2 border-b border-slate-100">
-                <div className="w-10 h-10 rounded-2xl bg-[#e8f5ed] border border-[#a3d9bc] flex items-center justify-center text-[#0e6245] shrink-0">
-                  <ClipboardList className="w-5 h-5" />
-                </div>
-                <div>
-                  <h2 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
-                    1. Basic Details
-                  </h2>
-                  <p className="text-xs text-slate-500 font-medium mt-0.5">
-                    Provide the basic information about your carbon credit listing.
-                  </p>
-                </div>
-              </div>
-
-              {/* Fields */}
-              <div className="space-y-4">
-                
-                {/* Row 1: Title & Credit Type */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {currentStep < 4 ? (
+              <>
+                {/* ----------------------------------------------------------------- */}
+                {/* SECTION 1: BASIC DETAILS                                          */}
+                {/* ----------------------------------------------------------------- */}
+                <div id="section-1" className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-7 space-y-6">
                   
-                  {/* Listing Title */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-700 block">
-                      Listing Title <span className="text-red-500">*</span>
-                    </label>
-                    <input 
-                      type="text"
-                      value={formData.listingTitle}
-                      onChange={(e) => handleChange('listingTitle', e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0e9f6e]/20 focus:border-[#0e9f6e] transition-all"
-                    />
-                    <p className="text-[11px] text-slate-400 font-medium">
-                      Give a clear and short title for your listing.
-                    </p>
-                  </div>
-
-                  {/* Carbon Credit Type */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-700 block">
-                      Carbon Credit Type <span className="text-red-500">*</span>
-                    </label>
-                    <div className="relative">
-                      <select 
-                        value={formData.creditType}
-                        onChange={(e) => handleChange('creditType', e.target.value)}
-                        className="w-full appearance-none px-3.5 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0e9f6e]/20 focus:border-[#0e9f6e] transition-all cursor-pointer pr-9"
-                      >
-                        <option value="Nature-Based Credit (Afforestation / Reforestation)">
-                          Nature-Based Credit (Afforestation / Reforestation)
-                        </option>
-                        <option value="Industrial Emission Reduction (CCUS / Flue Gas)">
-                          Industrial Emission Reduction (CCUS / Flue Gas)
-                        </option>
-                        <option value="Renewable Energy (Solar / Wind / Green Hydrogen)">
-                          Renewable Energy (Solar / Wind / Green Hydrogen)
-                        </option>
-                        <option value="Biochar & Soil Carbon Sequestration">
-                          Biochar & Soil Carbon Sequestration
-                        </option>
-                      </select>
-                      <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-3.5 top-3 pointer-events-none" />
+                  {/* Header */}
+                  <div className="flex items-start gap-3.5 pb-2 border-b border-slate-100">
+                    <div className="w-10 h-10 rounded-2xl bg-[#e8f5ed] border border-[#a3d9bc] flex items-center justify-center text-[#0e6245] shrink-0">
+                      <ClipboardList className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h2 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
+                        1. Basic Details
+                      </h2>
+                      <p className="text-xs text-slate-500 font-medium mt-0.5">
+                        Provide the basic information about your carbon credit listing.
+                      </p>
                     </div>
                   </div>
 
-                </div>
-
-                {/* Row 2: Quantity Available & Price per Ton */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-                  
-                  {/* Quantity Available */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-700 block">
-                      Quantity Available <span className="text-red-500">*</span>
-                    </label>
-                    <div className="relative flex items-center">
-                      <input 
-                        type="number"
-                        value={formData.quantity}
-                        onChange={(e) => handleChange('quantity', e.target.value)}
-                        className="w-full pl-3.5 pr-28 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0e9f6e]/20 focus:border-[#0e9f6e] transition-all"
-                      />
-                      <div className="absolute right-1 top-1 bottom-1 flex items-center">
-                        <select 
-                          value={formData.quantityUnit}
-                          onChange={(e) => handleChange('quantityUnit', e.target.value)}
-                          className="h-full px-2.5 bg-slate-100 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 focus:outline-none cursor-pointer"
-                        >
-                          <option value="tons CO₂">tons CO₂</option>
-                          <option value="tCO₂e">tCO₂e</option>
-                          <option value="kilo-tons">kilo-tons</option>
-                        </select>
+                  {/* Fields */}
+                  <div className="space-y-4">
+                    
+                    {/* Row 1: Title & Credit Type */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      
+                      {/* Listing Title */}
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-slate-700 block">
+                          Listing Title <span className="text-red-500">*</span>
+                        </label>
+                        <input 
+                          type="text"
+                          value={formData.listingTitle}
+                          onChange={(e) => handleChange('listingTitle', e.target.value)}
+                          className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0e9f6e]/20 focus:border-[#0e9f6e] transition-all"
+                        />
+                        <p className="text-[11px] text-slate-400 font-medium">
+                          Give a clear and short title for your listing.
+                        </p>
                       </div>
-                    </div>
-                    <p className="text-[11px] text-slate-400 font-medium">
-                      Total volume of carbon credits available for sale.
-                    </p>
-                  </div>
 
-                  {/* Price per Ton (INR/USD) */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-700 block">
-                      Price per Ton (INR/USD) <span className="text-red-500">*</span>
-                    </label>
-                    <div className="relative flex items-center">
-                      <span className="absolute left-3.5 text-slate-500 font-bold text-xs pointer-events-none">
-                        ₹
-                      </span>
-                      <input 
-                        type="text"
-                        value={formData.pricePerTon}
-                        onChange={(e) => handleChange('pricePerTon', e.target.value)}
-                        className="w-full pl-8 pr-3.5 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0e9f6e]/20 focus:border-[#0e9f6e] transition-all"
-                      />
-                    </div>
-                    <p className="text-[11px] text-slate-400 font-medium">
-                      Set a competitive price based on market rates.
-                    </p>
-                  </div>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-            {/* ----------------------------------------------------------------- */}
-            {/* SECTION 2: PROJECT INFORMATION                                    */}
-            {/* ----------------------------------------------------------------- */}
-            <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-7 space-y-6">
-              
-              {/* Header */}
-              <div className="flex items-start gap-3.5 pb-2 border-b border-slate-100">
-                <div className="w-10 h-10 rounded-2xl bg-[#e8f5ed] border border-[#a3d9bc] flex items-center justify-center text-[#0e6245] shrink-0">
-                  <FileText className="w-5 h-5" />
-                </div>
-                <div>
-                  <h2 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
-                    2. Project Information
-                  </h2>
-                  <p className="text-xs text-slate-500 font-medium mt-0.5">
-                    Tell buyers about the project and its impact.
-                  </p>
-                </div>
-              </div>
-
-              {/* Fields */}
-              <div className="space-y-4">
-                
-                {/* 3-Column: Location, Start Date, End Date */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  
-                  {/* Project Location */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-700 block">
-                      Project Location <span className="text-red-500">*</span>
-                    </label>
-                    <div className="relative">
-                      <input 
-                        type="text"
-                        value={formData.projectLocation}
-                        onChange={(e) => handleChange('projectLocation', e.target.value)}
-                        className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0e9f6e]/20 focus:border-[#0e9f6e] transition-all"
-                      />
-                      <MapPin className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
-                    </div>
-                  </div>
-
-                  {/* Project Start Date */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-700 block">
-                      Project Start Date <span className="text-red-500">*</span>
-                    </label>
-                    <div className="relative">
-                      <input 
-                        type="text"
-                        value={formData.startDate}
-                        onChange={(e) => handleChange('startDate', e.target.value)}
-                        className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0e9f6e]/20 focus:border-[#0e9f6e] transition-all"
-                      />
-                      <Calendar className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
-                    </div>
-                  </div>
-
-                  {/* Project End Date */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-700 block">
-                      Project End Date <span className="text-red-500">*</span>
-                    </label>
-                    <div className="relative">
-                      <input 
-                        type="text"
-                        value={formData.endDate}
-                        onChange={(e) => handleChange('endDate', e.target.value)}
-                        className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0e9f6e]/20 focus:border-[#0e9f6e] transition-all"
-                      />
-                      <Calendar className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
-                    </div>
-                  </div>
-
-                </div>
-
-                {/* Project Description */}
-                <div className="space-y-1.5 pt-1">
-                  <label className="text-xs font-semibold text-slate-700 block">
-                    Project Description <span className="text-red-500">*</span>
-                  </label>
-                  <textarea 
-                    rows={4}
-                    value={formData.description}
-                    onChange={(e) => handleChange('description', e.target.value)}
-                    maxLength={1000}
-                    className="w-full p-3.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0e9f6e]/20 focus:border-[#0e9f6e] transition-all resize-none leading-relaxed"
-                  />
-                  <div className="text-right text-[10px] text-slate-400 font-semibold">
-                    {formData.description.length}/1000
-                  </div>
-                </div>
-
-              </div>
-
-            </div>
-
-
-            {/* ----------------------------------------------------------------- */}
-            {/* SECTION 3: VERIFICATION & DOCUMENTS                               */}
-            {/* ----------------------------------------------------------------- */}
-            <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-7 space-y-6">
-              
-              {/* Header */}
-              <div className="flex items-start gap-3.5 pb-2 border-b border-slate-100">
-                <div className="w-10 h-10 rounded-2xl bg-[#e8f5ed] border border-[#a3d9bc] flex items-center justify-center text-[#0e6245] shrink-0">
-                  <ShieldCheck className="w-5 h-5" />
-                </div>
-                <div>
-                  <h2 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
-                    3. Verification & Documents
-                  </h2>
-                  <p className="text-xs text-slate-500 font-medium mt-0.5">
-                    Upload necessary documents to build buyer trust.
-                  </p>
-                </div>
-              </div>
-
-              {/* Standard & Certification ID */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                
-                {/* Verification Standard */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-700 block">
-                    Verification Standard <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <select 
-                      value={formData.standard}
-                      onChange={(e) => handleChange('standard', e.target.value)}
-                      className="w-full appearance-none px-3.5 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0e9f6e]/20 focus:border-[#0e9f6e] transition-all cursor-pointer pr-9"
-                    >
-                      <option value="Verified Carbon Standard (VCS)">Verified Carbon Standard (VCS)</option>
-                      <option value="Gold Standard (GS)">Gold Standard (GS)</option>
-                      <option value="American Carbon Registry (ACR)">American Carbon Registry (ACR)</option>
-                      <option value="Climate Action Reserve (CAR)">Climate Action Reserve (CAR)</option>
-                    </select>
-                    <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-3.5 top-3 pointer-events-none" />
-                  </div>
-                </div>
-
-                {/* Certification ID */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-700 block">
-                    Certification ID <span className="text-red-500">*</span>
-                  </label>
-                  <input 
-                    type="text"
-                    value={formData.certificationId}
-                    onChange={(e) => handleChange('certificationId', e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0e9f6e]/20 focus:border-[#0e9f6e] transition-all font-mono text-[11px]"
-                  />
-                </div>
-
-              </div>
-
-              {/* Upload Documents Zone */}
-              <div className="space-y-2 pt-1">
-                <label className="text-xs font-semibold text-slate-700 block">
-                  Upload Documents <span className="text-red-500">*</span>
-                </label>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
-                  
-                  {/* Drag & drop upload area */}
-                  <div 
-                    onClick={handleSimulateUpload}
-                    className="border-2 border-dashed border-slate-200 hover:border-[#0e9f6e] hover:bg-emerald-50/30 rounded-2xl p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-all group"
-                  >
-                    <div className="w-10 h-10 rounded-full bg-slate-100 group-hover:bg-[#e8f5ed] flex items-center justify-center text-slate-500 group-hover:text-[#0e6245] transition-colors mb-2">
-                      <UploadCloud className="w-5 h-5" />
-                    </div>
-                    <p className="text-xs font-medium text-slate-600">
-                      Drag & drop files here, or <span className="text-[#0e6245] font-bold underline">click to browse</span>
-                    </p>
-                    <p className="text-[10px] text-slate-400 mt-1">
-                      PDF, DOC, JPG, PNG (Max 10 MB each)
-                    </p>
-                  </div>
-
-                  {/* Uploaded File Items */}
-                  <div className="space-y-2 flex flex-col justify-center">
-                    {files.map((file) => (
-                      <div 
-                        key={file.id} 
-                        className="bg-slate-50/70 border border-slate-200/80 rounded-xl px-3.5 py-2.5 flex items-center justify-between gap-3 text-xs"
-                      >
-                        {/* Red PDF icon + name + size */}
-                        <div className="flex items-center gap-2.5 overflow-hidden">
-                          <div className="w-6 h-6 rounded-md bg-red-100 text-red-600 flex items-center justify-center shrink-0">
-                            <FileText className="w-3.5 h-3.5" />
-                          </div>
-                          <div className="truncate text-left">
-                            <span className="font-semibold text-slate-800 block truncate">
-                              {file.name}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* File size + Green Check Circle */}
-                        <div className="flex items-center gap-2 shrink-0">
-                          <span className="text-[10px] text-slate-400 font-medium">
-                            {file.size}
-                          </span>
-                          <CheckCircle2 className="w-4 h-4 text-emerald-600 fill-emerald-100" />
-                          <button 
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleRemoveFile(file.id);
-                            }}
-                            className="text-slate-300 hover:text-red-500 transition-colors ml-1"
-                            title="Remove file"
+                      {/* Carbon Credit Type */}
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-slate-700 block">
+                          Carbon Credit Type <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                          <select 
+                            value={formData.creditType}
+                            onChange={(e) => handleChange('creditType', e.target.value)}
+                            className="w-full appearance-none px-3.5 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0e9f6e]/20 focus:border-[#0e9f6e] transition-all cursor-pointer pr-9"
                           >
-                            <X className="w-3.5 h-3.5" />
-                          </button>
+                            <option value="Nature-Based Credit (Afforestation / Reforestation)">
+                              Nature-Based Credit (Afforestation / Reforestation)
+                            </option>
+                            <option value="Industrial Emission Reduction (CCUS / Flue Gas)">
+                              Industrial Emission Reduction (CCUS / Flue Gas)
+                            </option>
+                            <option value="Renewable Energy (Solar / Wind / Green Hydrogen)">
+                              Renewable Energy (Solar / Wind / Green Hydrogen)
+                            </option>
+                            <option value="Biochar & Soil Carbon Sequestration">
+                              Biochar & Soil Carbon Sequestration
+                            </option>
+                          </select>
+                          <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-3.5 top-3 pointer-events-none" />
                         </div>
                       </div>
-                    ))}
+
+                    </div>
+
+                    {/* Row 2: Quantity Available & Price per Ton */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                      
+                      {/* Quantity Available */}
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-slate-700 block">
+                          Quantity Available <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative flex items-center">
+                          <input 
+                            type="number"
+                            value={formData.quantity}
+                            onChange={(e) => handleChange('quantity', e.target.value)}
+                            className="w-full pl-3.5 pr-28 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0e9f6e]/20 focus:border-[#0e9f6e] transition-all"
+                          />
+                          <div className="absolute right-1 top-1 bottom-1 flex items-center">
+                            <select 
+                              value={formData.quantityUnit}
+                              onChange={(e) => handleChange('quantityUnit', e.target.value)}
+                              className="h-full px-2.5 bg-slate-100 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 focus:outline-none cursor-pointer"
+                            >
+                              <option value="tons CO₂">tons CO₂</option>
+                              <option value="tCO₂e">tCO₂e</option>
+                              <option value="kilo-tons">kilo-tons</option>
+                            </select>
+                          </div>
+                        </div>
+                        <p className="text-[11px] text-slate-400 font-medium">
+                          Total volume of carbon credits available for sale.
+                        </p>
+                      </div>
+
+                      {/* Price per Ton (INR/USD) */}
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-slate-700 block">
+                          Price per Ton (INR/USD) <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative flex items-center">
+                          <span className="absolute left-3.5 text-slate-500 font-bold text-xs pointer-events-none">
+                            ₹
+                          </span>
+                          <input 
+                            type="text"
+                            value={formData.pricePerTon}
+                            onChange={(e) => handleChange('pricePerTon', e.target.value)}
+                            className="w-full pl-8 pr-3.5 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0e9f6e]/20 focus:border-[#0e9f6e] transition-all"
+                          />
+                        </div>
+                        <p className="text-[11px] text-slate-400 font-medium">
+                          Set a competitive price based on market rates.
+                        </p>
+                      </div>
+
+                    </div>
+
                   </div>
 
                 </div>
-              </div>
-
-            </div>
 
 
-            {/* ----------------------------------------------------------------- */}
-            {/* BOTTOM ACTIONS BAR: SAVE DRAFT, CANCEL, NEXT: REVIEW              */}
-            {/* ----------------------------------------------------------------- */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
-              
-              {/* Save as Draft button */}
-              <button 
-                type="button"
-                onClick={handleSaveDraft}
-                className="w-full sm:w-auto px-4 py-2.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <FileText className="w-3.5 h-3.5 text-slate-500" />
-                <span>Save as Draft</span>
-              </button>
+                {/* ----------------------------------------------------------------- */}
+                {/* SECTION 2: PROJECT INFORMATION                                    */}
+                {/* ----------------------------------------------------------------- */}
+                <div id="section-2" className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-7 space-y-6">
+                  
+                  {/* Header */}
+                  <div className="flex items-start gap-3.5 pb-2 border-b border-slate-100">
+                    <div className="w-10 h-10 rounded-2xl bg-[#e8f5ed] border border-[#a3d9bc] flex items-center justify-center text-[#0e6245] shrink-0">
+                      <FileText className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h2 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
+                        2. Project Information
+                      </h2>
+                      <p className="text-xs text-slate-500 font-medium mt-0.5">
+                        Tell buyers about the project and its impact.
+                      </p>
+                    </div>
+                  </div>
 
-              {/* Right: Cancel and Next: Review */}
-              <div className="w-full sm:w-auto flex items-center justify-end gap-3">
-                <button 
-                  type="button"
-                  onClick={() => navigate('/supplier/dashboard')}
-                  className="w-1/2 sm:w-auto px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition-colors cursor-pointer text-center"
-                >
-                  Cancel
-                </button>
+                  {/* Fields */}
+                  <div className="space-y-4">
+                    
+                    {/* 3-Column: Location, Start Date, End Date */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      
+                      {/* Project Location */}
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-slate-700 block">
+                          Project Location <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                          <input 
+                            type="text"
+                            value={formData.projectLocation}
+                            onChange={(e) => handleChange('projectLocation', e.target.value)}
+                            className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0e9f6e]/20 focus:border-[#0e9f6e] transition-all"
+                          />
+                          <MapPin className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
+                        </div>
+                      </div>
 
-                <button 
-                  type="button"
-                  onClick={handleSubmit}
-                  disabled={isSubmitting}
-                  className="w-1/2 sm:w-auto px-6 py-2.5 bg-[#0e6245] hover:bg-[#0b5038] text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer hover:shadow-lg disabled:opacity-75"
-                >
-                  {isSubmitting ? (
-                    <span>Submitting...</span>
-                  ) : (
-                    <>
+                      {/* Project Start Date */}
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-slate-700 block">
+                          Project Start Date <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                          <input 
+                            type="text"
+                            value={formData.startDate}
+                            onChange={(e) => handleChange('startDate', e.target.value)}
+                            className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0e9f6e]/20 focus:border-[#0e9f6e] transition-all"
+                          />
+                          <Calendar className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
+                        </div>
+                      </div>
+
+                      {/* Project End Date */}
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-slate-700 block">
+                          Project End Date <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                          <input 
+                            type="text"
+                            value={formData.endDate}
+                            onChange={(e) => handleChange('endDate', e.target.value)}
+                            className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0e9f6e]/20 focus:border-[#0e9f6e] transition-all"
+                          />
+                          <Calendar className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
+                        </div>
+                      </div>
+
+                    </div>
+
+                    {/* Project Description */}
+                    <div className="space-y-1.5 pt-1">
+                      <label className="text-xs font-semibold text-slate-700 block">
+                        Project Description <span className="text-red-500">*</span>
+                      </label>
+                      <textarea 
+                        rows={4}
+                        value={formData.description}
+                        onChange={(e) => handleChange('description', e.target.value)}
+                        maxLength={1000}
+                        className="w-full p-3.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0e9f6e]/20 focus:border-[#0e9f6e] transition-all resize-none leading-relaxed"
+                      />
+                      <div className="text-right text-[10px] text-slate-400 font-semibold">
+                        {formData.description.length}/1000
+                      </div>
+                    </div>
+
+                  </div>
+
+                </div>
+
+
+                {/* ----------------------------------------------------------------- */}
+                {/* SECTION 3: VERIFICATION & DOCUMENTS                               */}
+                {/* ----------------------------------------------------------------- */}
+                <div id="section-3" className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-7 space-y-6">
+                  
+                  {/* Header */}
+                  <div className="flex items-start gap-3.5 pb-2 border-b border-slate-100">
+                    <div className="w-10 h-10 rounded-2xl bg-[#e8f5ed] border border-[#a3d9bc] flex items-center justify-center text-[#0e6245] shrink-0">
+                      <ShieldCheck className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h2 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
+                        3. Verification & Documents
+                      </h2>
+                      <p className="text-xs text-slate-500 font-medium mt-0.5">
+                        Upload necessary documents to build buyer trust.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Standard & Certification ID */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
+                    {/* Verification Standard */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-slate-700 block">
+                        Verification Standard <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <select 
+                          value={formData.standard}
+                          onChange={(e) => handleChange('standard', e.target.value)}
+                          className="w-full appearance-none px-3.5 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0e9f6e]/20 focus:border-[#0e9f6e] transition-all cursor-pointer pr-9"
+                        >
+                          <option value="Verified Carbon Standard (VCS)">Verified Carbon Standard (VCS)</option>
+                          <option value="Gold Standard (GS)">Gold Standard (GS)</option>
+                          <option value="American Carbon Registry (ACR)">American Carbon Registry (ACR)</option>
+                          <option value="Climate Action Reserve (CAR)">Climate Action Reserve (CAR)</option>
+                        </select>
+                        <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-3.5 top-3 pointer-events-none" />
+                      </div>
+                    </div>
+
+                    {/* Certification ID */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-slate-700 block">
+                        Certification ID <span className="text-red-500">*</span>
+                      </label>
+                      <input 
+                        type="text"
+                        value={formData.certificationId}
+                        onChange={(e) => handleChange('certificationId', e.target.value)}
+                        className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0e9f6e]/20 focus:border-[#0e9f6e] transition-all font-mono text-[11px]"
+                      />
+                    </div>
+
+                  </div>
+
+                  {/* Upload Documents Zone */}
+                  <div className="space-y-2 pt-1">
+                    <label className="text-xs font-semibold text-slate-700 block">
+                      Upload Documents <span className="text-red-500">*</span>
+                    </label>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+                      
+                      {/* Drag & drop upload area */}
+                      <div 
+                        onClick={handleSimulateUpload}
+                        className="border-2 border-dashed border-slate-200 hover:border-[#0e9f6e] hover:bg-emerald-50/30 rounded-2xl p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-all group"
+                      >
+                        <div className="w-10 h-10 rounded-full bg-slate-100 group-hover:bg-[#e8f5ed] flex items-center justify-center text-slate-500 group-hover:text-[#0e6245] transition-colors mb-2">
+                          <UploadCloud className="w-5 h-5" />
+                        </div>
+                        <p className="text-xs font-medium text-slate-600">
+                          Drag & drop files here, or <span className="text-[#0e6245] font-bold underline">click to browse</span>
+                        </p>
+                        <p className="text-[10px] text-slate-400 mt-1">
+                          PDF, DOC, JPG, PNG (Max 10 MB each)
+                        </p>
+                      </div>
+
+                      {/* Uploaded File Items */}
+                      <div className="space-y-2 flex flex-col justify-center">
+                        {files.map((file) => (
+                          <div 
+                            key={file.id} 
+                            className="bg-slate-50/70 border border-slate-200/80 rounded-xl px-3.5 py-2.5 flex items-center justify-between gap-3 text-xs"
+                          >
+                            {/* Red PDF icon + name + size */}
+                            <div className="flex items-center gap-2.5 overflow-hidden">
+                              <div className="w-6 h-6 rounded-md bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+                                <FileText className="w-3.5 h-3.5" />
+                              </div>
+                              <div className="truncate text-left">
+                                <span className="font-semibold text-slate-800 block truncate">
+                                  {file.name}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* File size + Green Check Circle */}
+                            <div className="flex items-center gap-2 shrink-0">
+                              <span className="text-[10px] text-slate-400 font-medium">
+                                {file.size}
+                              </span>
+                              <CheckCircle2 className="w-4 h-4 text-emerald-600 fill-emerald-100" />
+                              <button 
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleRemoveFile(file.id);
+                                }}
+                                className="text-slate-300 hover:text-red-500 transition-colors ml-1"
+                                title="Remove file"
+                              >
+                                <X className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                    </div>
+                  </div>
+
+                </div>
+
+
+                {/* ----------------------------------------------------------------- */}
+                {/* BOTTOM ACTIONS BAR: SAVE DRAFT, CANCEL, NEXT: REVIEW              */}
+                {/* ----------------------------------------------------------------- */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+                  
+                  {/* Save as Draft button */}
+                  <button 
+                    type="button"
+                    onClick={handleSaveDraft}
+                    className="w-full sm:w-auto px-4 py-2.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <FileText className="w-3.5 h-3.5 text-slate-500" />
+                    <span>Save as Draft</span>
+                  </button>
+
+                  {/* Right: Cancel and Next: Review */}
+                  <div className="w-full sm:w-auto flex items-center justify-end gap-3">
+                    <button 
+                      type="button"
+                      onClick={() => navigate('/supplier/dashboard')}
+                      className="w-1/2 sm:w-auto px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition-colors cursor-pointer text-center"
+                    >
+                      Cancel
+                    </button>
+
+                    <button 
+                      type="button"
+                      onClick={handleNextToReview}
+                      className="w-1/2 sm:w-auto px-6 py-2.5 bg-[#0e6245] hover:bg-[#0b5038] text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer hover:shadow-lg"
+                    >
                       <span>Next: Review</span>
                       <ArrowRight className="w-3.5 h-3.5" />
-                    </>
-                  )}
-                </button>
-              </div>
+                    </button>
+                  </div>
 
-            </div>
+                </div>
+              </>
+            ) : (
+              /* ----------------------------------------------------------------- */
+              /* SECTION 4: REVIEW & PUBLISH (STEP 4)                              */
+              /* ----------------------------------------------------------------- */
+              <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-7 space-y-6 animate-fade-in">
+                
+                {/* Header */}
+                <div className="flex items-start justify-between gap-4 pb-4 border-b border-slate-100">
+                  <div className="flex items-start gap-3.5">
+                    <div className="w-10 h-10 rounded-2xl bg-[#e8f5ed] border border-[#a3d9bc] flex items-center justify-center text-[#0e6245] shrink-0 shadow-xs">
+                      <CheckCircle2 className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h2 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
+                        4. Review & Publish
+                      </h2>
+                      <p className="text-xs text-slate-500 font-medium mt-0.5">
+                        Please review all project details and compliance parameters before publishing to the marketplace.
+                      </p>
+                    </div>
+                  </div>
+
+                  <span className="px-3 py-1 bg-emerald-50 border border-emerald-200 text-[#0e6245] text-xs font-bold rounded-full shrink-0">
+                    Step 4 of 4
+                  </span>
+                </div>
+
+                {/* Review Overview Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  
+                  {/* Card 1: Basic Details Summary */}
+                  <div className="bg-slate-50/70 border border-slate-200/80 rounded-2xl p-5 space-y-3.5 text-left">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                        <ClipboardList className="w-3.5 h-3.5 text-[#0e6245]" />
+                        <span>Basic Details</span>
+                      </span>
+                      <button 
+                        type="button"
+                        onClick={() => handleBackToEdit(1)}
+                        className="text-[11px] font-bold text-[#0e6245] hover:underline cursor-pointer"
+                      >
+                        Edit
+                      </button>
+                    </div>
+
+                    <div className="space-y-2 text-xs">
+                      <div>
+                        <span className="text-slate-400 text-[10px] uppercase font-bold block">Listing Title</span>
+                        <span className="font-bold text-slate-900">{formData.listingTitle}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 text-[10px] uppercase font-bold block">Credit Category</span>
+                        <span className="font-semibold text-slate-800">{formData.creditType}</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 pt-1">
+                        <div>
+                          <span className="text-slate-400 text-[10px] uppercase font-bold block">Available Volume</span>
+                          <span className="font-extrabold text-slate-900 text-sm">{formData.quantity} {formData.quantityUnit}</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-400 text-[10px] uppercase font-bold block">Price per Unit</span>
+                          <span className="font-extrabold text-emerald-700 text-sm">₹ {formData.pricePerTon}</span>
+                        </div>
+                      </div>
+                      <div className="pt-2 border-t border-slate-200">
+                        <span className="text-slate-400 text-[10px] uppercase font-bold block">Estimated Listing Valuation</span>
+                        <span className="font-black text-base text-[#0e6245]">
+                          ₹ {(Number(String(formData.quantity).replace(/,/g, '') || 0) * Number(String(formData.pricePerTon).replace(/,/g, '') || 0)).toLocaleString('en-IN')}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Card 2: Project Information Summary */}
+                  <div className="bg-slate-50/70 border border-slate-200/80 rounded-2xl p-5 space-y-3.5 text-left">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                        <FileText className="w-3.5 h-3.5 text-[#0e6245]" />
+                        <span>Project Information</span>
+                      </span>
+                      <button 
+                        type="button"
+                        onClick={() => handleBackToEdit(2)}
+                        className="text-[11px] font-bold text-[#0e6245] hover:underline cursor-pointer"
+                      >
+                        Edit
+                      </button>
+                    </div>
+
+                    <div className="space-y-2 text-xs">
+                      <div>
+                        <span className="text-slate-400 text-[10px] uppercase font-bold block">Location</span>
+                        <span className="font-bold text-slate-900 flex items-center gap-1">
+                          <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                          <span>{formData.projectLocation}</span>
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 text-[10px] uppercase font-bold block">Project Crediting Period</span>
+                        <span className="font-semibold text-slate-800 flex items-center gap-1">
+                          <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                          <span>{formData.startDate} – {formData.endDate}</span>
+                        </span>
+                      </div>
+                      <div className="pt-1">
+                        <span className="text-slate-400 text-[10px] uppercase font-bold block">Project Description</span>
+                        <p className="text-[11px] text-slate-600 leading-relaxed line-clamp-3">
+                          {formData.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* Card 3: Verification Standard & Uploaded Documents */}
+                <div className="bg-slate-50/70 border border-slate-200/80 rounded-2xl p-5 space-y-3.5 text-left">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                      <ShieldCheck className="w-3.5 h-3.5 text-[#0e6245]" />
+                      <span>Verification Standard & Documents</span>
+                    </span>
+                    <button 
+                      type="button"
+                      onClick={() => handleBackToEdit(3)}
+                      className="text-[11px] font-bold text-[#0e6245] hover:underline cursor-pointer"
+                    >
+                      Edit
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <div>
+                      <span className="text-slate-400 text-[10px] uppercase font-bold block">Verification Standard</span>
+                      <span className="font-bold text-slate-900">{formData.standard}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 text-[10px] uppercase font-bold block">Registry Certificate ID</span>
+                      <span className="font-mono text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 inline-block">
+                        {formData.certificationId}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Attached Files List */}
+                  <div className="pt-2 border-t border-slate-200">
+                    <span className="text-slate-400 text-[10px] uppercase font-bold block mb-2">Attached Documents ({files.length})</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      {files.map((file) => (
+                        <div key={file.id} className="bg-white border border-slate-200 rounded-xl px-3 py-2 flex items-center gap-2 shadow-2xs">
+                          <div className="w-6 h-6 rounded bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+                            <FileText className="w-3.5 h-3.5" />
+                          </div>
+                          <div className="truncate text-left flex-1">
+                            <span className="text-[11px] font-bold text-slate-800 block truncate">{file.name}</span>
+                            <span className="text-[9px] text-slate-400 block">{file.size}</span>
+                          </div>
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Compliance & Additionality Declaration Checkbox */}
+                <div className="p-4 bg-emerald-50/70 border border-emerald-200/80 rounded-2xl flex items-start gap-3 text-left">
+                  <input 
+                    type="checkbox"
+                    id="review-declaration"
+                    checked={confirmedDeclaration}
+                    onChange={(e) => setConfirmedDeclaration(e.target.checked)}
+                    className="w-4 h-4 text-[#0e6245] rounded border-slate-300 focus:ring-[#0e6245] mt-0.5 cursor-pointer"
+                  />
+                  <label htmlFor="review-declaration" className="text-xs text-slate-700 leading-snug cursor-pointer select-none">
+                    <span className="font-bold text-slate-900 block">Verification & Additionality Declaration</span>
+                    I confirm that this project adheres to Verified Carbon Standard additionality criteria, has been independently verified, and has not been dual-listed or committed on another registry.
+                  </label>
+                </div>
+
+                {/* Step 4 Action Buttons */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-100">
+                  <button 
+                    type="button"
+                    onClick={handleSaveDraft}
+                    className="w-full sm:w-auto px-4 py-2.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <FileText className="w-3.5 h-3.5 text-slate-500" />
+                    <span>Save as Draft</span>
+                  </button>
+
+                  <div className="w-full sm:w-auto flex items-center justify-end gap-3">
+                    <button 
+                      type="button"
+                      onClick={() => handleBackToEdit(3)}
+                      className="w-1/2 sm:w-auto px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition-colors cursor-pointer text-center"
+                    >
+                      ← Back to Edit
+                    </button>
+
+                    <button 
+                      type="button"
+                      onClick={handleSubmit}
+                      disabled={isSubmitting || !confirmedDeclaration}
+                      className="w-1/2 sm:w-auto px-6 py-2.5 bg-[#0e6245] hover:bg-[#0b5038] text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer hover:shadow-lg disabled:opacity-50"
+                    >
+                      {isSubmitting ? (
+                        <span>Publishing Listing...</span>
+                      ) : (
+                        <>
+                          <CheckCircle2 className="w-4 h-4" />
+                          <span>Publish Carbon Listing</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            )}
 
           </div>
 

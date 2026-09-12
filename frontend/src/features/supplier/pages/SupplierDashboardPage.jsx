@@ -133,6 +133,15 @@ export const SupplierDashboardPage = () => {
               <span>My Listings</span>
             </button>
 
+            {/* Create Listing Link */}
+            <Link 
+              to="/supplier/create-listing"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-[#0e6245] hover:bg-emerald-100 border border-emerald-200 transition-all shadow-xs"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Create Listing</span>
+            </Link>
+
             {/* Inventory */}
             <button 
               onClick={() => setActiveTab('inventory')}

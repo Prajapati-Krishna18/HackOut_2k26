@@ -27,6 +27,7 @@ import {
   Receipt,
   BarChart3,
   Check,
+  Plus,
   Link as LinkIcon
 } from 'lucide-react';
 
@@ -132,11 +133,19 @@ export const SupplierProfilePage = () => {
             </button>
 
             <button 
-              onClick={() => navigate('/marketplace')}
+              onClick={() => navigate('/supplier/create-listing')}
               className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all cursor-pointer"
             >
               <Boxes className="w-3.5 h-3.5" />
               <span>My Listings</span>
+            </button>
+
+            <button 
+              onClick={() => navigate('/supplier/create-listing')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-[#0e6245] hover:bg-emerald-100 border border-emerald-200 transition-all shadow-xs cursor-pointer"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Create Listing</span>
             </button>
 
             <button 

@@ -803,7 +803,7 @@ export const SupplierDashboardPage = () => {
               
               {/* Action 1 */}
               <div 
-                onClick={() => navigate('/marketplace')}
+                onClick={() => navigate('/supplier/create-listing')}
                 className="bg-emerald-50/60 hover:bg-emerald-50 border border-emerald-100 rounded-2xl p-3.5 flex items-center gap-3 cursor-pointer transition-all group"
               >
                 <div className="w-9 h-9 rounded-xl bg-[#0e6245] text-white flex items-center justify-center shrink-0 shadow-xs group-hover:scale-105 transition-transform">

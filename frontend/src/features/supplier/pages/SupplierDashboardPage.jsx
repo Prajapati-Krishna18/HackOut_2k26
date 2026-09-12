@@ -25,7 +25,12 @@ import {
   Quote,
   Clock,
   LogOut,
-  User
+  User,
+  Activity,
+  ShieldCheck,
+  Flame,
+  Gauge,
+  DollarSign
 } from 'lucide-react';
 import {
   BarChart,
@@ -41,6 +46,7 @@ import {
 } from 'recharts';
 import { useSocket } from '@/context/SocketContext';
 import { Badge } from '@/components/ui/Badge';
+import { MetricCard } from '@/components/common/MetricCard';
 
 // Photographic background & vector graphics
 import heroBannerBg from '@/assets/supplier-dashboard-hero.jpg';

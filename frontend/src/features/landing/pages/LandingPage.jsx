@@ -20,7 +20,10 @@ import {
   Minus, 
   ChevronLeft, 
   ChevronRight,
-  X
+  X,
+  Layers,
+  Navigation,
+  Eye
 } from 'lucide-react';
 
 // Imported photographic assets matching the reference photos
@@ -37,8 +40,34 @@ import algaeImg from '@/assets/industry-algae.jpg';
 export const LandingPage = () => {
   const [activeTab, setActiveTab] = useState('Home');
   const [activeMapFilter, setActiveMapFilter] = useState('Suppliers');
+  const [mapZoom, setMapZoom] = useState(5);
+  const [mapType, setMapType] = useState('m'); // 'm' = roadmap, 'k' = satellite, 'p' = terrain
+  const [isInteractive, setIsInteractive] = useState(false);
+  const [selectedHub, setSelectedHub] = useState({
+    title: 'Carbon Supplier',
+    location: 'India (Gujarat Industrial Hub)',
+    volume: '50,000 tons/year',
+    status: 'Verified ✓',
+    type: 'supplier'
+  });
   const [testimonialIndex, setTestimonialIndex] = useState(0);
   const [isVideoOpen, setIsVideoOpen] = useState(false);
+
+  // Map Filter coordinates and details
+  const getMapQuery = () => {
+    switch (activeMapFilter) {
+      case 'Suppliers':
+        return '22.2587,71.1924'; // Gujarat, India
+      case 'Buyers':
+        return '50.1109,8.6821'; // Frankfurt, Germany
+      case 'Logistics':
+        return '51.9244,4.4777'; // Port of Rotterdam
+      case 'Active Routes':
+        return '25.2048,55.2708'; // Dubai Global Crossroad
+      default:
+        return '22.2587,71.1924';
+    }
+  };
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -626,66 +655,121 @@ export const LandingPage = () => {
                   <span className="w-2 h-2 rounded-full bg-[#f59e0b]" />
                   <span>Active Routes</span>
                 </button>
-              </div>
-
-              {/* Styled World Map Container with SVG graphic, route paths, and tooltips */}
-              <div className="relative rounded-2xl bg-[#eff7f4] min-h-[320px] p-4 flex items-center justify-center overflow-hidden border border-emerald-100/60">
+              </div>              {/* Live Google Map Container with Interactive Overlays */}
+              <div className="relative rounded-2xl min-h-[360px] h-[360px] flex items-center justify-center overflow-hidden border border-emerald-100 shadow-inner bg-slate-100 group">
                 
-                {/* Stylized vector map background representation */}
-                <svg className="w-full h-full opacity-60 max-h-[320px]" viewBox="0 0 1000 500" fill="none">
-                  {/* North America */}
-                  <path d="M150 120 C 180 80, 260 80, 280 140 C 270 200, 200 240, 160 210 Z" fill="#c3e4d5" />
-                  {/* South America */}
-                  <path d="M280 260 C 330 280, 340 370, 300 430 C 260 410, 250 330, 280 260 Z" fill="#c3e4d5" />
-                  {/* Europe */}
-                  <path d="M480 110 C 530 90, 560 140, 530 180 C 490 170, 470 140, 480 110 Z" fill="#c3e4d5" />
-                  {/* Africa */}
-                  <path d="M490 200 C 560 210, 580 320, 530 380 C 480 340, 460 250, 490 200 Z" fill="#c3e4d5" />
-                  {/* Asia */}
-                  <path d="M580 90 C 720 70, 850 130, 820 250 C 730 250, 680 180, 580 160 Z" fill="#c3e4d5" />
-                  {/* Australia */}
-                  <path d="M780 340 C 850 330, 870 410, 810 430 C 760 410, 760 360, 780 340 Z" fill="#c3e4d5" />
+                {/* 1. Real-Time Live Google Maps Iframe Feed */}
+                <iframe
+                  title="Live Google Map Ecosystem"
+                  src={`https://maps.google.com/maps?q=${encodeURIComponent(getMapQuery())}&t=${mapType}&z=${mapZoom}&ie=UTF8&iwloc=&output=embed`}
+                  className={`absolute inset-0 w-full h-full border-0 transition-all duration-700 ${
+                    isInteractive ? 'pointer-events-auto ring-2 ring-[#0e9f6e]' : 'pointer-events-none'
+                  }`}
+                  style={{
+                    filter: mapType === 'm' ? 'saturate(1.25) contrast(1.02)' : 'none'
+                  }}
+                  loading="lazy"
+                />
 
-                  {/* Connecting Curved Route Lines */}
-                  <path d="M250 160 Q 400 120 720 220" stroke="#10b981" strokeWidth="2" strokeDasharray="4 4" opacity="0.8" />
-                  <path d="M520 140 Q 620 170 720 220" stroke="#3b82f6" strokeWidth="2" strokeDasharray="4 4" opacity="0.8" />
-                  <path d="M720 220 Q 760 300 810 370" stroke="#f59e0b" strokeWidth="2" strokeDasharray="4 4" opacity="0.8" />
-                </svg>
+                {/* Soft daylight gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/25 via-emerald-900/5 to-white/15 pointer-events-none z-10" />
 
-                {/* Pins on the Map */}
-                <div className="absolute top-[32%] left-[25%] w-3 h-3 rounded-full bg-[#10b981] ring-4 ring-emerald-200 animate-ping" />
-                <div className="absolute top-[32%] left-[25%] w-3 h-3 rounded-full bg-[#10b981]" />
 
-                <div className="absolute top-[28%] left-[52%] w-3 h-3 rounded-full bg-[#3b82f6] ring-4 ring-blue-200" />
-                <div className="absolute top-[68%] left-[81%] w-3 h-3 rounded-full bg-[#f59e0b] ring-4 ring-amber-200" />
-                <div className="absolute top-[48%] left-[54%] w-3 h-3 rounded-full bg-[#8b5cf6] ring-4 ring-purple-200" />
+                {/* Top-Right Map Controls: Satellite / Roadmap & Pan Toggle */}
+                <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5">
+                  <button
+                    onClick={() => setMapType(mapType === 'm' ? 'k' : mapType === 'k' ? 'p' : 'm')}
+                    className="bg-white/95 backdrop-blur-md hover:bg-white text-slate-700 text-[10px] font-bold px-2.5 py-1.5 rounded-lg border border-slate-200 shadow-md flex items-center gap-1 transition-all"
+                    title="Toggle Map View (Roadmap / Satellite / Terrain)"
+                  >
+                    <Layers className="w-3 h-3 text-[#0e6245]" />
+                    <span>{mapType === 'm' ? 'Satellite' : mapType === 'k' ? 'Terrain' : 'Roadmap'}</span>
+                  </button>
 
-                {/* Interactive Tooltip over India / South Asia (Matches photo perfectly!) */}
-                <div className="absolute top-[40%] left-[64%] z-20">
-                  <div className="w-3 h-3 rounded-full bg-[#10b981] ring-4 ring-emerald-300" />
-                  <div className="mt-2 -ml-16 bg-white rounded-xl shadow-xl border border-slate-200 p-3 min-w-[150px] text-xs">
-                    <div className="flex items-center gap-1.5 text-slate-800 font-bold">
-                      <div className="w-2 h-2 rounded-full bg-[#10b981]" />
-                      <span>Carbon Supplier</span>
-                    </div>
-                    <p className="text-[11px] text-slate-500 mt-1 font-medium">India</p>
-                    <p className="text-[11px] font-bold text-slate-800">50,000 tons/year</p>
-                    <p className="text-[10px] text-[#0e9f6e] font-semibold flex items-center gap-1 mt-0.5">
-                      <span>Verified</span>
-                      <span>✓</span>
-                    </p>
-                  </div>
+                  <button
+                    onClick={() => setIsInteractive(!isInteractive)}
+                    className={`text-[10px] font-bold px-2.5 py-1.5 rounded-lg border shadow-md flex items-center gap-1 transition-all ${
+                      isInteractive 
+                        ? 'bg-[#0e6245] text-white border-[#0e6245]' 
+                        : 'bg-white/95 backdrop-blur-md text-slate-700 border-slate-200 hover:bg-white'
+                    }`}
+                    title="Toggle interactive map dragging and zooming"
+                  >
+                    <Navigation className="w-3 h-3" />
+                    <span>{isInteractive ? 'Interactive On' : 'Interact'}</span>
+                  </button>
                 </div>
 
-                {/* Zoom Controls bottom right */}
-                <div className="absolute bottom-4 right-4 flex flex-col bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden text-slate-600">
-                  <button className="p-1.5 hover:bg-slate-50 border-b border-slate-100">
+                {/* Overlaid Animated Node Markers & Arcs (when not in full interactive mode) */}
+                {!isInteractive && (
+                  <div className="absolute inset-0 pointer-events-none z-20">
+                    
+                    {/* SVG Connecting Flow Lines */}
+                    <svg className="w-full h-full opacity-70" viewBox="0 0 1000 500" fill="none">
+                      <path d="M220 180 Q 420 120 660 210" stroke="#10b981" strokeWidth="2.5" strokeDasharray="6 6" className="animate-pulse" />
+                      <path d="M480 150 Q 560 170 660 210" stroke="#3b82f6" strokeWidth="2" strokeDasharray="4 4" />
+                      <path d="M660 210 Q 720 280 820 340" stroke="#f59e0b" strokeWidth="2.5" strokeDasharray="5 5" />
+                    </svg>
+
+                    {/* Node 1: Primary Indian Industrial Hub */}
+                    <div className="absolute top-[42%] left-[62%] pointer-events-auto">
+                      <div className="relative">
+                        <div className="w-4 h-4 rounded-full bg-[#10b981] ring-4 ring-emerald-300 animate-ping absolute" />
+                        <div className="w-4 h-4 rounded-full bg-[#10b981] ring-4 ring-white shadow-lg relative flex items-center justify-center text-white text-[8px] font-black">
+                          ✓
+                        </div>
+                      </div>
+
+                      {/* Info Tooltip Matching the exact Reference Card */}
+                      <div className="mt-2 -ml-20 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-slate-200/90 p-3 min-w-[160px] text-xs transition-all hover:scale-105">
+                        <div className="flex items-center gap-1.5 text-slate-900 font-black">
+                          <div className="w-2 h-2 rounded-full bg-[#10b981]" />
+                          <span>Carbon Supplier</span>
+                        </div>
+                        <p className="text-[11px] text-slate-500 mt-1 font-semibold">India (Gujarat Hub)</p>
+                        <p className="text-[11px] font-black text-slate-900">50,000 tons/year</p>
+                        <p className="text-[10px] text-[#0e9f6e] font-bold flex items-center gap-1 mt-0.5">
+                          <span>Verified & Active</span>
+                          <span>✓</span>
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Node 2: European Buyer Cluster */}
+                    <div className="absolute top-[26%] left-[48%] pointer-events-auto">
+                      <div className="w-3.5 h-3.5 rounded-full bg-[#3b82f6] ring-4 ring-blue-200 shadow-md" />
+                    </div>
+
+                    {/* Node 3: Global Logistics Hub */}
+                    <div className="absolute top-[52%] left-[54%] pointer-events-auto">
+                      <div className="w-3.5 h-3.5 rounded-full bg-[#8b5cf6] ring-4 ring-purple-200 shadow-md" />
+                    </div>
+
+                    {/* Node 4: Active Cross-Border Route */}
+                    <div className="absolute top-[62%] left-[78%] pointer-events-auto">
+                      <div className="w-3.5 h-3.5 rounded-full bg-[#f59e0b] ring-4 ring-amber-200 shadow-md" />
+                    </div>
+                  </div>
+                )}
+
+                {/* Real Zoom Controls bottom right */}
+                <div className="absolute bottom-3 right-3 z-30 flex flex-col bg-white/95 backdrop-blur-md border border-slate-200 rounded-xl shadow-lg overflow-hidden text-slate-700">
+                  <button 
+                    onClick={() => setMapZoom((prev) => Math.min(prev + 1, 16))}
+                    className="p-2 hover:bg-emerald-50 hover:text-[#0e6245] border-b border-slate-100 transition-colors"
+                    title="Zoom In"
+                  >
                     <Plus className="w-3.5 h-3.5" />
                   </button>
-                  <button className="p-1.5 hover:bg-slate-50">
+                  <button 
+                    onClick={() => setMapZoom((prev) => Math.max(prev - 1, 2))}
+                    className="p-2 hover:bg-emerald-50 hover:text-[#0e6245] transition-colors"
+                    title="Zoom Out"
+                  >
                     <Minus className="w-3.5 h-3.5" />
                   </button>
                 </div>
+
               </div>
 
               {/* Bottom Metrics Bar inside Map Card */}

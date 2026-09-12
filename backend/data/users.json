@@ -89,5 +89,17 @@
     "updated_at": "2026-09-12T09:09:33.380Z",
     "otp_hash": null,
     "otp_expires": null
+  },
+  {
+    "id": "89743c9f-56f1-4ae4-8235-6a9e6441931a",
+    "full_name": "Dhruva Tajapara",
+    "email": "dhruvapatel292007@gmail.com",
+    "password_hash": null,
+    "role": "supplier",
+    "provider": "google",
+    "avatar_url": "https://lh3.googleusercontent.com/a/ACg8ocIKePGfNRaKqBmcceb8NoRl-0w7tBnWualO-GZMHmXpn8Uf8Q=s96-c",
+    "is_verified": true,
+    "created_at": "2026-09-12T11:08:16.460Z",
+    "updated_at": "2026-09-12T11:08:16.460Z"
   }
 ]

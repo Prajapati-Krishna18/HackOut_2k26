@@ -6,18 +6,111 @@ import { logger } from './logger.js';
  * Creates and configures Nodemailer transporter
  */
 const createTransporter = () => {
-  if (env.SMTP.HOST && env.SMTP.USER && env.SMTP.PASS) {
-    return nodemailer.createTransport({
-      host: env.SMTP.HOST,
-      port: env.SMTP.PORT,
-      secure: env.SMTP.SECURE,
-      auth: {
-        user: env.SMTP.USER,
-        pass: env.SMTP.PASS
-      }
-    });
+  if (env.SMTP.USER && env.SMTP.PASS) {
+    if (env.SMTP.HOST) {
+      return nodemailer.createTransport({
+        host: env.SMTP.HOST,
+        port: env.SMTP.PORT || 587,
+        secure: env.SMTP.SECURE || false,
+        auth: {
+          user: env.SMTP.USER,
+          pass: env.SMTP.PASS
+        }
+      });
+    } else {
+      // Default to Gmail service if host is omitted
+      return nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: env.SMTP.USER,
+          pass: env.SMTP.PASS
+        }
+      });
+    }
   }
   return null;
+};
+
+/**
+ * Send 6-Digit Email Verification OTP
+ * @param {Object} params
+ * @param {string} params.to - Recipient email
+ * @param {string} params.name - User's full name
+ * @param {string} params.otp - 6-digit OTP code
+ */
+export const sendOtpEmail = async ({ to, name, otp }) => {
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f0fdf4; margin: 0; padding: 24px; }
+        .container { max-width: 540px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1px solid #d1fae5; }
+        .header { background: linear-gradient(135deg, #064e3b 0%, #047857 50%, #059669 100%); padding: 32px 24px; text-align: center; color: #ffffff; }
+        .header h1 { margin: 0; font-size: 28px; font-weight: 900; letter-spacing: -0.5px; }
+        .header p { margin: 6px 0 0; font-size: 13px; color: #a7f3d0; font-weight: 500; }
+        .content { padding: 36px 32px; color: #1e293b; line-height: 1.6; }
+        .greeting { font-size: 18px; font-weight: 800; color: #0f172a; margin-top: 0; }
+        .otp-box { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 2px dashed #059669; border-radius: 12px; padding: 20px; text-align: center; margin: 28px 0; }
+        .otp-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; color: #047857; margin-bottom: 8px; }
+        .otp-code { font-size: 38px; font-weight: 900; letter-spacing: 8px; color: #064e3b; font-family: 'Courier New', monospace; }
+        .timer-note { font-size: 13px; color: #64748b; margin-top: 6px; }
+        .footer { background: #f8fafc; padding: 20px 32px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>CarbonSphere</h1>
+          <p>AI-Powered Circular Carbon Exchange</p>
+        </div>
+        <div class="content">
+          <p class="greeting">Hello ${name || 'Future Eco-Leader'},</p>
+          <p>Thank you for registering on <strong>CarbonSphere</strong>. Use the 6-digit verification code below to verify your email address and activate your trading desk.</p>
+          
+          <div class="otp-box">
+            <div class="otp-label">Your Verification Code</div>
+            <div class="otp-code">${otp}</div>
+            <div class="timer-note">Valid for <strong>10 minutes</strong></div>
+          </div>
+          
+          <p style="font-size: 13px; color: #64748b; margin-top: 24px;">
+            If you did not request this verification code, please ignore this message or contact security support.
+          </p>
+        </div>
+        <div class="footer">
+          &copy; ${new Date().getFullYear()} CarbonSphere Ecosystem. All rights reserved.
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  const transporter = createTransporter();
+
+  if (transporter) {
+    try {
+      await transporter.sendMail({
+        from: env.SMTP.FROM,
+        to,
+        subject: `${otp} is your CarbonSphere Verification Code`,
+        html: htmlContent
+      });
+      logger.info(`[EMAIL SERVICE] OTP verification email dispatched to: ${to}`);
+      return true;
+    } catch (err) {
+      logger.error(`[EMAIL SERVICE] Failed to send OTP email via SMTP to ${to}: ${err.message}`);
+    }
+  }
+
+  // Development Fallback Logging
+  logger.info(`=======================================================`);
+  logger.info(`[EMAIL OTP] Recipient: ${to}`);
+  logger.info(`[EMAIL OTP] 6-Digit Code: ${otp}`);
+  logger.info(`[EMAIL OTP] Expiry: 10 minutes`);
+  logger.info(`=======================================================`);
+  return false;
 };
 
 /**

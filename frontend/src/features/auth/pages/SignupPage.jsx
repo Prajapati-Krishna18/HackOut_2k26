@@ -219,7 +219,7 @@ export const SignupPage = () => {
       {/* ========================================================================= */}
       {/* TOP BAR: HEADER & LOGIN LINK                                              */}
       {/* ========================================================================= */}
-      <header className="w-full px-6 sm:px-12 py-3 sm:py-3.5 flex items-center justify-between relative z-30 shrink-0">
+      <header className="max-w-7xl w-full mx-auto px-6 sm:px-10 lg:px-12 py-3 sm:py-3.5 flex items-center justify-between relative z-30 shrink-0">
         <Link to="/" className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#0e6245] to-[#10a37f] flex items-center justify-center text-white shadow-md">
             <Leaf className="w-4 h-4 fill-current" />
@@ -244,14 +244,14 @@ export const SignupPage = () => {
       </header>
 
       {/* ========================================================================= */}
-      {/* MAIN CONTENT SPLIT LAYOUT (COMPACT & NON-SCROLLABLE)                      */}
+      {/* MAIN CONTENT SPLIT LAYOUT (EQUAL SIDE SPACING)                            */}
       {/* ========================================================================= */}
-      <main className="max-w-[1536px] w-full mx-auto px-6 sm:px-12 py-1 sm:py-2 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center relative z-20 min-h-0">
+      <main className="max-w-7xl w-full mx-auto px-6 sm:px-10 lg:px-12 py-1 sm:py-2 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center justify-between relative z-20 min-h-0">
         
         {/* ======================================================================= */}
         {/* LEFT COLUMN: BRAND STORY & TELEMETRY VALUES                             */}
         {/* ======================================================================= */}
-        <div className="lg:col-span-6 xl:col-span-6 flex flex-col justify-center space-y-3.5 text-white pr-0 lg:pr-6">
+        <div className="lg:col-span-6 xl:col-span-6 flex flex-col justify-center space-y-3.5 text-white pr-0 lg:pr-4">
           
           <div className="space-y-2 max-w-lg">
             <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold text-emerald-300">

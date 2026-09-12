@@ -15,6 +15,24 @@ const SocketContext = createContext({
   simulateSpike: () => {}
 });
 
+let socketInstance = null;
+
+const getSocket = () => {
+  if (!socketInstance) {
+    socketInstance = io(SOCKET_URL, {
+      transports: ['websocket', 'polling'],
+      autoConnect: true,
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      timeout: 20000,
+      withCredentials: true
+    });
+  }
+  return socketInstance;
+};
+
 export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -49,41 +67,40 @@ export const SocketProvider = ({ children }) => {
   const [latestMatch, setLatestMatch] = useState(null);
 
   useEffect(() => {
-    const newSocket = io(SOCKET_URL, {
-      transports: ['websocket', 'polling'],
-      reconnection: true,
-      reconnectionAttempts: 10,
-      reconnectionDelay: 2000,
-      timeout: 10000
-    });
+    const s = getSocket();
 
-    newSocket.on('connect', () => {
+    if (s.connected) {
       setIsConnected(true);
-      console.log('⚡ [Socket.io Connected] Client linked to CarbonSphere real-time stream:', newSocket.id);
-    });
+    }
 
-    newSocket.on('disconnect', () => {
+    const onConnect = () => {
+      setIsConnected(true);
+      console.log('⚡ [Socket.io Connected] Client linked to CarbonSphere real-time stream:', s.id);
+    };
+
+    const onDisconnect = (reason) => {
       setIsConnected(false);
-      console.log('🔌 [Socket.io Disconnected] Reconnecting...');
-    });
+      console.log('🔌 [Socket.io Disconnected] Reason:', reason);
+    };
 
-    // Real-time telemetry broadcast from sensors
-    newSocket.on('telemetry:update', (data) => {
+    const onConnectError = (error) => {
+      setIsConnected(false);
+      console.warn('⚠️ [Socket.io Connect Error]:', error.message);
+    };
+
+    const onTelemetryUpdate = (data) => {
       setTelemetry((prev) => ({ ...prev, ...data }));
-    });
+    };
 
-    // Real-time marketplace metrics ticker
-    newSocket.on('market:update', (data) => {
+    const onMarketUpdate = (data) => {
       setMarketMetrics((prev) => ({ ...prev, ...data }));
-    });
+    };
 
-    // Real-time transactions & escrow clearances
-    newSocket.on('marketplace:new_transaction', (event) => {
+    const onNewTransaction = (event) => {
       setLiveEvents((prev) => [event, ...prev.slice(0, 19)]);
-    });
+    };
 
-    // Real-time AI smart matching opportunity
-    newSocket.on('matching:opportunity', (match) => {
+    const onMatchingOpportunity = (match) => {
       setLatestMatch(match);
       setLiveEvents((prev) => [
         {
@@ -96,12 +113,26 @@ export const SocketProvider = ({ children }) => {
         },
         ...prev.slice(0, 19)
       ]);
-    });
+    };
 
-    setSocket(newSocket);
+    s.on('connect', onConnect);
+    s.on('disconnect', onDisconnect);
+    s.on('connect_error', onConnectError);
+    s.on('telemetry:update', onTelemetryUpdate);
+    s.on('market:update', onMarketUpdate);
+    s.on('marketplace:new_transaction', onNewTransaction);
+    s.on('matching:opportunity', onMatchingOpportunity);
+
+    setSocket(s);
 
     return () => {
-      newSocket.disconnect();
+      s.off('connect', onConnect);
+      s.off('disconnect', onDisconnect);
+      s.off('connect_error', onConnectError);
+      s.off('telemetry:update', onTelemetryUpdate);
+      s.off('market:update', onMarketUpdate);
+      s.off('marketplace:new_transaction', onNewTransaction);
+      s.off('matching:opportunity', onMatchingOpportunity);
     };
   }, []);
 

@@ -34,14 +34,14 @@ import SettingsPage from '@/features/settings/pages/SettingsPage';
 export const AppRoutes = () => {
   return (
     <Routes>
-      {/* 1. Public Marketing & Onboarding */}
+      {/* 1. Public Marketing */}
       <Route element={<MainLayout />}>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/role-selection" element={<RoleSelectionPage />} />
       </Route>
 
       {/* 2. Authentication & Onboarding Flow */}
       <Route element={<AuthLayout />}>
+        <Route path="/role-selection" element={<RoleSelectionPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />

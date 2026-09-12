@@ -199,15 +199,15 @@ export const SupplierDashboardPage = () => {
             </div>
 
             {/* User Profile Header */}
-            <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
+            <Link to="/supplier/profile" className="flex items-center gap-2 pl-2 border-l border-slate-200 cursor-pointer group hover:opacity-90 transition-opacity">
               <div className="w-8 h-8 rounded-full bg-[#072b1e] text-emerald-300 font-bold text-xs flex items-center justify-center shadow-xs">
                 KP
               </div>
               <div className="flex flex-col text-left">
-                <span className="text-xs font-bold text-slate-900 leading-tight">Krishna Prajapati</span>
+                <span className="text-xs font-bold text-slate-900 group-hover:text-[#0e9f6e] transition-colors leading-tight">Krishna Prajapati</span>
                 <span className="text-[10px] text-slate-500 leading-tight">Supplier</span>
               </div>
-            </div>
+            </Link>
 
           </div>
 

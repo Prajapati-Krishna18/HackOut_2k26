@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Search, 
@@ -19,7 +19,8 @@ import {
   Plus, 
   Minus, 
   ChevronLeft, 
-  ChevronRight
+  ChevronRight,
+  X
 } from 'lucide-react';
 
 // Imported photographic assets matching the reference photos
@@ -37,6 +38,21 @@ export const LandingPage = () => {
   const [activeTab, setActiveTab] = useState('Home');
   const [activeMapFilter, setActiveMapFilter] = useState('Suppliers');
   const [testimonialIndex, setTestimonialIndex] = useState(0);
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setIsVideoOpen(false);
+    };
+    if (isVideoOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+    }
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isVideoOpen]);
 
   const testimonials = [
     {
@@ -78,7 +94,7 @@ export const LandingPage = () => {
             </div>
             <div className="flex flex-col">
               <span className="text-2xl font-black tracking-tight text-slate-900 flex items-center">
-                Carbon<span className="text-[#0e9f6e]">X</span>
+                Carbon<span className="text-[#0e9f6e]">Sphere</span>
               </span>
               <span className="text-[9px] font-semibold tracking-wider text-[#0e9f6e] -mt-1">
                 Connect. Carbon. Create Opportunities.
@@ -171,8 +187,13 @@ export const LandingPage = () => {
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </Link>
-              <button className="inline-flex items-center gap-2.5 px-6 py-3.5 bg-white/90 hover:bg-white text-slate-800 font-semibold rounded-lg border border-slate-200 shadow-sm backdrop-blur-sm transition-all">
-                <div className="w-5 h-5 rounded-full border border-[#0e6245] flex items-center justify-center text-[#0e6245]">
+              <button 
+                id="watch-video-btn"
+                type="button"
+                onClick={() => setIsVideoOpen(true)}
+                className="inline-flex items-center gap-2.5 px-6 py-3.5 bg-white/90 hover:bg-white text-slate-800 font-semibold rounded-lg border border-slate-200 shadow-sm backdrop-blur-sm transition-all cursor-pointer hover:border-[#0e9f6e] hover:shadow-md group"
+              >
+                <div className="w-5 h-5 rounded-full border border-[#0e6245] flex items-center justify-center text-[#0e6245] group-hover:bg-[#0e6245] group-hover:text-white transition-colors">
                   <Play className="w-2.5 h-2.5 fill-current ml-0.5" />
                 </div>
                 <span>Watch Video</span>
@@ -878,8 +899,8 @@ export const LandingPage = () => {
           </div>
 
           <div className="flex items-center gap-4 relative z-10 shrink-0">
-            <Link to="/signup">
-              <button className="inline-flex items-center gap-2 px-6 py-3 bg-[#0e6245] hover:bg-[#0b5038] text-white font-semibold text-xs rounded-lg shadow-sm transition-all">
+            <Link to="/login" id="bottom-get-started-btn">
+              <button className="inline-flex items-center gap-2 px-6 py-3 bg-[#0e6245] hover:bg-[#0b5038] text-white font-semibold text-xs rounded-lg shadow-sm transition-all cursor-pointer">
                 <span>Get Started</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
@@ -983,6 +1004,77 @@ export const LandingPage = () => {
 
         </div>
       </footer>
+
+      {/* ========================================================================= */}
+      {/* VIDEO MODAL                                                               */}
+      {/* ========================================================================= */}
+      {isVideoOpen && (
+        <div 
+          id="video-modal-backdrop"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/80 backdrop-blur-md transition-opacity"
+          onClick={() => setIsVideoOpen(false)}
+        >
+          <div 
+            id="video-modal-container"
+            className="relative w-full max-w-4xl bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-900/90 backdrop-blur-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                  <Play className="w-4 h-4 fill-current ml-0.5" />
+                </div>
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold text-white tracking-tight">
+                    CarbonSphere: Transforming Captured CO₂ into Value
+                  </h3>
+                  <p className="text-[11px] text-slate-400">
+                    Platform Overview • Circular Carbon Exchange & Verification
+                  </p>
+                </div>
+              </div>
+              <button 
+                id="close-video-modal-btn"
+                type="button"
+                onClick={() => setIsVideoOpen(false)}
+                className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+                title="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Responsive Video Frame */}
+            <div className="relative w-full aspect-video bg-black">
+              <iframe 
+                id="landing-video-iframe"
+                className="w-full h-full border-0"
+                src="https://www.youtube-nocookie.com/embed/XxjIdkO_eK4?autoplay=1&rel=0&modestbranding=1" 
+                title="CarbonSphere Overview Video"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                allowFullScreen
+              />
+            </div>
+
+            {/* Modal Footer with Action Buttons */}
+            <div className="px-6 py-3.5 bg-slate-950 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
+              <span className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                Learn how smart matching & telemetry accelerate industrial decarbonization
+              </span>
+              <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+                <Link to="/login" onClick={() => setIsVideoOpen(false)}>
+                  <button className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer">
+                    <span>Get Started</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

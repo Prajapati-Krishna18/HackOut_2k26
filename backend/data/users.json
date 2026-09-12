@@ -72,7 +72,7 @@
     "avatar_url": "https://lh3.googleusercontent.com/a/ACg8ocISYTP11Ya-oRVrPaU_JCt8E5OTTNw0v4b4jfsf_CBv035yew=s96-c",
     "is_verified": true,
     "created_at": "2026-09-12T09:08:26.037Z",
-    "updated_at": "2026-09-12T09:08:26.037Z"
+    "updated_at": "2026-09-12T14:30:17.323Z"
   },
   {
     "id": "1822b9d4-fd9d-4fbf-8843-6ab333a0c1e9",
@@ -103,45 +103,19 @@
     "updated_at": "2026-09-12T11:08:16.460Z"
   },
   {
-    "id": "105f48fe-bbfc-4c60-be01-b4bcf129cb4c",
-    "full_name": "Dhruva",
-    "email": "dhruvatajapara12345@gmail.com",
-    "password_hash": "$2a$12$RaA/AjgvPj4Ia04WH2viLeh5k/1Uk46rC5Jq6OoxcDYvte1DgsvF.",
-    "role": "supplier",
-    "provider": "email",
-    "avatar_url": null,
-    "is_verified": true,
-    "verification_token": "b835d1138930bab576fcc5775447b5b3bbcdfade720443acd78aac576c3937b0",
-    "verification_expires": "2026-09-13T13:13:33.554Z",
-    "created_at": "2026-09-12T13:13:33.554Z",
-    "updated_at": "2026-09-12T13:15:16.850Z",
-    "otp_hash": null,
-    "otp_expires": null
-  },
-  {
-    "id": "149e2a62-e352-4c1a-8f9d-c8bc1444b523",
-    "full_name": "Test Supplier",
-    "email": "supplier.test@example.com",
-    "password_hash": "$2a$12$Hzd9ktd/v1y2dhdWhgKnPORsuqM.nLrXBvfFiyK4Z2TzfSruBLbcS",
+    "id": "d4447866-dfb2-4caf-bef1-d39032ad461b",
+    "full_name": "Dhruva Automated Test",
+    "email": "dhruva.test.36402@gmail.com",
+    "password_hash": "$2a$12$xaIVNmyJOa2KJeohzwIlS.Y6Fpu6pj/Cvyk83l3hKMx3vFgtCbVvm",
     "role": "supplier",
     "provider": "email",
     "avatar_url": null,
     "is_verified": false,
-    "verification_token": "ba5de9ff907fd930f25d3b6bc1affc8d86259785a6b319c09768b501492bce26",
-    "verification_expires": "2026-09-13T13:33:33.720Z",
-    "created_at": "2026-09-12T13:33:33.721Z",
-    "updated_at": "2026-09-12T13:33:33.721Z"
-  },
-  {
-    "id": "ac0af9a7-83d3-4605-bfba-7e3d34382a3d",
-    "full_name": "Krishna Prajapati",
-    "email": "krishna.prajapati.rcg@gmail.com",
-    "password_hash": null,
-    "role": "supplier",
-    "provider": "google",
-    "avatar_url": "https://lh3.googleusercontent.com/a/ACg8ocKBbJqfD7tIYF5yXMqLyLDrau_ZWsHkuRbMRyPiwLCG4XsZUw=s96-c",
-    "is_verified": true,
-    "created_at": "2026-09-12T15:15:43.296Z",
-    "updated_at": "2026-09-12T15:15:43.296Z"
+    "otp_hash": "cd7f96693b54d10930f6b798f373216ca725336e3068d70a4d1b275f8eefa6d0",
+    "otp_expires": "2026-09-12T14:19:37.794Z",
+    "verification_token": "b3f201b2a6cf633c3acde22754f411d3d828cdffe7052e7e85c0e50d148f23e4",
+    "verification_expires": "2026-09-13T14:09:37.794Z",
+    "created_at": "2026-09-12T14:09:37.794Z",
+    "updated_at": "2026-09-12T14:09:37.794Z"
   }
 ]

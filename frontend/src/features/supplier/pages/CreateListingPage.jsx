@@ -96,19 +96,60 @@ export const CreateListingPage = () => {
     showToast('Listing saved as draft successfully!');
   };
 
-  const handleNextToReview = () => {
-    if (!formData.listingTitle.trim()) {
-      showToast('Please enter a listing title.');
-      return;
+  const handleNextStep = () => {
+    if (currentStep === 1) {
+      if (!formData.listingTitle.trim()) {
+        showToast('Please enter a listing title.');
+        return;
+      }
+      if (!formData.quantity || Number(String(formData.quantity).replace(/,/g, '')) <= 0) {
+        showToast('Please specify the available volume.');
+        return;
+      }
+      if (!formData.pricePerTon || Number(String(formData.pricePerTon).replace(/,/g, '')) <= 0) {
+        showToast('Please set a valid price per unit.');
+        return;
+      }
+      setCurrentStep(2);
+      window.scrollTo({ top: 380, behavior: 'smooth' });
+    } else if (currentStep === 2) {
+      if (!formData.projectLocation.trim()) {
+        showToast('Please provide a project location.');
+        return;
+      }
+      if (!formData.description.trim()) {
+        showToast('Please provide a project description.');
+        return;
+      }
+      setCurrentStep(3);
+      window.scrollTo({ top: 380, behavior: 'smooth' });
+    } else if (currentStep === 3) {
+      if (!formData.certificationId.trim()) {
+        showToast('Please enter the Registry Certification ID.');
+        return;
+      }
+      setCurrentStep(4);
+      window.scrollTo({ top: 380, behavior: 'smooth' });
+      showToast('All parameters verified! Review your listing before publishing.');
     }
-    setCurrentStep(4);
-    window.scrollTo({ top: 380, behavior: 'smooth' });
-    showToast('All parameters verified! Review your listing before publishing.');
   };
 
-  const handleBackToEdit = (stepNumber = 1) => {
-    setCurrentStep(stepNumber);
-    window.scrollTo({ top: 380, behavior: 'smooth' });
+  const handlePrevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(prev => prev - 1);
+      window.scrollTo({ top: 380, behavior: 'smooth' });
+    }
+  };
+
+  const handleStepClick = (targetStep) => {
+    if (targetStep < currentStep) {
+      setCurrentStep(targetStep);
+      window.scrollTo({ top: 380, behavior: 'smooth' });
+    } else if (targetStep === currentStep + 1) {
+      handleNextStep();
+    } else if (targetStep > currentStep) {
+      handleNextStep();
+    }
   };
 
   const handleSubmit = (e) => {
@@ -322,7 +363,7 @@ export const CreateListingPage = () => {
             
             {/* Step 1: Basic Details */}
             <div 
-              onClick={() => handleBackToEdit(1)}
+              onClick={() => handleStepClick(1)}
               className="flex items-center gap-3 cursor-pointer group"
             >
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
@@ -349,7 +390,7 @@ export const CreateListingPage = () => {
 
             {/* Step 2: Project Information */}
             <div 
-              onClick={() => handleBackToEdit(2)}
+              onClick={() => handleStepClick(2)}
               className="flex items-center gap-3 cursor-pointer group"
             >
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
@@ -376,7 +417,7 @@ export const CreateListingPage = () => {
 
             {/* Step 3: Verification & Documents */}
             <div 
-              onClick={() => handleBackToEdit(3)}
+              onClick={() => handleStepClick(3)}
               className="flex items-center gap-3 cursor-pointer group"
             >
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
@@ -403,7 +444,7 @@ export const CreateListingPage = () => {
 
             {/* Step 4: Review & Publish */}
             <div 
-              onClick={() => handleNextToReview()}
+              onClick={() => handleStepClick(4)}
               className="flex items-center gap-3 cursor-pointer group"
             >
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
@@ -436,27 +477,31 @@ export const CreateListingPage = () => {
           {/* LEFT COLUMN: MAIN FORM SECTIONS (1, 2, 3) + ACTION BUTTONS            */}
           {/* ===================================================================== */}
           <div className="lg:col-span-8 space-y-6">
-            
-            {currentStep < 4 ? (
-              <>
-                {/* ----------------------------------------------------------------- */}
-                {/* SECTION 1: BASIC DETAILS                                          */}
-                {/* ----------------------------------------------------------------- */}
+            {/* ----------------------------------------------------------------- */}
+            {/* SECTION 1: BASIC DETAILS (STEP 1)                                 */}
+            {/* ----------------------------------------------------------------- */}
+            {currentStep === 1 && (
+              <div className="space-y-6 animate-fade-in">
                 <div id="section-1" className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-7 space-y-6">
                   
                   {/* Header */}
-                  <div className="flex items-start gap-3.5 pb-2 border-b border-slate-100">
-                    <div className="w-10 h-10 rounded-2xl bg-[#e8f5ed] border border-[#a3d9bc] flex items-center justify-center text-[#0e6245] shrink-0">
-                      <ClipboardList className="w-5 h-5" />
+                  <div className="flex items-start justify-between gap-4 pb-3 border-b border-slate-100">
+                    <div className="flex items-start gap-3.5">
+                      <div className="w-10 h-10 rounded-2xl bg-[#e8f5ed] border border-[#a3d9bc] flex items-center justify-center text-[#0e6245] shrink-0">
+                        <ClipboardList className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h2 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
+                          1. Basic Details
+                        </h2>
+                        <p className="text-xs text-slate-500 font-medium mt-0.5">
+                          Provide the basic information about your carbon credit listing.
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h2 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
-                        1. Basic Details
-                      </h2>
-                      <p className="text-xs text-slate-500 font-medium mt-0.5">
-                        Provide the basic information about your carbon credit listing.
-                      </p>
-                    </div>
+                    <span className="px-3 py-1 bg-emerald-50 border border-emerald-200 text-[#0e6245] text-xs font-bold rounded-full shrink-0">
+                      Step 1 of 4
+                    </span>
                   </div>
 
                   {/* Fields */}
@@ -566,29 +611,85 @@ export const CreateListingPage = () => {
 
                     </div>
 
+                    {/* Calculated Valuation Widget */}
+                    <div className="bg-[#edf8f1] border border-[#a3d9bc] rounded-2xl p-4 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-xl bg-white border border-emerald-200 flex items-center justify-center text-[#0e6245]">
+                          <Receipt className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <span className="text-[10px] uppercase font-bold text-[#0e6245] tracking-wider block">Estimated Total Listing Value</span>
+                          <span className="text-xs text-slate-600 font-medium">Calculated as Available Volume × Unit Price</span>
+                        </div>
+                      </div>
+                      <span className="text-base font-black text-[#0e6245]">
+                        ₹ {(Number(String(formData.quantity).replace(/,/g, '') || 0) * Number(String(formData.pricePerTon).replace(/,/g, '') || 0)).toLocaleString('en-IN')}
+                      </span>
+                    </div>
+
                   </div>
 
                 </div>
 
+                {/* Step 1 Actions */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+                  <button 
+                    type="button"
+                    onClick={handleSaveDraft}
+                    className="w-full sm:w-auto px-4 py-2.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <FileText className="w-3.5 h-3.5 text-slate-500" />
+                    <span>Save as Draft</span>
+                  </button>
 
-                {/* ----------------------------------------------------------------- */}
-                {/* SECTION 2: PROJECT INFORMATION                                    */}
-                {/* ----------------------------------------------------------------- */}
+                  <div className="w-full sm:w-auto flex items-center justify-end gap-3">
+                    <button 
+                      type="button"
+                      onClick={() => navigate('/supplier/dashboard')}
+                      className="w-1/2 sm:w-auto px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition-colors cursor-pointer text-center"
+                    >
+                      Cancel
+                    </button>
+
+                    <button 
+                      type="button"
+                      onClick={handleNextStep}
+                      className="w-1/2 sm:w-auto px-6 py-2.5 bg-[#0e6245] hover:bg-[#0b5038] text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer hover:shadow-lg"
+                    >
+                      <span>Next: Project Info</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+
+            {/* ----------------------------------------------------------------- */}
+            {/* SECTION 2: PROJECT INFORMATION (STEP 2)                           */}
+            {/* ----------------------------------------------------------------- */}
+            {currentStep === 2 && (
+              <div className="space-y-6 animate-fade-in">
                 <div id="section-2" className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-7 space-y-6">
                   
                   {/* Header */}
-                  <div className="flex items-start gap-3.5 pb-2 border-b border-slate-100">
-                    <div className="w-10 h-10 rounded-2xl bg-[#e8f5ed] border border-[#a3d9bc] flex items-center justify-center text-[#0e6245] shrink-0">
-                      <FileText className="w-5 h-5" />
+                  <div className="flex items-start justify-between gap-4 pb-3 border-b border-slate-100">
+                    <div className="flex items-start gap-3.5">
+                      <div className="w-10 h-10 rounded-2xl bg-[#e8f5ed] border border-[#a3d9bc] flex items-center justify-center text-[#0e6245] shrink-0">
+                        <FileText className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h2 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
+                          2. Project Information
+                        </h2>
+                        <p className="text-xs text-slate-500 font-medium mt-0.5">
+                          Tell buyers about the project, crediting timelines, and its environmental impact.
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h2 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
-                        2. Project Information
-                      </h2>
-                      <p className="text-xs text-slate-500 font-medium mt-0.5">
-                        Tell buyers about the project and its impact.
-                      </p>
-                    </div>
+                    <span className="px-3 py-1 bg-emerald-50 border border-emerald-200 text-[#0e6245] text-xs font-bold rounded-full shrink-0">
+                      Step 2 of 4
+                    </span>
                   </div>
 
                   {/* Fields */}
@@ -668,25 +769,65 @@ export const CreateListingPage = () => {
 
                 </div>
 
+                {/* Step 2 Actions */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+                  <button 
+                    type="button"
+                    onClick={handleSaveDraft}
+                    className="w-full sm:w-auto px-4 py-2.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <FileText className="w-3.5 h-3.5 text-slate-500" />
+                    <span>Save as Draft</span>
+                  </button>
 
-                {/* ----------------------------------------------------------------- */}
-                {/* SECTION 3: VERIFICATION & DOCUMENTS                               */}
-                {/* ----------------------------------------------------------------- */}
+                  <div className="w-full sm:w-auto flex items-center justify-end gap-3">
+                    <button 
+                      type="button"
+                      onClick={handlePrevStep}
+                      className="w-1/2 sm:w-auto px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition-colors cursor-pointer text-center"
+                    >
+                      ← Back: Basic Details
+                    </button>
+
+                    <button 
+                      type="button"
+                      onClick={handleNextStep}
+                      className="w-1/2 sm:w-auto px-6 py-2.5 bg-[#0e6245] hover:bg-[#0b5038] text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer hover:shadow-lg"
+                    >
+                      <span>Next: Verification & Docs</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+
+            {/* ----------------------------------------------------------------- */}
+            {/* SECTION 3: VERIFICATION & DOCUMENTS (STEP 3)                       */}
+            {/* ----------------------------------------------------------------- */}
+            {currentStep === 3 && (
+              <div className="space-y-6 animate-fade-in">
                 <div id="section-3" className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-7 space-y-6">
                   
                   {/* Header */}
-                  <div className="flex items-start gap-3.5 pb-2 border-b border-slate-100">
-                    <div className="w-10 h-10 rounded-2xl bg-[#e8f5ed] border border-[#a3d9bc] flex items-center justify-center text-[#0e6245] shrink-0">
-                      <ShieldCheck className="w-5 h-5" />
+                  <div className="flex items-start justify-between gap-4 pb-3 border-b border-slate-100">
+                    <div className="flex items-start gap-3.5">
+                      <div className="w-10 h-10 rounded-2xl bg-[#e8f5ed] border border-[#a3d9bc] flex items-center justify-center text-[#0e6245] shrink-0">
+                        <ShieldCheck className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h2 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
+                          3. Verification & Documents
+                        </h2>
+                        <p className="text-xs text-slate-500 font-medium mt-0.5">
+                          Upload official audit reports and verify your carbon registry certification.
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h2 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
-                        3. Verification & Documents
-                      </h2>
-                      <p className="text-xs text-slate-500 font-medium mt-0.5">
-                        Upload necessary documents to build buyer trust.
-                      </p>
-                    </div>
+                    <span className="px-3 py-1 bg-emerald-50 border border-emerald-200 text-[#0e6245] text-xs font-bold rounded-full shrink-0">
+                      Step 3 of 4
+                    </span>
                   </div>
 
                   {/* Standard & Certification ID */}
@@ -797,13 +938,8 @@ export const CreateListingPage = () => {
 
                 </div>
 
-
-                {/* ----------------------------------------------------------------- */}
-                {/* BOTTOM ACTIONS BAR: SAVE DRAFT, CANCEL, NEXT: REVIEW              */}
-                {/* ----------------------------------------------------------------- */}
+                {/* Step 3 Actions */}
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
-                  
-                  {/* Save as Draft button */}
                   <button 
                     type="button"
                     onClick={handleSaveDraft}
@@ -813,29 +949,33 @@ export const CreateListingPage = () => {
                     <span>Save as Draft</span>
                   </button>
 
-                  {/* Right: Cancel and Next: Review */}
                   <div className="w-full sm:w-auto flex items-center justify-end gap-3">
                     <button 
                       type="button"
-                      onClick={() => navigate('/supplier/dashboard')}
+                      onClick={handlePrevStep}
                       className="w-1/2 sm:w-auto px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition-colors cursor-pointer text-center"
                     >
-                      Cancel
+                      ← Back: Project Info
                     </button>
 
                     <button 
                       type="button"
-                      onClick={handleNextToReview}
+                      onClick={handleNextStep}
                       className="w-1/2 sm:w-auto px-6 py-2.5 bg-[#0e6245] hover:bg-[#0b5038] text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer hover:shadow-lg"
                     >
                       <span>Next: Review</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
-
                 </div>
-              </>
-            ) : (
+              </div>
+            )}
+
+
+            {/* ----------------------------------------------------------------- */}
+            {/* SECTION 4: REVIEW & PUBLISH (STEP 4)                              */}
+            {/* ----------------------------------------------------------------- */}
+            {currentStep === 4 && (
               /* ----------------------------------------------------------------- */
               /* SECTION 4: REVIEW & PUBLISH (STEP 4)                              */
               /* ----------------------------------------------------------------- */
@@ -874,7 +1014,7 @@ export const CreateListingPage = () => {
                       </span>
                       <button 
                         type="button"
-                        onClick={() => handleBackToEdit(1)}
+                        onClick={() => handleStepClick(1)}
                         className="text-[11px] font-bold text-[#0e6245] hover:underline cursor-pointer"
                       >
                         Edit
@@ -918,7 +1058,7 @@ export const CreateListingPage = () => {
                       </span>
                       <button 
                         type="button"
-                        onClick={() => handleBackToEdit(2)}
+                        onClick={() => handleStepClick(2)}
                         className="text-[11px] font-bold text-[#0e6245] hover:underline cursor-pointer"
                       >
                         Edit
@@ -960,7 +1100,7 @@ export const CreateListingPage = () => {
                     </span>
                     <button 
                       type="button"
-                      onClick={() => handleBackToEdit(3)}
+                      onClick={() => handleStepClick(3)}
                       className="text-[11px] font-bold text-[#0e6245] hover:underline cursor-pointer"
                     >
                       Edit
@@ -980,20 +1120,18 @@ export const CreateListingPage = () => {
                     </div>
                   </div>
 
-                  {/* Attached Files List */}
-                  <div className="pt-2 border-t border-slate-200">
-                    <span className="text-slate-400 text-[10px] uppercase font-bold block mb-2">Attached Documents ({files.length})</span>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  {/* Uploaded File Badges */}
+                  <div className="pt-1">
+                    <span className="text-slate-400 text-[10px] uppercase font-bold block mb-2">Attached Verification Documents</span>
+                    <div className="flex flex-wrap gap-2">
                       {files.map((file) => (
-                        <div key={file.id} className="bg-white border border-slate-200 rounded-xl px-3 py-2 flex items-center gap-2 shadow-2xs">
-                          <div className="w-6 h-6 rounded bg-red-100 text-red-600 flex items-center justify-center shrink-0">
-                            <FileText className="w-3.5 h-3.5" />
-                          </div>
-                          <div className="truncate text-left flex-1">
-                            <span className="text-[11px] font-bold text-slate-800 block truncate">{file.name}</span>
-                            <span className="text-[9px] text-slate-400 block">{file.size}</span>
-                          </div>
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                        <div 
+                          key={file.id} 
+                          className="bg-white border border-slate-200 rounded-xl px-3 py-1.5 flex items-center gap-2 text-xs shadow-2xs"
+                        >
+                          <FileText className="w-3.5 h-3.5 text-emerald-600" />
+                          <span className="font-medium text-slate-800">{file.name}</span>
+                          <span className="text-[10px] text-slate-400">({file.size})</span>
                         </div>
                       ))}
                     </div>
@@ -1001,7 +1139,7 @@ export const CreateListingPage = () => {
                 </div>
 
                 {/* Compliance & Additionality Declaration Checkbox */}
-                <div className="p-4 bg-emerald-50/70 border border-emerald-200/80 rounded-2xl flex items-start gap-3 text-left">
+                <div className="bg-emerald-50/50 border border-emerald-200/80 rounded-2xl p-4 flex items-start gap-3 text-left">
                   <input 
                     type="checkbox"
                     id="review-declaration"
@@ -1029,10 +1167,10 @@ export const CreateListingPage = () => {
                   <div className="w-full sm:w-auto flex items-center justify-end gap-3">
                     <button 
                       type="button"
-                      onClick={() => handleBackToEdit(3)}
+                      onClick={handlePrevStep}
                       className="w-1/2 sm:w-auto px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition-colors cursor-pointer text-center"
                     >
-                      ← Back to Edit
+                      ← Back: Verification & Docs
                     </button>
 
                     <button 

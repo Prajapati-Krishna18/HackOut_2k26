@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import { OAuth2Client } from 'google-auth-library';
-import { supabaseAdmin } from '../../config/supabase.js';
+import { supabase, supabaseAdmin } from '../../config/supabase.js';
 import { env } from '../../config/env.js';
 import {
   generateJwtToken,
@@ -12,7 +12,8 @@ import {
 } from '../../utils/generateToken.js';
 import {
   sendVerificationEmail,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  sendOtpEmail
 } from '../../utils/sendEmail.js';
 import { ApiError } from '../../utils/apiError.js';
 import { HTTP_STATUS } from '../../constants/index.js';
@@ -20,7 +21,7 @@ import { logger } from '../../utils/logger.js';
 
 const googleClient = new OAuth2Client(env.GOOGLE.CLIENT_ID);
 
-// Local persistence storage for seamless development
+// Local persistence storage for seamless development & fallback resilience
 const DATA_DIR = path.resolve(process.cwd(), 'data');
 const USERS_FILE = path.join(DATA_DIR, 'users.json');
 
@@ -33,7 +34,7 @@ const loadLocalUsers = () => {
       return new Map(arr.map((u) => [u.email, u]));
     }
   } catch (e) {
-    logger.warn('Could not read local users file:', e);
+    logger.warn('[AUTH DEBUG] Could not read local users file:', e.message);
   }
   return new Map();
 };
@@ -44,7 +45,7 @@ const saveLocalUsers = (map) => {
     const arr = Array.from(map.values());
     fs.writeFileSync(USERS_FILE, JSON.stringify(arr, null, 2), 'utf-8');
   } catch (e) {
-    logger.warn('Could not save local users file:', e);
+    logger.warn('[AUTH DEBUG] Could not save local users file:', e.message);
   }
 };
 
@@ -82,107 +83,145 @@ const sanitizeUser = (user) => {
 
 class AuthService {
   /**
-   * 1. Register a new user with Email and Password
+   * 1. Register a new user with Supabase Authentication & Profile Creation
    */
   async signup({ full_name, email, password, role = 'supplier' }) {
     const normalizedEmail = email.toLowerCase().trim();
+    const resolvedFullName = full_name ? full_name.trim() : normalizedEmail.split('@')[0];
+    const resolvedRole = (role || 'supplier').toLowerCase();
 
-    // Check for existing user
-    let existingUser = null;
-    let tableExists = true;
+    logger.info(`=======================================================`);
+    logger.info(`[AUTH DEBUG] Signup request received for: ${normalizedEmail}`);
+    logger.info(`[AUTH DEBUG] Full Name: ${resolvedFullName}, Role: ${resolvedRole}`);
+    logger.info(`=======================================================`);
 
+    let supabaseAuthUser = null;
+    let supabaseAuthSession = null;
+    let authError = null;
+
+    // 1. Execute Supabase Authentication signUp() to create record in auth.users
     try {
-      const { data, error: findError } = await supabaseAdmin
-        .from('users')
-        .select('id, email')
-        .eq('email', normalizedEmail)
-        .maybeSingle();
+      logger.info(`[SUPABASE AUTH] Calling supabase.auth.signUp for: ${normalizedEmail}...`);
+      const authResponse = await supabase.auth.signUp({
+        email: normalizedEmail,
+        password,
+        options: {
+          data: {
+            full_name: resolvedFullName,
+            role: resolvedRole
+          }
+        }
+      });
 
-      if (findError) {
-        tableExists = false;
-        logger.warn(
-          `Supabase table check note (${findError.code}): Using local persistence for development.`
-        );
-      } else {
-        existingUser = data;
+      logger.info(`[SUPABASE AUTH DEBUG] signUp response data: ${JSON.stringify(authResponse.data, null, 2)}`);
+
+      if (authResponse.error) {
+        authError = authResponse.error;
+        logger.warn(`[SUPABASE AUTH DEBUG] signUp error: ${authError.message} (status: ${authError.status}, code: ${authError.code})`);
+
+        if (
+          authError.message?.toLowerCase().includes('already registered') ||
+          authError.message?.toLowerCase().includes('already in use') ||
+          authError.status === 422
+        ) {
+          throw new ApiError(HTTP_STATUS.CONFLICT, 'An account with this email address already exists.');
+        }
+      } else if (authResponse.data && authResponse.data.user) {
+        supabaseAuthUser = authResponse.data.user;
+        supabaseAuthSession = authResponse.data.session;
+        logger.info(`[SUPABASE AUTH] ✅ USER REGISTERED IN SUPABASE AUTHENTICATION!`);
+        logger.info(`[SUPABASE AUTH] Supabase Auth User ID: ${supabaseAuthUser.id}`);
+        logger.info(`[SUPABASE AUTH] Supabase Session Exists: ${!!supabaseAuthSession}`);
       }
     } catch (err) {
-      tableExists = false;
+      if (err instanceof ApiError) throw err;
+      logger.error('[SUPABASE AUTH] Error executing supabase.auth.signUp:', err.message);
     }
 
-    if (!tableExists || !existingUser) {
-      existingUser = getLocalUser(normalizedEmail);
-    }
-
-    if (existingUser) {
+    // Check if user exists locally
+    const existingLocal = getLocalUser(normalizedEmail);
+    if (existingLocal && !supabaseAuthUser) {
       throw new ApiError(HTTP_STATUS.CONFLICT, 'An account with this email address already exists.');
     }
 
-    // Hash password securely
+    // Hash password for local / custom backup authentication
     const salt = await bcrypt.genSalt(12);
     const passwordHash = await bcrypt.hash(password, salt);
 
-    // Generate email verification token (24-hour validity)
+    // Generate 6-digit verification OTP and verification token
+    const numericOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    const hashedOtp = hashToken(numericOtp);
+    const otpExpires = new Date(Date.now() + 10 * 60 * 1000).toISOString(); // 10 mins
+
     const rawVerificationToken = generateRandomToken();
     const hashedVerificationToken = hashToken(rawVerificationToken);
     const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-    const userId = crypto.randomUUID();
+    
+    // User ID must match Supabase Auth UUID if available
+    const userId = supabaseAuthUser ? supabaseAuthUser.id : crypto.randomUUID();
     const now = new Date().toISOString();
 
     const userRecord = {
       id: userId,
-      full_name: full_name ? full_name.trim() : normalizedEmail.split('@')[0],
+      full_name: resolvedFullName,
       email: normalizedEmail,
       password_hash: passwordHash,
-      role: (role || 'supplier').toLowerCase(),
+      role: resolvedRole,
       provider: 'email',
       avatar_url: null,
       is_verified: false,
+      otp_hash: hashedOtp,
+      otp_expires: otpExpires,
       verification_token: hashedVerificationToken,
       verification_expires: verificationExpires,
       created_at: now,
       updated_at: now
     };
 
-    let createdUser = null;
+    let createdUser = userRecord;
 
-    if (tableExists) {
-      try {
-        const { data: newUser, error: insertError } = await supabaseAdmin
-          .from('users')
-          .insert([userRecord])
-          .select('id, full_name, email, role, provider, avatar_url, is_verified, created_at, updated_at')
-          .single();
+    // 2. Profile Creation in public.users table
+    try {
+      logger.info(`[SUPABASE DB] Upserting user profile record into public.users with ID: ${userId}...`);
+      const { data: profileData, error: profileError } = await supabaseAdmin
+        .from('users')
+        .upsert([userRecord], { onConflict: 'email' })
+        .select('id, full_name, email, role, provider, avatar_url, is_verified, created_at, updated_at')
+        .single();
 
-        if (!insertError && newUser) {
-          createdUser = newUser;
-        } else {
-          logger.warn('Supabase insert note: Using local persistence fallback.');
-          setLocalUser(normalizedEmail, userRecord);
-          createdUser = userRecord;
-        }
-      } catch (err) {
-        setLocalUser(normalizedEmail, userRecord);
-        createdUser = userRecord;
+      if (!profileError && profileData) {
+        logger.info(`[SUPABASE DB] ✅ User profile created/upserted in public.users successfully!`);
+        createdUser = { ...userRecord, ...profileData };
+      } else if (profileError) {
+        logger.warn(`[SUPABASE DB DEBUG] Note on public.users upsert (${profileError.code || profileError.message}): Profile synced to local state.`);
       }
-    } else {
-      setLocalUser(normalizedEmail, userRecord);
-      createdUser = userRecord;
+    } catch (dbErr) {
+      logger.warn('[SUPABASE DB DEBUG] public.users sync note:', dbErr.message);
     }
 
-    // Dispatch verification email asynchronously
-    sendVerificationEmail({
+    // Persist to local cache
+    setLocalUser(normalizedEmail, createdUser);
+
+    // 3. Dispatch verification OTP email
+    sendOtpEmail({
       to: createdUser.email,
       name: createdUser.full_name,
-      verificationToken: rawVerificationToken
-    }).catch((err) => logger.error('Verification email dispatch failed:', err));
+      otp: numericOtp
+    }).catch((err) => logger.error('[AUTH DEBUG] OTP email dispatch note:', err.message));
 
     // Generate JWT token
     const token = generateJwtToken(createdUser);
 
+    logger.info(`[AUTH DEBUG] Signup completed successfully for: ${createdUser.email}`);
+    logger.info(`[AUTH DEBUG] Generated JWT Token: ${token.slice(0, 20)}...`);
+
     return {
       user: sanitizeUser(createdUser),
-      token
+      token,
+      supabaseAuth: {
+        userId: supabaseAuthUser ? supabaseAuthUser.id : null,
+        registeredInAuth: !!supabaseAuthUser
+      }
     };
   }
 
@@ -192,9 +231,35 @@ class AuthService {
   async login({ email, password }) {
     const normalizedEmail = email.toLowerCase().trim();
 
-    let user = null;
-    let tableExists = true;
+    logger.info(`=======================================================`);
+    logger.info(`[AUTH DEBUG] Login request received for: ${normalizedEmail}`);
+    logger.info(`=======================================================`);
 
+    let supabaseLoginUser = null;
+    let supabaseLoginSession = null;
+
+    // 1. Try Supabase Auth signInWithPassword
+    try {
+      logger.info(`[SUPABASE AUTH] Calling supabase.auth.signInWithPassword for: ${normalizedEmail}...`);
+      const loginResponse = await supabase.auth.signInWithPassword({
+        email: normalizedEmail,
+        password
+      });
+
+      logger.info(`[SUPABASE AUTH DEBUG] signIn response error: ${loginResponse.error ? loginResponse.error.message : 'none'}`);
+
+      if (!loginResponse.error && loginResponse.data && loginResponse.data.user) {
+        supabaseLoginUser = loginResponse.data.user;
+        supabaseLoginSession = loginResponse.data.session;
+        logger.info(`[SUPABASE AUTH] ✅ Login authenticated via Supabase Auth! User ID: ${supabaseLoginUser.id}`);
+        logger.info(`[SUPABASE AUTH DEBUG] Session expires at: ${supabaseLoginSession?.expires_at}`);
+      }
+    } catch (err) {
+      logger.warn('[SUPABASE AUTH DEBUG] signInWithPassword note:', err.message);
+    }
+
+    // 2. Fetch user profile from Supabase Database or Local Persistence
+    let user = null;
     try {
       const { data, error: findError } = await supabaseAdmin
         .from('users')
@@ -202,42 +267,65 @@ class AuthService {
         .eq('email', normalizedEmail)
         .maybeSingle();
 
-      if (findError) {
-        tableExists = false;
-      } else {
+      if (!findError && data) {
         user = data;
       }
-    } catch (err) {
-      tableExists = false;
-    }
+    } catch (err) {}
 
-    if (!tableExists || !user) {
+    if (!user) {
       user = getLocalUser(normalizedEmail);
     }
 
-    if (!user) {
+    if (!user && !supabaseLoginUser) {
+      logger.warn(`[AUTH DEBUG] Login failed: User ${normalizedEmail} not found.`);
       throw new ApiError(HTTP_STATUS.UNAUTHORIZED, 'Invalid email or password.');
     }
 
-    if (user.provider === 'google' && !user.password_hash) {
+    // If user exists in Supabase Auth but not in public.users/local, create state
+    if (!user && supabaseLoginUser) {
+      user = {
+        id: supabaseLoginUser.id,
+        full_name: supabaseLoginUser.user_metadata?.full_name || normalizedEmail.split('@')[0],
+        email: normalizedEmail,
+        role: supabaseLoginUser.user_metadata?.role || 'supplier',
+        provider: 'email',
+        avatar_url: null,
+        is_verified: supabaseLoginUser.email_confirmed_at ? true : false,
+        created_at: supabaseLoginUser.created_at,
+        updated_at: new Date().toISOString()
+      };
+      setLocalUser(normalizedEmail, user);
+    }
+
+    if (user.provider === 'google' && !user.password_hash && !supabaseLoginUser) {
       throw new ApiError(
         HTTP_STATUS.BAD_REQUEST,
         'This account is registered via Google Sign-In. Please authenticate with Google.'
       );
     }
 
-    // Compare bcrypt hash
-    const isPasswordValid = await bcrypt.compare(password, user.password_hash);
-    if (!isPasswordValid) {
-      throw new ApiError(HTTP_STATUS.UNAUTHORIZED, 'Invalid email or password.');
+    // If Supabase Auth didn't authenticate, verify local bcrypt password hash
+    if (!supabaseLoginUser && user.password_hash) {
+      const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+      if (!isPasswordValid) {
+        logger.warn(`[AUTH DEBUG] Login failed: Invalid password for ${normalizedEmail}.`);
+        throw new ApiError(HTTP_STATUS.UNAUTHORIZED, 'Invalid email or password.');
+      }
+      logger.info(`[AUTH DEBUG] Password verified via bcrypt hash for ${normalizedEmail}.`);
     }
 
-    // Generate JWT
+    // Generate JWT token
     const token = generateJwtToken(user);
+
+    logger.info(`[AUTH DEBUG] ✅ User login successful for: ${user.email} (Role: ${user.role})`);
 
     return {
       user: sanitizeUser(user),
-      token
+      token,
+      supabaseAuth: {
+        userId: user.id,
+        authenticated: true
+      }
     };
   }
 
@@ -247,6 +335,8 @@ class AuthService {
   async googleAuth({ idToken, credential, accessToken, role = 'supplier' }) {
     const rawToken = credential || idToken;
     let googlePayload = null;
+
+    logger.info(`[AUTH DEBUG] Google Auth request initiated (Role: ${role})`);
 
     try {
       if (rawToken) {
@@ -271,7 +361,7 @@ class AuthService {
         }
       }
     } catch (authErr) {
-      logger.error('Google token verification failed:', authErr);
+      logger.error('[AUTH DEBUG] Google token verification failed:', authErr.message);
       throw new ApiError(HTTP_STATUS.UNAUTHORIZED, 'Invalid or expired Google authentication token.');
     }
 
@@ -279,12 +369,12 @@ class AuthService {
       throw new ApiError(HTTP_STATUS.BAD_REQUEST, 'Google token did not provide a verified email address.');
     }
 
-    const { email, name, picture } = googlePayload;
+    const { email, name, picture, sub } = googlePayload;
     const normalizedEmail = email.toLowerCase().trim();
 
-    let existingUser = null;
-    let tableExists = true;
+    logger.info(`[AUTH DEBUG] Google token verified for: ${normalizedEmail} (Google Sub: ${sub})`);
 
+    let existingUser = null;
     try {
       const { data, error: findError } = await supabaseAdmin
         .from('users')
@@ -292,16 +382,12 @@ class AuthService {
         .eq('email', normalizedEmail)
         .maybeSingle();
 
-      if (findError) {
-        tableExists = false;
-      } else {
+      if (!findError && data) {
         existingUser = data;
       }
-    } catch (err) {
-      tableExists = false;
-    }
+    } catch (err) {}
 
-    if (!tableExists || !existingUser) {
+    if (!existingUser) {
       existingUser = getLocalUser(normalizedEmail);
     }
 
@@ -312,16 +398,16 @@ class AuthService {
       userRecord = { ...existingUser };
       if (!existingUser.avatar_url && picture) {
         userRecord.avatar_url = picture;
-        userRecord.is_verified = true;
-        if (tableExists) {
-          await supabaseAdmin
-            .from('users')
-            .update({ avatar_url: picture, is_verified: true })
-            .eq('id', existingUser.id);
-        } else {
-          setLocalUser(normalizedEmail, userRecord);
-        }
       }
+      userRecord.is_verified = true;
+      userRecord.updated_at = now;
+
+      try {
+        await supabaseAdmin
+          .from('users')
+          .update({ avatar_url: picture, is_verified: true, updated_at: now })
+          .eq('id', existingUser.id);
+      } catch (e) {}
     } else {
       userRecord = {
         id: crypto.randomUUID(),
@@ -336,28 +422,24 @@ class AuthService {
         updated_at: now
       };
 
-      if (tableExists) {
-        try {
-          const { data: createdUser, error: insertError } = await supabaseAdmin
-            .from('users')
-            .insert([userRecord])
-            .select('*')
-            .single();
+      try {
+        const { data: createdUser, error: insertError } = await supabaseAdmin
+          .from('users')
+          .insert([userRecord])
+          .select('*')
+          .single();
 
-          if (!insertError && createdUser) {
-            userRecord = createdUser;
-          } else {
-            setLocalUser(normalizedEmail, userRecord);
-          }
-        } catch (err) {
-          setLocalUser(normalizedEmail, userRecord);
+        if (!insertError && createdUser) {
+          userRecord = createdUser;
         }
-      } else {
-        setLocalUser(normalizedEmail, userRecord);
-      }
+      } catch (err) {}
     }
 
+    setLocalUser(normalizedEmail, userRecord);
+
     const token = generateJwtToken(userRecord);
+
+    logger.info(`[AUTH DEBUG] ✅ Google authentication successful for: ${normalizedEmail}`);
 
     return {
       user: sanitizeUser(userRecord),
@@ -428,6 +510,13 @@ class AuthService {
 
     logger.info(`[OTP SERVICE] Verification OTP for ${normalizedEmail}: ${otp} (expires in 10 mins)`);
 
+    // Dispatch verification OTP email
+    sendOtpEmail({
+      to: normalizedEmail,
+      name: user?.full_name || 'CarbonSphere User',
+      otp
+    }).catch((err) => logger.error('[AUTH DEBUG] Resend OTP email dispatch note:', err.message));
+
     return {
       success: true,
       message: `Verification code sent to ${normalizedEmail}`,
@@ -472,9 +561,18 @@ class AuthService {
       user.otp_hash = null;
       user.otp_expires = null;
       setLocalUser(normalizedEmail, user);
+
+      try {
+        await supabaseAdmin
+          .from('users')
+          .update({ is_verified: true, updated_at: new Date().toISOString() })
+          .eq('id', user.id);
+      } catch (e) {}
     }
 
     const token = generateJwtToken(user);
+
+    logger.info(`[AUTH DEBUG] ✅ OTP Verified successfully for ${normalizedEmail}`);
 
     return {
       success: true,
@@ -534,7 +632,7 @@ class AuthService {
       to: user.email,
       name: user.full_name,
       resetToken: rawResetToken
-    }).catch((err) => logger.error('Password reset email error:', err));
+    }).catch((err) => logger.error('[AUTH DEBUG] Password reset email error:', err.message));
 
     return {
       message: 'If an account with that email exists, a password reset link has been dispatched.'
@@ -651,7 +749,6 @@ class AuthService {
     }
 
     if (!updatedUser) {
-      // Create or sanitize
       updatedUser = { id: userId, ...updateData };
     }
 

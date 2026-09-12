@@ -48,22 +48,11 @@ EXECUTE FUNCTION public.update_updated_at_column();
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 
 -- 6. RLS Policies
--- Allow public to register (insert)
-CREATE POLICY "Allow public registration" 
-ON public.users 
-FOR INSERT 
-WITH CHECK (true);
-
--- Allow service role full access
-CREATE POLICY "Service role full access" 
+-- Allow public / anon / authenticated / service_role full access
+DROP POLICY IF EXISTS "Allow all operations for anon and authenticated" ON public.users;
+CREATE POLICY "Allow all operations for anon and authenticated" 
 ON public.users 
 FOR ALL 
-TO service_role 
+TO public, anon, authenticated, service_role 
 USING (true) 
 WITH CHECK (true);
-
--- Users can read their own profile
-CREATE POLICY "Users can read own profile" 
-ON public.users 
-FOR SELECT 
-USING (auth.uid()::text = id::text OR true);

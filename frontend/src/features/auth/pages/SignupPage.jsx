@@ -103,7 +103,7 @@ export const SignupPage = () => {
         role: 'supplier'
       });
 
-      const { user, token } = response.data;
+      const { user, token } = response.data?.data || response.data;
       const roleUpper = (user?.role || 'supplier').toUpperCase();
       login(user, token, roleUpper);
 
@@ -112,7 +112,7 @@ export const SignupPage = () => {
       
       // Advance to Step 2: OTP Verification
       setCurrentStep(2);
-      setApiSuccess(`Verification code dispatched to ${data.email}`);
+      setApiSuccess(`A 6-digit verification code has been dispatched to ${data.email}`);
     } catch (err) {
       console.error('Signup error:', err);
       setApiError(err?.message || 'Registration failed. Please verify your details or try again.');
@@ -158,17 +158,12 @@ export const SignupPage = () => {
     try {
       await authService.sendOtp(registeredEmail || 'user@example.com');
       setOtpTimer(45);
-      setApiSuccess('A fresh 6-digit OTP has been sent to your email.');
+      setApiSuccess(`A fresh 6-digit verification code has been dispatched to ${registeredEmail}`);
     } catch (e) {
       setApiError('Failed to resend code. Please try again.');
     } finally {
       setIsResending(false);
     }
-  };
-
-  // Auto fill dev test code
-  const handleFillTestCode = () => {
-    setOtp(['1', '2', '3', '4', '5', '6']);
   };
 
   // Step 2: Submit OTP Verification
@@ -565,7 +560,7 @@ export const SignupPage = () => {
                   ))}
                 </div>
 
-                {/* Resend & Dev Helper Row */}
+                {/* Resend Helper Row */}
                 <div className="flex items-center justify-between text-[11px] px-1">
                   <button
                     type="button"
@@ -579,14 +574,9 @@ export const SignupPage = () => {
                     <span>{otpTimer > 0 ? `Resend in 0:${otpTimer < 10 ? '0' : ''}${otpTimer}` : 'Resend Code'}</span>
                   </button>
 
-                  <button
-                    type="button"
-                    onClick={handleFillTestCode}
-                    className="text-[10px] font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2 py-1 rounded-lg transition-colors flex items-center gap-1"
-                  >
-                    <Sparkles className="w-3 h-3 text-emerald-600" />
-                    <span>Auto-Fill (123456)</span>
-                  </button>
+                  <span className="text-[10px] text-slate-400">
+                    Check your email inbox / spam
+                  </span>
                 </div>
 
                 {/* Verify OTP Button */}

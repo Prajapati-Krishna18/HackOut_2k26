@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 import {
   Leaf,
   LayoutDashboard,
@@ -22,7 +23,9 @@ import {
   Info,
   Globe,
   Quote,
-  Clock
+  Clock,
+  LogOut,
+  User
 } from 'lucide-react';
 import {
   BarChart,
@@ -61,11 +64,22 @@ const inventoryData = [
 ];
 
 export const SupplierDashboardPage = () => {
+  const { logout } = useAuth();
   const { isConnected, telemetry, simulateSpike } = useSocket();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [timeRange, setTimeRange] = useState('Last 6 Months');
   const [metricsPeriod, setMetricsPeriod] = useState('Aug 2025');
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const navigate = useNavigate();
+
+  const savedPhoto = localStorage.getItem('carbonsphere_supplier_photo');
+  const savedProfile = (() => {
+    try {
+      return JSON.parse(localStorage.getItem('carbonsphere_supplier_profile')) || {};
+    } catch {
+      return {};
+    }
+  })();
 
   // Mini Sparkline Generator
   const Sparkline = ({ strokeColor, points }) => (
@@ -201,16 +215,80 @@ export const SupplierDashboardPage = () => {
               </span>
             </div>
 
-            {/* User Profile Header */}
-            <Link to="/supplier/profile" className="flex items-center gap-2 pl-2 border-l border-slate-200 cursor-pointer group hover:opacity-90 transition-opacity">
-              <div className="w-8 h-8 rounded-full bg-[#072b1e] text-emerald-300 font-bold text-xs flex items-center justify-center shadow-xs">
-                KP
-              </div>
-              <div className="flex flex-col text-left">
-                <span className="text-xs font-bold text-slate-900 group-hover:text-[#0e9f6e] transition-colors leading-tight">Krishna Prajapati</span>
-                <span className="text-[10px] text-slate-500 leading-tight">Supplier</span>
-              </div>
-            </Link>
+            {/* User Profile Header with Dropdown & Logout */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setShowUserMenu(prev => !prev)}
+                className="flex items-center gap-2 pl-2 border-l border-slate-200 cursor-pointer group hover:bg-slate-50 p-1 rounded-xl transition-all"
+              >
+                <div className="w-8 h-8 rounded-full bg-[#072b1e] text-emerald-300 font-bold text-xs flex items-center justify-center shadow-xs overflow-hidden border border-emerald-600/30">
+                  {savedPhoto ? (
+                    <img src={savedPhoto} alt="User Avatar" className="w-full h-full object-cover" />
+                  ) : (
+                    <span>KP</span>
+                  )}
+                </div>
+                <div className="hidden sm:flex flex-col text-left">
+                  <span className="text-xs font-bold text-slate-900 leading-tight">Krishna Prajapati</span>
+                  <span className="text-[10px] text-slate-500 leading-tight">Verified Supplier</span>
+                </div>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+              </button>
+
+              {showUserMenu && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-40 cursor-default"
+                    onClick={() => setShowUserMenu(false)} 
+                  />
+                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-200/90 py-2.5 z-50 animate-fade-in text-xs">
+                    <div className="px-4 py-2 border-b border-slate-100">
+                      <p className="font-bold text-slate-900">Krishna Prajapati</p>
+                      <p className="text-[11px] text-slate-500 truncate">krishna@greentechindustries.com</p>
+                      <span className="inline-block mt-1 px-2 py-0.5 bg-emerald-50 text-[#0e6245] text-[9px] font-bold rounded-full border border-emerald-200">
+                        {savedProfile?.companyName || 'GreenTech Industries'}
+                      </span>
+                    </div>
+
+                    <div className="py-1">
+                      <Link
+                        to="/supplier/profile"
+                        onClick={() => setShowUserMenu(false)}
+                        className="w-full px-4 py-2 hover:bg-slate-50 flex items-center gap-2.5 text-slate-700 font-medium cursor-pointer"
+                      >
+                        <User className="w-3.5 h-3.5 text-slate-400" />
+                        <span>Supplier Profile</span>
+                      </Link>
+
+                      <Link
+                        to="/supplier/create-listing"
+                        onClick={() => setShowUserMenu(false)}
+                        className="w-full px-4 py-2 hover:bg-slate-50 flex items-center gap-2.5 text-slate-700 font-medium cursor-pointer"
+                      >
+                        <Plus className="w-3.5 h-3.5 text-slate-400" />
+                        <span>Create Carbon Listing</span>
+                      </Link>
+                    </div>
+
+                    <div className="border-t border-slate-100 my-1" />
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowUserMenu(false);
+                        logout();
+                        navigate('/login');
+                      }}
+                      className="w-full px-4 py-2.5 hover:bg-red-50 text-red-600 flex items-center gap-2.5 text-left font-bold cursor-pointer transition-colors"
+                    >
+                      <LogOut className="w-4 h-4 text-red-500" />
+                      <span>Log Out</span>
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
 
           </div>
 

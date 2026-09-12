@@ -40,6 +40,7 @@ import {
   Cell
 } from 'recharts';
 import { useSocket } from '@/context/SocketContext';
+import { Badge } from '@/components/ui/Badge';
 
 // Photographic background & vector graphics
 import heroBannerBg from '@/assets/supplier-dashboard-hero.jpg';

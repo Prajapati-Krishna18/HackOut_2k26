@@ -1,24 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  Search, 
-  ChevronDown, 
-  ArrowRight, 
-  Play, 
-  CheckCircle2, 
-  Globe, 
-  Leaf, 
-  Users, 
-  TrendingUp, 
-  Sparkles, 
-  AlertTriangle, 
-  RotateCw, 
-  ShieldCheck, 
-  BarChart3, 
-  Sprout, 
-  Plus, 
-  Minus, 
-  ChevronLeft, 
+import {
+  Search,
+  ChevronDown,
+  ArrowRight,
+  Play,
+  CheckCircle2,
+  Globe,
+  Leaf,
+  Users,
+  TrendingUp,
+  Sparkles,
+  AlertTriangle,
+  RotateCw,
+  ShieldCheck,
+  BarChart3,
+  Sprout,
+  Plus,
+  Minus,
+  ChevronLeft,
   ChevronRight,
   X,
   Layers,
@@ -109,13 +109,13 @@ export const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-[#fbfdfc] text-slate-900 font-sans selection:bg-[#0e9f6e] selection:text-white">
-      
+
       {/* ========================================================================= */}
       {/* 1. TOP NAVBAR                                                             */}
       {/* ========================================================================= */}
       <header className="w-full bg-white/95 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          
+
           {/* Brand Logo */}
           <Link to="/" className="flex items-center gap-2.5 group">
             <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#0e6245] to-[#10a37f] flex items-center justify-center text-white shadow-sm shadow-emerald-700/20">
@@ -133,8 +133,8 @@ export const LandingPage = () => {
 
           {/* Navigation Links */}
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               className="relative text-[#0e9f6e] font-semibold py-1 flex items-center gap-1"
             >
               Home
@@ -173,7 +173,7 @@ export const LandingPage = () => {
       {/* ========================================================================= */}
       {/* 2. HERO SECTION WITH INDUSTRIAL RIVER BACKGROUND (FULL SCREEN EDGE-TO-EDGE) */}
       {/* ========================================================================= */}
-      <section 
+      <section
         className="relative w-full min-h-[640px] md:min-h-[720px] lg:min-h-[82vh] bg-cover bg-center flex flex-col justify-between"
         style={{ backgroundImage: `url(${heroBg})` }}
       >
@@ -216,7 +216,7 @@ export const LandingPage = () => {
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </Link>
-              <button 
+              <button
                 id="watch-video-btn"
                 type="button"
                 onClick={() => setIsVideoOpen(true)}
@@ -267,7 +267,7 @@ export const LandingPage = () => {
       {/* ========================================================================= */}
       <div className="max-w-6xl mx-auto px-6 -mt-8 relative z-20">
         <div className="bg-white rounded-2xl border border-slate-200/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 sm:p-8 grid grid-cols-2 lg:grid-cols-4 gap-6 divide-y lg:divide-y-0 lg:divide-x divide-slate-100">
-          
+
           {/* Stat 1 */}
           <div className="flex items-center gap-4 pt-4 lg:pt-0 lg:px-4 first:pt-0 first:px-0">
             <div className="w-12 h-12 rounded-2xl bg-[#e8f5ed] text-[#0e9f6e] flex items-center justify-center shrink-0">
@@ -321,7 +321,7 @@ export const LandingPage = () => {
       {/* ========================================================================= */}
       <section className="py-24 px-6 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          
+
           {/* Left Column: Problem details */}
           <div className="lg:col-span-7 space-y-6">
             <span className="text-xs uppercase font-bold tracking-wider text-slate-400">THE PROBLEM</span>
@@ -335,7 +335,7 @@ export const LandingPage = () => {
 
             {/* 3 Challenge Cards Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
-              
+
               <div className="bg-[#f8faf9] p-5 rounded-2xl border border-slate-200/70 space-y-3">
                 <div className="w-10 h-10 rounded-xl bg-white border border-slate-200/80 text-[#0e9f6e] flex items-center justify-center shadow-xs">
                   <Sprout className="w-5 h-5" />
@@ -366,9 +366,9 @@ export const LandingPage = () => {
           {/* Right Column: Industrial Emissions Video Banner */}
           <div className="lg:col-span-5">
             <div className="relative rounded-3xl overflow-hidden shadow-2xl group border border-slate-200 aspect-[4/3]">
-              <img 
-                src={emissionsImg} 
-                alt="Industrial Emissions to Opportunities" 
+              <img
+                src={emissionsImg}
+                alt="Industrial Emissions to Opportunities"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
@@ -408,7 +408,7 @@ export const LandingPage = () => {
 
         {/* 4 Process Step Cards with Connecting Arrows */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
-          
+
           {/* Step 1: Supplier */}
           <div className="flex flex-col items-center text-center p-6 bg-white rounded-3xl border border-slate-200/80 shadow-xs hover:shadow-md transition-shadow relative">
             <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-md mb-5 shrink-0">
@@ -467,12 +467,12 @@ export const LandingPage = () => {
       {/* ========================================================================= */}
       {/* 6. CARBON CREATES OPPORTUNITIES ACROSS INDUSTRIES (DARK FOREST CANOPY)     */}
       {/* ========================================================================= */}
-      <section 
+      <section
         className="py-24 px-6 relative bg-cover bg-center text-white"
         style={{ backgroundImage: `linear-gradient(rgba(10, 31, 20, 0.88), rgba(6, 23, 15, 0.94)), url(${forestCanopy})` }}
       >
         <div className="max-w-7xl mx-auto">
-          
+
           {/* Header Row: Title on left, Explore button on right */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
             <div className="space-y-2 max-w-2xl">
@@ -494,7 +494,7 @@ export const LandingPage = () => {
 
           {/* 5 Industry Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
-            
+
             {/* Industry 1 */}
             <div className="bg-white text-slate-900 rounded-2xl overflow-hidden shadow-lg hover:-translate-y-1 transition-transform">
               <div className="h-36 overflow-hidden">
@@ -561,7 +561,7 @@ export const LandingPage = () => {
       {/* ========================================================================= */}
       <section className="py-24 px-6 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          
+
           {/* Left Column: Global Reach Overview */}
           <div className="lg:col-span-5 space-y-6">
             <span className="text-xs uppercase font-bold tracking-wider text-slate-400">GLOBAL REACH</span>
@@ -621,10 +621,10 @@ export const LandingPage = () => {
           {/* Right Column: World Map graphic card */}
           <div className="lg:col-span-7">
             <div className="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden p-6 space-y-6">
-              
+
               {/* Map Filter Pills */}
               <div className="flex flex-wrap items-center gap-3 border-b border-slate-100 pb-4 text-xs font-semibold">
-                <button 
+                <button
                   onClick={() => setActiveMapFilter('Suppliers')}
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all ${activeMapFilter === 'Suppliers' ? 'bg-emerald-50 border-emerald-300 text-emerald-800' : 'border-slate-200 text-slate-600'}`}
                 >
@@ -632,7 +632,7 @@ export const LandingPage = () => {
                   <span>Suppliers</span>
                 </button>
 
-                <button 
+                <button
                   onClick={() => setActiveMapFilter('Buyers')}
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all ${activeMapFilter === 'Buyers' ? 'bg-blue-50 border-blue-300 text-blue-800' : 'border-slate-200 text-slate-600'}`}
                 >
@@ -640,7 +640,7 @@ export const LandingPage = () => {
                   <span>Buyers</span>
                 </button>
 
-                <button 
+                <button
                   onClick={() => setActiveMapFilter('Logistics')}
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all ${activeMapFilter === 'Logistics' ? 'bg-purple-50 border-purple-300 text-purple-800' : 'border-slate-200 text-slate-600'}`}
                 >
@@ -648,23 +648,23 @@ export const LandingPage = () => {
                   <span>Logistics</span>
                 </button>
 
-                <button 
+                <button
                   onClick={() => setActiveMapFilter('Active Routes')}
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all ${activeMapFilter === 'Active Routes' ? 'bg-amber-50 border-amber-300 text-amber-800' : 'border-slate-200 text-slate-600'}`}
                 >
                   <span className="w-2 h-2 rounded-full bg-[#f59e0b]" />
                   <span>Active Routes</span>
                 </button>
-              </div>              {/* Live Google Map Container with Interactive Overlays */}
+              </div>
+              {/* Live Google Map Container with Interactive Overlays */}
               <div className="relative rounded-2xl min-h-[360px] h-[360px] flex items-center justify-center overflow-hidden border border-emerald-100 shadow-inner bg-slate-100 group">
-                
+
                 {/* 1. Real-Time Live Google Maps Iframe Feed */}
                 <iframe
                   title="Live Google Map Ecosystem"
                   src={`https://maps.google.com/maps?q=${encodeURIComponent(getMapQuery())}&t=${mapType}&z=${mapZoom}&ie=UTF8&iwloc=&output=embed`}
-                  className={`absolute inset-0 w-full h-full border-0 transition-all duration-700 ${
-                    isInteractive ? 'pointer-events-auto ring-2 ring-[#0e9f6e]' : 'pointer-events-none'
-                  }`}
+                  className={`absolute inset-0 w-full h-full border-0 transition-all duration-700 ${isInteractive ? 'pointer-events-auto ring-2 ring-[#0e9f6e]' : 'pointer-events-none'
+                    }`}
                   style={{
                     filter: mapType === 'm' ? 'saturate(1.25) contrast(1.02)' : 'none'
                   }}
@@ -688,11 +688,10 @@ export const LandingPage = () => {
 
                   <button
                     onClick={() => setIsInteractive(!isInteractive)}
-                    className={`text-[10px] font-bold px-2.5 py-1.5 rounded-lg border shadow-md flex items-center gap-1 transition-all ${
-                      isInteractive 
-                        ? 'bg-[#0e6245] text-white border-[#0e6245]' 
+                    className={`text-[10px] font-bold px-2.5 py-1.5 rounded-lg border shadow-md flex items-center gap-1 transition-all ${isInteractive
+                        ? 'bg-[#0e6245] text-white border-[#0e6245]'
                         : 'bg-white/95 backdrop-blur-md text-slate-700 border-slate-200 hover:bg-white'
-                    }`}
+                      }`}
                     title="Toggle interactive map dragging and zooming"
                   >
                     <Navigation className="w-3 h-3" />
@@ -703,7 +702,7 @@ export const LandingPage = () => {
                 {/* Overlaid Animated Node Markers & Arcs (when not in full interactive mode) */}
                 {!isInteractive && (
                   <div className="absolute inset-0 pointer-events-none z-20">
-                    
+
                     {/* SVG Connecting Flow Lines */}
                     <svg className="w-full h-full opacity-70" viewBox="0 0 1000 500" fill="none">
                       <path d="M220 180 Q 420 120 660 210" stroke="#10b981" strokeWidth="2.5" strokeDasharray="6 6" className="animate-pulse" />
@@ -754,14 +753,14 @@ export const LandingPage = () => {
 
                 {/* Real Zoom Controls bottom right */}
                 <div className="absolute bottom-3 right-3 z-30 flex flex-col bg-white/95 backdrop-blur-md border border-slate-200 rounded-xl shadow-lg overflow-hidden text-slate-700">
-                  <button 
+                  <button
                     onClick={() => setMapZoom((prev) => Math.min(prev + 1, 16))}
                     className="p-2 hover:bg-emerald-50 hover:text-[#0e6245] border-b border-slate-100 transition-colors"
                     title="Zoom In"
                   >
                     <Plus className="w-3.5 h-3.5" />
                   </button>
-                  <button 
+                  <button
                     onClick={() => setMapZoom((prev) => Math.max(prev - 1, 2))}
                     className="p-2 hover:bg-emerald-50 hover:text-[#0e6245] transition-colors"
                     title="Zoom Out"
@@ -802,14 +801,14 @@ export const LandingPage = () => {
       {/* ========================================================================= */}
       {/* 8. REAL IMPACT: A MORE SUSTAINABLE TOMORROW (FOREST CANOPY)                */}
       {/* ========================================================================= */}
-      <section 
+      <section
         id="impact"
         className="py-24 px-6 relative bg-cover bg-center text-white"
         style={{ backgroundImage: `linear-gradient(rgba(10, 31, 20, 0.90), rgba(6, 23, 15, 0.95)), url(${forestCanopy})` }}
       >
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
+
             {/* Left Column: Heading & Button */}
             <div className="lg:col-span-5 space-y-5">
               <h2 className="text-3xl sm:text-4xl font-black tracking-tight leading-tight">
@@ -829,7 +828,7 @@ export const LandingPage = () => {
 
             {/* Right Column: 4 Translucent Metric Cards */}
             <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-4">
-              
+
               <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-5 text-center flex flex-col items-center justify-center space-y-2.5">
                 <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-emerald-400">
                   <Leaf className="w-5 h-5" />
@@ -874,7 +873,7 @@ export const LandingPage = () => {
       {/* ========================================================================= */}
       <section className="py-24 px-6 max-w-7xl mx-auto">
         <div className="space-y-10">
-          
+
           {/* Section Header with Carousel Arrows */}
           <div className="flex items-end justify-between">
             <div>
@@ -885,13 +884,13 @@ export const LandingPage = () => {
             </div>
 
             <div className="flex items-center gap-2">
-              <button 
+              <button
                 onClick={() => setTestimonialIndex(Math.max(0, testimonialIndex - 1))}
                 className="w-8 h-8 rounded-full border border-slate-300 flex items-center justify-center text-slate-600 hover:bg-slate-100 transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <button 
+              <button
                 onClick={() => setTestimonialIndex(Math.min(testimonials.length - 1, testimonialIndex + 1))}
                 className="w-8 h-8 rounded-full border border-slate-300 flex items-center justify-center text-slate-600 hover:bg-slate-100 transition-colors"
               >
@@ -902,7 +901,7 @@ export const LandingPage = () => {
 
           {/* 3 Testimonial Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            
+
             {/* Testimonial 1: Tata Steel */}
             <div className="bg-white p-7 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-6">
               <div className="space-y-4">
@@ -971,7 +970,7 @@ export const LandingPage = () => {
       {/* ========================================================================= */}
       <section className="px-6 pb-20 max-w-7xl mx-auto">
         <div className="bg-[#eaf5ef] rounded-3xl p-8 sm:p-12 border border-[#d2ecd9] relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-8 shadow-sm">
-          
+
           <div className="space-y-2 relative z-10">
             <span className="text-xs uppercase font-bold tracking-wider text-[#0e6245]">READY TO MAKE A DIFFERENCE?</span>
             <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
@@ -1008,9 +1007,9 @@ export const LandingPage = () => {
       {/* ========================================================================= */}
       <footer className="bg-[#071912] text-slate-300 pt-16 pb-12 px-6 border-t border-emerald-950">
         <div className="max-w-7xl mx-auto space-y-12">
-          
+
           <div className="grid grid-cols-1 md:grid-cols-5 gap-10">
-            
+
             {/* Brand column */}
             <div className="md:col-span-2 space-y-3">
               <div className="flex items-center gap-2.5">
@@ -1061,16 +1060,16 @@ export const LandingPage = () => {
                 <h5 className="font-bold text-white uppercase tracking-wider text-[11px] mb-2">Follow Us</h5>
                 <div className="flex items-center gap-3 text-slate-400">
                   <a href="#" className="hover:text-emerald-400 transition-colors" title="LinkedIn">
-                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.45c-.89 0-1.61.72-1.61 1.61 0 .89.72 1.61 1.61 1.61.89 0 1.61-.72 1.61-1.61 0-.89-.72-1.61-1.61-1.61Z"/></svg>
+                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.45c-.89 0-1.61.72-1.61 1.61 0 .89.72 1.61 1.61 1.61.89 0 1.61-.72 1.61-1.61 0-.89-.72-1.61-1.61-1.61Z" /></svg>
                   </a>
                   <a href="#" className="hover:text-emerald-400 transition-colors" title="Twitter / X">
-                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
                   </a>
                   <a href="#" className="hover:text-emerald-400 transition-colors" title="YouTube">
-                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" /></svg>
                   </a>
                   <a href="#" className="hover:text-emerald-400 transition-colors" title="Instagram">
-                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" /></svg>
                   </a>
                 </div>
               </div>
@@ -1093,12 +1092,12 @@ export const LandingPage = () => {
       {/* VIDEO MODAL                                                               */}
       {/* ========================================================================= */}
       {isVideoOpen && (
-        <div 
+        <div
           id="video-modal-backdrop"
           className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/80 backdrop-blur-md transition-opacity"
           onClick={() => setIsVideoOpen(false)}
         >
-          <div 
+          <div
             id="video-modal-container"
             className="relative w-full max-w-4xl bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden flex flex-col"
             onClick={(e) => e.stopPropagation()}
@@ -1118,7 +1117,7 @@ export const LandingPage = () => {
                   </p>
                 </div>
               </div>
-              <button 
+              <button
                 id="close-video-modal-btn"
                 type="button"
                 onClick={() => setIsVideoOpen(false)}
@@ -1131,12 +1130,12 @@ export const LandingPage = () => {
 
             {/* Responsive Video Frame */}
             <div className="relative w-full aspect-video bg-black">
-              <iframe 
+              <iframe
                 id="landing-video-iframe"
                 className="w-full h-full border-0"
-                src="https://www.youtube-nocookie.com/embed/XxjIdkO_eK4?autoplay=1&rel=0&modestbranding=1" 
+                src="https://www.youtube-nocookie.com/embed/XxjIdkO_eK4?autoplay=1&rel=0&modestbranding=1"
                 title="CarbonSphere Overview Video"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
               />
             </div>

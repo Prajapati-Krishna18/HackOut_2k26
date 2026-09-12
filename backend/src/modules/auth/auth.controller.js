@@ -20,7 +20,7 @@ class AuthController {
           new ApiResponse(
             HTTP_STATUS.CREATED,
             { user, token },
-            'Account registered successfully. A verification link has been sent to your email.'
+            'Account registered successfully. A verification code has been dispatched to your email.'
           )
         );
     } catch (error) {

@@ -68,6 +68,7 @@ const inventoryData = [
 ];
 
 export const SupplierDashboardPage = () => {
+  const { telemetry, isConnected, simulateSpike } = useSocket();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [timeRange, setTimeRange] = useState('Last 6 Months');
   const [metricsPeriod, setMetricsPeriod] = useState('Aug 2025');

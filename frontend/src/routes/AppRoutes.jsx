@@ -46,14 +46,7 @@ export const AppRoutes = () => {
         <Route path="/" element={<LandingPage />} />
       </Route>
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-      {/* 2. Public Authentication & Marketplace Discovery */}
-=======
-      {/* Public Search Results */}
-=======
       {/* Public Search & AI Match Results */}
->>>>>>> d08de3674cb6220dda93d93f546b08a234f2abf0
       <Route path="/search" element={<SearchResultsPage />} />
       <Route path="/search-results" element={<SearchResultsPage />} />
       <Route path="/marketplace/search" element={<SearchResultsPage />} />
@@ -62,7 +55,6 @@ export const AppRoutes = () => {
       <Route path="/ai-matching" element={<MatchingEnginePage />} />
 
       {/* 2. Authentication & Onboarding Flow */}
->>>>>>> 5bc5c426c835310bd80d33f44379fb60c86937ba
       <Route element={<AuthLayout />}>
         <Route path="/role-selection" element={<RoleSelectionPage />} />
         <Route path="/login" element={<LoginPage />} />

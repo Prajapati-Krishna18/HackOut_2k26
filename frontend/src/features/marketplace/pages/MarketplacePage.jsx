@@ -112,7 +112,7 @@ export const MarketplacePage = () => {
       available: '500 tons available',
       image: westernGhatsImg,
       standard: 'Verra (VCS)',
-      link: '/supplier/listings/CGT-001'
+      link: '/marketplace/listing/CGT-001'
     },
     {
       id: 'mkt-2',
@@ -126,7 +126,7 @@ export const MarketplacePage = () => {
       available: '1,000 tons available',
       image: windEnergyImg,
       standard: 'Gold Standard',
-      link: '/supplier/listings/CGT-001'
+      link: '/marketplace/listing/CGT-002'
     },
     {
       id: 'mkt-3',
@@ -140,7 +140,7 @@ export const MarketplacePage = () => {
       available: '750 tons available',
       image: solarPowerImg,
       standard: 'Gold Standard',
-      link: '/supplier/listings/CGT-001'
+      link: '/marketplace/listing/CGT-003'
     },
     {
       id: 'mkt-4',
@@ -154,7 +154,7 @@ export const MarketplacePage = () => {
       available: '400 tons available',
       image: blueCarbonImg,
       standard: 'Plan Vivo',
-      link: '/supplier/listings/CGT-001'
+      link: '/marketplace/listing/CGT-004'
     },
     {
       id: 'mkt-5',
@@ -168,7 +168,7 @@ export const MarketplacePage = () => {
       available: '600 tons available',
       image: methaneCaptureImg,
       standard: 'Verra (VCS)',
-      link: '/supplier/listings/CGT-001'
+      link: '/marketplace/listing/CGT-005'
     },
     {
       id: 'mkt-6',
@@ -182,7 +182,7 @@ export const MarketplacePage = () => {
       available: '1,200 tons available',
       image: agroforestryImg,
       standard: 'Climate Action Reserve (CAR)',
-      link: '/supplier/listings/CGT-001'
+      link: '/marketplace/listing/CGT-006'
     }
   ];
 

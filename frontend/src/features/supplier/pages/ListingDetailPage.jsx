@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { USER_ROLES } from '@/constants/roles';
 import {
   Leaf,
   ChevronLeft,
@@ -31,7 +32,8 @@ import {
   Coins,
   FileCheck,
   BadgeCheck,
-  AlertCircle
+  AlertCircle,
+  Bell
 } from 'lucide-react';
 
 // Photographic Assets
@@ -45,8 +47,14 @@ import heroBannerBg from '@/assets/supplier-dashboard-hero.jpg';
 
 export const ListingDetailPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { id } = useParams();
-  const { logout } = useAuth();
+  const { user, role, logout } = useAuth();
+
+  const isBuyerMode =
+    location.pathname.startsWith('/marketplace') ||
+    location.pathname.startsWith('/listings') ||
+    (role || '').toUpperCase() === USER_ROLES.BUYER;
 
   // Navigation & User State
   const [activeTab, setActiveTab] = useState('details');
@@ -164,110 +172,141 @@ export const ListingDetailPage = () => {
 
           {/* Brand Logo & Tagline */}
           <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#0e6245] to-[#10a37f] flex items-center justify-center text-white shadow-sm">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#0e6245] to-[#10b981] flex items-center justify-center text-white shadow-sm">
               <Leaf className="w-4 h-4 fill-current" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
-                Carbon<span className="text-[#0e9f6e]">Sphere</span>
-              </span>
-              <span className="text-[8.5px] font-medium text-slate-500 -mt-1 hidden sm:block">
+              <div className="flex items-center text-lg sm:text-xl font-black tracking-tight text-slate-900 leading-none">
+                <span>Carbon</span>
+                <span className="text-[#0e9f6e]">X</span>
+              </div>
+              <span className="text-[10px] text-slate-400 font-medium tracking-wide">
                 Cleaner Industries. Brighter Tomorrows.
               </span>
             </div>
           </Link>
 
-          {/* Navigation Items */}
-          <nav className="hidden lg:flex items-center gap-1.5 xl:gap-2">
-            <Link
-              to="/supplier/dashboard"
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all"
-            >
-              <Trees className="w-3.5 h-3.5" />
-              <span>Dashboard</span>
-            </Link>
+          {isBuyerMode ? (
+            /* Buyer / Marketplace Navigation Links */
+            <nav className="hidden lg:flex items-center gap-6 text-xs font-semibold text-slate-600">
+              <Link to="/buyer/dashboard" className="flex items-center gap-1.5 hover:text-[#0e6245] transition-colors pb-1 pt-1">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                <span>Dashboard</span>
+              </Link>
 
-            <Link
-              to="/supplier/dashboard"
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#0e6245] text-white shadow-xs"
-            >
-              <FileText className="w-3.5 h-3.5" />
-              <span>My Listings</span>
-            </Link>
+              <Link
+                to="/marketplace"
+                className="flex items-center gap-1.5 text-[#0e6245] border-b-2 border-[#0e6245] pb-1 pt-1 font-bold transition-all"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+                <span>Marketplace</span>
+              </Link>
 
-            <Link
-              to="/marketplace"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all"
-            >
-              <Globe className="w-3.5 h-3.5" />
-              <span>Marketplace</span>
-            </Link>
+              <Link to="/transactions" className="flex items-center gap-1.5 hover:text-[#0e6245] transition-colors pb-1 pt-1">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span>Orders</span>
+              </Link>
 
-            <Link
-              to="/orders"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all"
-            >
-              <ShoppingCart className="w-3.5 h-3.5" />
-              <span>Orders</span>
-            </Link>
+              <Link to="/transactions" className="flex items-center gap-1.5 hover:text-[#0e6245] transition-colors pb-1 pt-1">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                <span>Transactions</span>
+              </Link>
 
-            <Link
-              to="/transactions"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all"
-            >
-              <Coins className="w-3.5 h-3.5" />
-              <span>Transactions</span>
-            </Link>
+              <Link to="/sustainability" className="flex items-center gap-1.5 hover:text-[#0e6245] transition-colors pb-1 pt-1">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span>Reports</span>
+              </Link>
 
-            <Link
-              to="/sustainability"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all"
-            >
-              <FileCheck className="w-3.5 h-3.5" />
-              <span>Reports</span>
-            </Link>
+              <Link to="/notifications" className="flex items-center gap-1.5 hover:text-[#0e6245] transition-colors pb-1 pt-1">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                </svg>
+                <span>Messages</span>
+              </Link>
+            </nav>
+          ) : (
+            /* Supplier Command Center Navigation Links */
+            <nav className="hidden lg:flex items-center gap-1.5 xl:gap-2">
+              <Link
+                to="/supplier/dashboard"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all"
+              >
+                <Trees className="w-3.5 h-3.5" />
+                <span>Dashboard</span>
+              </Link>
 
-            <button
-              onClick={() => setIsContactModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all"
-            >
-              <MessageSquare className="w-3.5 h-3.5" />
-              <span>Messages</span>
-            </button>
-          </nav>
+              <Link
+                to="/supplier/dashboard?tab=listings"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#0e6245] text-white shadow-xs"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>My Listings</span>
+              </Link>
+
+              <Link
+                to="/marketplace"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all"
+              >
+                <Globe className="w-3.5 h-3.5" />
+                <span>Marketplace</span>
+              </Link>
+
+              <Link
+                to="/supplier/dashboard?tab=orders"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all"
+              >
+                <ShoppingCart className="w-3.5 h-3.5" />
+                <span>Orders</span>
+              </Link>
+
+              <Link
+                to="/supplier/dashboard?tab=transactions"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all"
+              >
+                <Coins className="w-3.5 h-3.5" />
+                <span>Transactions</span>
+              </Link>
+
+              <Link
+                to="/supplier/dashboard?tab=reports"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all"
+              >
+                <FileCheck className="w-3.5 h-3.5" />
+                <span>Reports</span>
+              </Link>
+            </nav>
+          )}
 
           {/* Right Header Icons & Profile */}
           <div className="flex items-center gap-3">
-            {/* Notification Bell with Badge 9 */}
+            {/* Notification Bell with Badge */}
             <div className="relative p-2 rounded-full hover:bg-slate-100 cursor-pointer transition-colors">
-              <div className="w-4 h-4 text-slate-600">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full">
-                  <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-                  <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-                </svg>
-              </div>
+              <Bell className="w-4 h-4 text-slate-600" />
               <span className="absolute top-1 right-1 w-4 h-4 bg-rose-500 text-white rounded-full text-[9px] font-bold flex items-center justify-center ring-2 ring-white">
-                9
+                3
               </span>
             </div>
 
             {/* User Profile */}
-            <Link
-              to="/supplier/profile"
-              className="flex items-center gap-2 pl-2 border-l border-slate-200 group hover:bg-slate-50 p-1 rounded-xl transition-all"
-            >
-              <div className="w-8 h-8 rounded-full bg-[#072b1e] text-emerald-300 font-bold text-xs flex items-center justify-center shadow-xs overflow-hidden border border-emerald-600/30">
-                {savedPhoto ? (
-                  <img src={savedPhoto} alt="User" className="w-full h-full object-cover" />
-                ) : (
-                  <span>KP</span>
-                )}
+            <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
+              <div className="w-8 h-8 rounded-full bg-[#0e6245] text-white font-bold text-xs flex items-center justify-center shadow-xs">
+                KP
               </div>
               <div className="hidden sm:flex flex-col text-left">
                 <span className="text-xs font-bold text-slate-900 leading-tight">Krishna Prajapati</span>
-                <span className="text-[10px] text-slate-500 leading-tight">Supplier</span>
+                <span className="text-[10px] text-slate-500 leading-tight">{isBuyerMode ? 'Buyer' : 'Supplier'}</span>
               </div>
-            </Link>
+            </div>
           </div>
 
         </div>
@@ -281,11 +320,11 @@ export const ListingDetailPage = () => {
         {/* Back Link to Listings */}
         <div>
           <button
-            onClick={() => navigate('/supplier/dashboard')}
+            onClick={() => navigate(isBuyerMode ? '/marketplace' : '/supplier/dashboard')}
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-[#0e6245] transition-colors cursor-pointer group"
           >
             <ChevronLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-            <span>Back to My Listings</span>
+            <span>{isBuyerMode ? 'Back to Marketplace' : 'Back to My Listings'}</span>
           </button>
         </div>
 
@@ -315,6 +354,15 @@ export const ListingDetailPage = () => {
               <span>Listed on Jan 12, 2025</span>
               <span className="text-slate-300">|</span>
               <span className="font-mono text-slate-700 font-semibold">Listing ID: #CGT-001</span>
+              <span className="text-slate-300">|</span>
+              <span className="text-slate-500">Developer:</span>
+              <Link
+                to="/supplier/details"
+                className="font-bold text-[#0e6245] hover:underline flex items-center gap-1"
+              >
+                <span>GreenFuture Solutions Pvt. Ltd.</span>
+                <span className="bg-emerald-100 text-emerald-800 text-[10px] font-semibold px-2 py-0.5 rounded-full">Verified</span>
+              </Link>
             </div>
           </div>
 

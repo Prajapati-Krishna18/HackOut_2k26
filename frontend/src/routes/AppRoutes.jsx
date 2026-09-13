@@ -24,6 +24,7 @@ import SupplierDashboardPage from '@/features/supplier/pages/SupplierDashboardPa
 import SupplierProfilePage from '@/features/supplier/pages/SupplierProfilePage';
 import CreateListingPage from '@/features/supplier/pages/CreateListingPage';
 import ListingDetailPage from '@/features/supplier/pages/ListingDetailPage';
+import SupplierDetailPage from '@/features/supplier/pages/SupplierDetailPage';
 import BuyerDashboardPage from '@/features/buyer/pages/BuyerDashboardPage';
 import MatchingEnginePage from '@/features/matching-engine/pages/MatchingEnginePage';
 import OpportunityEnginePage from '@/features/opportunity-engine/pages/OpportunityEnginePage';
@@ -44,51 +45,60 @@ export const AppRoutes = () => {
         <Route path="/" element={<LandingPage />} />
       </Route>
 
-      {/* 2. Authentication & Onboarding Flow */}
+      {/* 2. Public Authentication & Marketplace Discovery */}
       <Route element={<AuthLayout />}>
         <Route path="/role-selection" element={<RoleSelectionPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/supplier/onboarding" element={<SupplierOnboardingPage />} />
-        <Route path="/onboarding/supplier" element={<SupplierOnboardingPage />} />
-        <Route path="/buyer/onboarding" element={<BuyerOnboardingPage />} />
-        <Route path="/onboarding/buyer" element={<BuyerOnboardingPage />} />
-        <Route path="/buyer/profile" element={<BuyerOnboardingPage />} />
-        <Route path="/admin/onboarding" element={<AdminOnboardingPage />} />
-        <Route path="/onboarding/admin" element={<AdminOnboardingPage />} />
-        <Route path="/supplier/dashboard" element={<SupplierDashboardPage />} />
-        <Route path="/buyer/dashboard" element={<BuyerDashboardPage />} />
+
+        {/* Public Marketplace & Verified Supplier Profiles */}
         <Route path="/marketplace" element={<MarketplacePage />} />
-        <Route path="/supplier/profile" element={<SupplierProfilePage />} />
-        <Route path="/profile" element={<SupplierProfilePage />} />
-        <Route path="/supplier/create-listing" element={<CreateListingPage />} />
-        <Route path="/supplier/listings/create" element={<CreateListingPage />} />
-        <Route path="/create-listing" element={<CreateListingPage />} />
-        <Route path="/supplier/listings/:id" element={<ListingDetailPage />} />
-        <Route path="/supplier/listing/:id" element={<ListingDetailPage />} />
-        <Route path="/supplier/listing-details" element={<ListingDetailPage />} />
-        <Route path="/listing-details" element={<ListingDetailPage />} />
-        <Route path="/listings/:id" element={<ListingDetailPage />} />
         <Route path="/marketplace/listing/:id" element={<ListingDetailPage />} />
+        <Route path="/listings/:id" element={<ListingDetailPage />} />
+        <Route path="/supplier/details" element={<SupplierDetailPage />} />
+        <Route path="/supplier/details/:id" element={<SupplierDetailPage />} />
+        <Route path="/supplier/:id" element={<SupplierDetailPage />} />
+        <Route path="/marketplace/supplier/:id" element={<SupplierDetailPage />} />
+        <Route path="/suppliers/:id" element={<SupplierDetailPage />} />
       </Route>
 
-      {/* 3. Authenticated App Workspaces */}
+      {/* 3. Authenticated Protected App Workspaces */}
       <Route element={<ProtectedRoute />}>
+
+        {/* 3A. Supplier Only Protected Workspace */}
+        <Route element={<RoleRoute allowedRoles={[USER_ROLES.SUPPLIER, USER_ROLES.ADMIN]} />}>
+          <Route path="/supplier/dashboard" element={<SupplierDashboardPage />} />
+          <Route path="/supplier/onboarding" element={<SupplierOnboardingPage />} />
+          <Route path="/onboarding/supplier" element={<SupplierOnboardingPage />} />
+          <Route path="/supplier/profile" element={<SupplierProfilePage />} />
+          <Route path="/profile" element={<SupplierProfilePage />} />
+          <Route path="/supplier/create-listing" element={<CreateListingPage />} />
+          <Route path="/supplier/listings/create" element={<CreateListingPage />} />
+          <Route path="/create-listing" element={<CreateListingPage />} />
+          <Route path="/supplier/listings/:id" element={<ListingDetailPage />} />
+          <Route path="/supplier/listing/:id" element={<ListingDetailPage />} />
+          <Route path="/supplier/listing-details" element={<ListingDetailPage />} />
+          <Route path="/listing-details" element={<ListingDetailPage />} />
+        </Route>
+
+        {/* 3B. Buyer Only Protected Workspace */}
+        <Route element={<RoleRoute allowedRoles={[USER_ROLES.BUYER, USER_ROLES.ADMIN]} />}>
+          <Route path="/buyer/dashboard" element={<BuyerDashboardPage />} />
+          <Route path="/buyer/onboarding" element={<BuyerOnboardingPage />} />
+          <Route path="/onboarding/buyer" element={<BuyerOnboardingPage />} />
+          <Route path="/buyer/profile" element={<BuyerOnboardingPage />} />
+        </Route>
+
+        {/* 3C. Admin Only Protected Workspace */}
+        <Route element={<RoleRoute allowedRoles={[USER_ROLES.ADMIN]} />}>
+          <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+          <Route path="/admin/onboarding" element={<AdminOnboardingPage />} />
+          <Route path="/onboarding/admin" element={<AdminOnboardingPage />} />
+        </Route>
+
+        {/* 3D. Authenticated Shared Workspace Features */}
         <Route element={<DashboardLayout />}>
-
-          {/* Buyer Specific Routes */}
-          <Route element={<RoleRoute allowedRoles={[USER_ROLES.BUYER, USER_ROLES.ADMIN]} />}>
-            <Route path="/buyer/dashboard" element={<BuyerDashboardPage />} />
-          </Route>
-
-          {/* Admin Specific Routes */}
-          <Route element={<RoleRoute allowedRoles={[USER_ROLES.ADMIN]} />}>
-            <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
-          </Route>
-
-          {/* Shared Ecosystem Features */}
-          <Route path="/marketplace" element={<MarketplacePage />} />
           <Route path="/matching-engine" element={<MatchingEnginePage />} />
           <Route path="/opportunity-engine" element={<OpportunityEnginePage />} />
           <Route path="/digital-twin" element={<DigitalTwinPage />} />
@@ -98,6 +108,7 @@ export const AppRoutes = () => {
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Route>
+
       </Route>
 
       {/* Catch-all fallback */}

@@ -91,7 +91,7 @@ export const BuyerDashboardPage = () => {
       volume: '500 tons CO₂',
       price: '₹ 2,800',
       image: westernGhatsImg,
-      link: '/supplier/listings/CGT-001'
+      link: '/marketplace/listing/CGT-001'
     },
     {
       id: 'proj-2',

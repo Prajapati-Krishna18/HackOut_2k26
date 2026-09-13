@@ -25,12 +25,7 @@ import {
   Quote,
   Clock,
   LogOut,
-  User,
-  Activity,
-  ShieldCheck,
-  Flame,
-  Gauge,
-  DollarSign
+  User
 } from 'lucide-react';
 import {
   BarChart,
@@ -44,9 +39,7 @@ import {
   Pie,
   Cell
 } from 'recharts';
-import { useSocket } from '@/context/SocketContext';
 import { Badge } from '@/components/ui/Badge';
-import { MetricCard } from '@/components/common/MetricCard';
 
 // Photographic background & vector graphics
 import heroBannerBg from '@/assets/supplier-dashboard-hero.jpg';
@@ -72,7 +65,6 @@ const inventoryData = [
 
 export const SupplierDashboardPage = () => {
   const { logout } = useAuth();
-  const { isConnected, telemetry, simulateSpike } = useSocket();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [timeRange, setTimeRange] = useState('Last 6 Months');
   const [metricsPeriod, setMetricsPeriod] = useState('Aug 2025');
@@ -307,173 +299,9 @@ export const SupplierDashboardPage = () => {
       {/* ========================================================================= */}
       <main className="max-w-[1536px] w-full mx-auto px-4 sm:px-8 lg:px-12 py-6 space-y-6 flex-1">
 
-              {/* ======================================================================= */}
-              {/* HERO GREETING BANNER WITH FACTORY & HILLS AMBIENCE                      */}
-              {/* ======================================================================= */}
-              <div
-                className="w-full rounded-3xl border border-slate-200/90 shadow-sm relative overflow-hidden bg-cover bg-right p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 min-h-[165px]"
-                style={{ backgroundImage: `url(${heroBannerBg})` }}
-              >
-                {/* Subtle daylight gradient fade on the left for crisp text contrast */}
-                <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent lg:w-[60%] pointer-events-none z-0" />
-
-                {/* Left Greeting Content */}
-                <div className="relative z-10 space-y-2 max-w-xl">
-                  <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 flex items-center gap-2">
-                    <span>Good Morning, <span className="text-[#0e9f6e]">Krishna!</span></span>
-                    <span>🌿</span>
-                  </h1>
-                  <p className="text-xs sm:text-sm text-slate-600 font-medium">
-                    Every ton you capture today builds a cleaner, greener tomorrow.
-                  </p>
-
-                  {/* Translucent Quote Pill */}
-                  <div className="pt-2">
-                    <div className="bg-white/85 backdrop-blur-md border border-white/70 rounded-xl px-3.5 py-2 shadow-xs flex items-center gap-2 max-w-md">
-                      <Quote className="w-3.5 h-3.5 text-slate-700 fill-slate-700 shrink-0 opacity-70" />
-                      <p className="text-[11px] font-serif italic text-slate-800 leading-snug">
-                        "Small actions in industry create big changes for our planet."
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Floating Cursive Script over the mountain landscape */}
-                <div className="absolute left-[54%] top-6 hidden xl:block pointer-events-none transform -rotate-6 z-10">
-                  <span className="font-serif italic text-slate-800 text-xs font-bold block leading-tight drop-shadow-sm">
-                    From<br />Emissions<br />to<br />Opportunities
-                  </span>
-                  <div className="w-10 h-0.5 bg-[#0e9f6e] rounded-full mt-0.5" />
-                </div>
-
-              </div>
-
-            {/* Real-time Dynamic IoT Sensor Telemetry Strip */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-              <div className="bg-white dark:bg-carbon-900 border border-slate-200 dark:border-carbon-800 p-3.5 rounded-2xl shadow-xs space-y-1">
-                <div className="flex items-center justify-between text-slate-500 text-[10px] uppercase font-bold tracking-wider">
-                  <span>CO₂ Capture Rate</span>
-                  <Activity className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
-                </div>
-                <div className="text-lg font-black text-slate-900 dark:text-white flex items-baseline gap-1">
-                  <span>{telemetry?.co2CaptureRate || 48.6}</span>
-                  <span className="text-[10px] font-semibold text-slate-400">kg/hr</span>
-                </div>
-                <div className="text-[9px] text-emerald-600 font-medium flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  <span>Telemetry active</span>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-carbon-900 border border-slate-200 dark:border-carbon-800 p-3.5 rounded-2xl shadow-xs space-y-1">
-                <div className="flex items-center justify-between text-slate-500 text-[10px] uppercase font-bold tracking-wider">
-                  <span>Gas Purity</span>
-                  <ShieldCheck className="w-3.5 h-3.5 text-cyan-500" />
-                </div>
-                <div className="text-lg font-black text-slate-900 dark:text-white flex items-baseline gap-1">
-                  <span>{telemetry?.purity || 99.72}</span>
-                  <span className="text-[10px] font-semibold text-slate-400">%</span>
-                </div>
-                <div className="text-[9px] text-cyan-600 font-medium">Beverage / Food Grade</div>
-              </div>
-
-              <div className="bg-white dark:bg-carbon-900 border border-slate-200 dark:border-carbon-800 p-3.5 rounded-2xl shadow-xs space-y-1">
-                <div className="flex items-center justify-between text-slate-500 text-[10px] uppercase font-bold tracking-wider">
-                  <span>Flue Temp</span>
-                  <Flame className="w-3.5 h-3.5 text-amber-500" />
-                </div>
-                <div className="text-lg font-black text-slate-900 dark:text-white flex items-baseline gap-1">
-                  <span>{telemetry?.temperature || 64.2}</span>
-                  <span className="text-[10px] font-semibold text-slate-400">°C</span>
-                </div>
-                <div className="text-[9px] text-slate-400 font-medium">Optimal thermal zone</div>
-              </div>
-
-              <div className="bg-white dark:bg-carbon-900 border border-slate-200 dark:border-carbon-800 p-3.5 rounded-2xl shadow-xs space-y-1">
-                <div className="flex items-center justify-between text-slate-500 text-[10px] uppercase font-bold tracking-wider">
-                  <span>Line Pressure</span>
-                  <Gauge className="w-3.5 h-3.5 text-indigo-500" />
-                </div>
-                <div className="text-lg font-black text-slate-900 dark:text-white flex items-baseline gap-1">
-                  <span>{telemetry?.pressure || 3.42}</span>
-                  <span className="text-[10px] font-semibold text-slate-400">bar</span>
-                </div>
-                <div className="text-[9px] text-slate-400 font-medium">Nominal pipeline feed</div>
-              </div>
-
-              <div className="bg-white dark:bg-carbon-900 border border-slate-200 dark:border-carbon-800 p-3.5 rounded-2xl shadow-xs space-y-1">
-                <div className="flex items-center justify-between text-slate-500 text-[10px] uppercase font-bold tracking-wider">
-                  <span>Power Load</span>
-                  <Zap className="w-3.5 h-3.5 text-yellow-500" />
-                </div>
-                <div className="text-lg font-black text-slate-900 dark:text-white flex items-baseline gap-1">
-                  <span>{telemetry?.energyConsumption || 142.8}</span>
-                  <span className="text-[10px] font-semibold text-slate-400">kWh</span>
-                </div>
-                <div className="text-[9px] text-emerald-600 font-medium">100% Renewable grid</div>
-              </div>
-
-              <div className="bg-white dark:bg-carbon-900 border border-slate-200 dark:border-carbon-800 p-3.5 rounded-2xl shadow-xs space-y-1">
-                <div className="flex items-center justify-between text-slate-500 text-[10px] uppercase font-bold tracking-wider">
-                  <span>Captured Today</span>
-                  <Leaf className="w-3.5 h-3.5 text-emerald-500" />
-                </div>
-                <div className="text-lg font-black text-emerald-700 dark:text-emerald-400 flex items-baseline gap-1">
-                  <span>{telemetry?.totalCapturedToday || 1.18}</span>
-                  <span className="text-[10px] font-semibold text-slate-400">Tons</span>
-                </div>
-                <div className="text-[9px] text-slate-400 font-medium">Real-time accumulation</div>
-              </div>
-            </div>
-
-            {/* Metric Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <MetricCard
-                title="Total Sequestered"
-                value={telemetry?.cumulativeCredits ? `${(telemetry.cumulativeCredits * 0.5).toFixed(0)}` : '1,920'}
-                unit="tCO2e"
-                change="+18.4%"
-                isPositive={true}
-                icon={Leaf}
-                subtitle="Live telemetry verified"
-              />
-              <MetricCard
-                title="Verified Credits"
-                value={telemetry?.cumulativeCredits ? `${telemetry.cumulativeCredits}` : '3,840'}
-                unit="VCUs"
-                change="+12.0%"
-                isPositive={true}
-                icon={ShieldCheck}
-                subtitle="Gold Standard / Puro.earth"
-              />
-              <MetricCard
-                title="Realized Revenue"
-                value={telemetry?.estimatedRevenue ? `$${telemetry.estimatedRevenue.toLocaleString()}` : '$192,000'}
-                unit="USD"
-                change="+24.8%"
-                isPositive={true}
-                icon={DollarSign}
-                subtitle="Escrow smart contracts"
-              />
-              <MetricCard
-                title="Market Clearance Rate"
-                value={`${telemetry?.captureEfficiency || 96.4}%`}
-                unit="Yield"
-                change="+3.1%"
-                isPositive={true}
-                icon={TrendingUp}
-                subtitle="AI Spot match rate"
-              />
-            </div>
-
-            {/* ========================================================================= */}
-            {/* 2. MAIN DASHBOARD CONTENT AREA                                            */}
-            {/* ========================================================================= */}
-            <main className="max-w-[1536px] w-full mx-auto px-4 sm:px-8 lg:px-12 py-6 space-y-6 flex-1">
-
-              {/* ======================================================================= */}
-              {/* HERO GREETING BANNER WITH FACTORY & HILLS AMBIENCE                      */}
-              {/* ======================================================================= */}
+        {/* ======================================================================= */}
+        {/* HERO GREETING BANNER WITH FACTORY & HILLS AMBIENCE                      */}
+        {/* ======================================================================= */}
               <div
                 className="w-full rounded-3xl border border-slate-200/90 shadow-sm relative overflow-hidden bg-cover bg-right p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 min-h-[165px]"
                 style={{ backgroundImage: `url(${heroBannerBg})` }}
@@ -1174,7 +1002,6 @@ export const SupplierDashboardPage = () => {
 
               </div>
             </div>
-          </main>
 
 
             {/* ========================================================================= */}

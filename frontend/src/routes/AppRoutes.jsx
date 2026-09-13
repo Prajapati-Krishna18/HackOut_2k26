@@ -58,6 +58,7 @@ export const AppRoutes = () => {
         <Route path="/onboarding/admin" element={<AdminOnboardingPage />} />
         <Route path="/supplier/dashboard" element={<SupplierDashboardPage />} />
         <Route path="/buyer/dashboard" element={<BuyerDashboardPage />} />
+        <Route path="/marketplace" element={<MarketplacePage />} />
         <Route path="/supplier/profile" element={<SupplierProfilePage />} />
         <Route path="/profile" element={<SupplierProfilePage />} />
         <Route path="/supplier/create-listing" element={<CreateListingPage />} />

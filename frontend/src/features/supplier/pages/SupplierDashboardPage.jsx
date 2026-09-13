@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import {
   Leaf,
@@ -25,7 +25,24 @@ import {
   Quote,
   Clock,
   LogOut,
-  User
+  User,
+  Search,
+  Filter,
+  CheckCircle2,
+  Download,
+  ExternalLink,
+  Eye,
+  Edit,
+  Trash2,
+  Check,
+  X,
+  Coins,
+  FileCheck,
+  BadgeCheck,
+  AlertCircle,
+  Building2,
+  ShieldCheck,
+  ArrowUpRight
 } from 'lucide-react';
 import {
   BarChart,
@@ -65,11 +82,62 @@ const inventoryData = [
 
 export const SupplierDashboardPage = () => {
   const { logout } = useAuth();
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabFromUrl = searchParams.get('tab');
+  const [activeTab, setActiveTabState] = useState(tabFromUrl || 'dashboard');
   const [timeRange, setTimeRange] = useState('Last 6 Months');
   const [metricsPeriod, setMetricsPeriod] = useState('Aug 2025');
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
+  const [listingSearch, setListingSearch] = useState('');
+  const [listingStatusFilter, setListingStatusFilter] = useState('all');
   const navigate = useNavigate();
+
+  const [notifications, setNotifications] = useState([
+    {
+      id: 1,
+      title: 'New Bid on #CGT-001',
+      desc: 'EcoFuel Corp offered ₹2,750 / ton for 100 tons.',
+      time: '10m ago',
+      unread: true,
+      link: '/supplier/listings/CGT-001'
+    },
+    {
+      id: 2,
+      title: 'Escrow Funds Deposited',
+      desc: '₹14,00,000 locked in smart contract escrow for Order #ORD-8492.',
+      time: '1h ago',
+      unread: true,
+      link: '/supplier/dashboard?tab=orders'
+    },
+    {
+      id: 3,
+      title: 'MRV Audit Completed',
+      desc: 'DNV GL issued verification certificate for Western Ghats batch #4.',
+      time: '1d ago',
+      unread: false,
+      link: '/supplier/dashboard?tab=reports'
+    }
+  ]);
+
+  const handleTabChange = (tab) => {
+    setActiveTabState(tab);
+    setSearchParams({ tab });
+  };
+
+  useEffect(() => {
+    if (tabFromUrl && tabFromUrl !== activeTab) {
+      setActiveTabState(tabFromUrl);
+    }
+  }, [tabFromUrl]);
+
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 3200);
+  };
 
   const savedPhoto = localStorage.getItem('carbonsphere_supplier_photo');
   const savedProfile = (() => {
@@ -122,8 +190,9 @@ export const SupplierDashboardPage = () => {
 
             {/* Dashboard Tab */}
             <button
-              onClick={() => setActiveTab('dashboard')}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${activeTab === 'dashboard'
+              type="button"
+              onClick={() => handleTabChange('dashboard')}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${activeTab === 'dashboard'
                 ? 'bg-[#0e6245] text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                 }`}
@@ -134,9 +203,10 @@ export const SupplierDashboardPage = () => {
 
             {/* My Listings */}
             <button
-              onClick={() => setActiveTab('listings')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${activeTab === 'listings'
-                ? 'bg-[#0e6245] text-white'
+              type="button"
+              onClick={() => handleTabChange('listings')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${activeTab === 'listings'
+                ? 'bg-[#0e6245] text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                 }`}
             >
@@ -147,7 +217,7 @@ export const SupplierDashboardPage = () => {
             {/* Create Listing Link */}
             <Link
               to="/supplier/create-listing"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-[#0e6245] hover:bg-emerald-100 border border-emerald-200 transition-all shadow-xs"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-[#0e6245] hover:bg-emerald-100 border border-emerald-200 transition-all shadow-xs cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Create Listing</span>
@@ -155,9 +225,10 @@ export const SupplierDashboardPage = () => {
 
             {/* Inventory */}
             <button
-              onClick={() => setActiveTab('inventory')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${activeTab === 'inventory'
-                ? 'bg-[#0e6245] text-white'
+              type="button"
+              onClick={() => handleTabChange('inventory')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${activeTab === 'inventory'
+                ? 'bg-[#0e6245] text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                 }`}
             >
@@ -167,9 +238,10 @@ export const SupplierDashboardPage = () => {
 
             {/* Orders */}
             <button
-              onClick={() => setActiveTab('orders')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${activeTab === 'orders'
-                ? 'bg-[#0e6245] text-white'
+              type="button"
+              onClick={() => handleTabChange('orders')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${activeTab === 'orders'
+                ? 'bg-[#0e6245] text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                 }`}
             >
@@ -179,9 +251,10 @@ export const SupplierDashboardPage = () => {
 
             {/* Transactions */}
             <button
-              onClick={() => setActiveTab('transactions')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${activeTab === 'transactions'
-                ? 'bg-[#0e6245] text-white'
+              type="button"
+              onClick={() => handleTabChange('transactions')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${activeTab === 'transactions'
+                ? 'bg-[#0e6245] text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                 }`}
             >
@@ -191,9 +264,10 @@ export const SupplierDashboardPage = () => {
 
             {/* Reports */}
             <button
-              onClick={() => setActiveTab('reports')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${activeTab === 'reports'
-                ? 'bg-[#0e6245] text-white'
+              type="button"
+              onClick={() => handleTabChange('reports')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${activeTab === 'reports'
+                ? 'bg-[#0e6245] text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                 }`}
             >
@@ -206,12 +280,84 @@ export const SupplierDashboardPage = () => {
           {/* Right Action Profile & Notifications */}
           <div className="flex items-center gap-3 shrink-0">
 
-            {/* Notification Bell with Badge */}
-            <div className="relative cursor-pointer p-1.5 rounded-full hover:bg-slate-100 text-slate-600 transition-colors">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1 right-1 w-4 h-4 bg-rose-500 text-white rounded-full text-[9px] font-bold flex items-center justify-center ring-2 ring-white">
-                2
-              </span>
+            {/* Notification Bell with Badge & Popover */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setShowNotifications(prev => !prev)}
+                className="relative cursor-pointer p-1.5 rounded-full hover:bg-slate-100 text-slate-600 transition-colors"
+              >
+                <Bell className="w-5 h-5" />
+                {notifications.filter(n => n.unread).length > 0 && (
+                  <span className="absolute top-1 right-1 w-4 h-4 bg-rose-500 text-white rounded-full text-[9px] font-bold flex items-center justify-center ring-2 ring-white">
+                    {notifications.filter(n => n.unread).length}
+                  </span>
+                )}
+              </button>
+
+              {showNotifications && (
+                <>
+                  <div
+                    className="fixed inset-0 z-40 cursor-default"
+                    onClick={() => setShowNotifications(false)}
+                  />
+                  <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-xl border border-slate-200/90 py-3 z-50 animate-fade-in text-xs">
+                    <div className="px-4 pb-2 border-b border-slate-100 flex items-center justify-between">
+                      <h4 className="font-bold text-slate-900 text-sm">Notifications</h4>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setNotifications(prev => prev.map(n => ({ ...n, unread: false })));
+                          showToast('All notifications marked as read');
+                        }}
+                        className="text-[11px] font-semibold text-[#0e6245] hover:underline cursor-pointer"
+                      >
+                        Mark all as read
+                      </button>
+                    </div>
+
+                    <div className="divide-y divide-slate-100 max-h-72 overflow-y-auto">
+                      {notifications.map((notif) => (
+                        <div
+                          key={notif.id}
+                          onClick={() => {
+                            setShowNotifications(false);
+                            if (notif.link.startsWith('/supplier/dashboard')) {
+                              const params = new URLSearchParams(notif.link.split('?')[1]);
+                              handleTabChange(params.get('tab') || 'dashboard');
+                            } else {
+                              navigate(notif.link);
+                            }
+                          }}
+                          className={`p-3.5 hover:bg-slate-50 cursor-pointer transition-colors flex items-start gap-3 ${notif.unread ? 'bg-emerald-50/50' : ''
+                            }`}
+                        >
+                          <div className="w-7 h-7 rounded-full bg-emerald-100 text-[#0e6245] flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
+                            <Leaf className="w-3.5 h-3.5 fill-current" />
+                          </div>
+                          <div className="flex-1 space-y-0.5">
+                            <div className="flex items-center justify-between">
+                              <h5 className="font-bold text-slate-900 text-xs">{notif.title}</h5>
+                              <span className="text-[10px] text-slate-400">{notif.time}</span>
+                            </div>
+                            <p className="text-[11px] text-slate-600 leading-snug">{notif.desc}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="pt-2 px-4 border-t border-slate-100 text-center">
+                      <Link
+                        to="/notifications"
+                        onClick={() => setShowNotifications(false)}
+                        className="text-xs font-bold text-[#0e6245] hover:underline block py-1"
+                      >
+                        View all notification history →
+                      </Link>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* User Profile Header with Dropdown & Logout */}
@@ -294,14 +440,25 @@ export const SupplierDashboardPage = () => {
         </div>
       </header>
 
+      {/* Floating Toast Notification */}
+      {toastMessage && (
+        <div className="fixed top-5 right-5 z-50 bg-[#0e6245] text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-2.5 text-xs font-semibold animate-fade-in border border-emerald-500/30">
+          <CheckCircle2 className="w-4 h-4 text-emerald-300 shrink-0" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
       {/* ========================================================================= */}
       {/* 2. MAIN DASHBOARD CONTENT AREA                                            */}
       {/* ========================================================================= */}
       <main className="max-w-[1536px] w-full mx-auto px-4 sm:px-8 lg:px-12 py-6 space-y-6 flex-1">
 
-        {/* ======================================================================= */}
-        {/* HERO GREETING BANNER WITH FACTORY & HILLS AMBIENCE                      */}
-        {/* ======================================================================= */}
+        {/* ----------------- TAB: DASHBOARD OVERVIEW ----------------- */}
+        {activeTab === 'dashboard' && (
+          <div className="space-y-6 animate-fade-in">
+            {/* ======================================================================= */}
+            {/* HERO GREETING BANNER WITH FACTORY & HILLS AMBIENCE                      */}
+            {/* ======================================================================= */}
               <div
                 className="w-full rounded-3xl border border-slate-200/90 shadow-sm relative overflow-hidden bg-cover bg-right p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 min-h-[165px]"
                 style={{ backgroundImage: `url(${heroBannerBg})` }}
@@ -946,8 +1103,711 @@ export const SupplierDashboardPage = () => {
                 </div>
 
               </div>
+            </div>
+          )}
 
-            </main>
+        {/* ----------------- TAB: MY LISTINGS ----------------- */}
+        {activeTab === 'listings' && (
+          <div className="space-y-6 animate-fade-in">
+            {/* Header with Title and Create Button */}
+            <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2 text-[#0e6245]">
+                  <ListTree className="w-5 h-5" />
+                  <span className="text-xs font-bold uppercase tracking-wider">Carbon Marketplace Inventory</span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-1">
+                  My Carbon Listings
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Manage, track performance, and create new verified carbon credit listings.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3 shrink-0">
+                <Link
+                  to="/supplier/create-listing"
+                  className="bg-[#0e6245] hover:bg-[#074732] active:scale-95 text-white font-bold py-2.5 px-5 rounded-full flex items-center gap-2 shadow-sm transition-all text-xs"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Create New Listing</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* 4 Summary Stats */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs">
+                <span className="text-[11px] font-semibold text-slate-500 block">Total Volume Listed</span>
+                <div className="text-xl font-black text-slate-900 mt-0.5">1,450 tons</div>
+                <span className="text-[10px] font-semibold text-emerald-600">tCO2e across 4 listings</span>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs">
+                <span className="text-[11px] font-semibold text-slate-500 block">Active Listings</span>
+                <div className="text-xl font-black text-slate-900 mt-0.5">3 Active</div>
+                <span className="text-[10px] font-semibold text-emerald-600">1 Pending Verra Audit</span>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs">
+                <span className="text-[11px] font-semibold text-slate-500 block">Average Price</span>
+                <div className="text-xl font-black text-slate-900 mt-0.5">₹2,725</div>
+                <span className="text-[10px] font-semibold text-slate-400">(~ $33.5 USD / ton)</span>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs">
+                <span className="text-[11px] font-semibold text-slate-500 block">Portfolio Valuation</span>
+                <div className="text-xl font-black text-[#0e6245] mt-0.5">₹ 39,50,000</div>
+                <span className="text-[10px] font-semibold text-slate-400">Total potential revenue</span>
+              </div>
+            </div>
+
+            {/* Filter & Search Bar */}
+            <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
+              {/* Search input */}
+              <div className="relative w-full sm:w-80">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+                <input
+                  type="text"
+                  placeholder="Search listings by title, ID, or standard..."
+                  value={listingSearch}
+                  onChange={(e) => setListingSearch(e.target.value)}
+                  className="w-full pl-9 pr-3 py-1.5 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-[#0e6245]"
+                />
+              </div>
+
+              {/* Status Filter Pills */}
+              <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto">
+                {['all', 'active', 'pending'].map((filter) => (
+                  <button
+                    key={filter}
+                    type="button"
+                    onClick={() => setListingStatusFilter(filter)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold capitalize transition-all cursor-pointer ${
+                      listingStatusFilter === filter
+                        ? 'bg-[#0e6245] text-white shadow-xs'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                  >
+                    {filter === 'all' ? 'All (4)' : filter === 'active' ? 'Active (3)' : 'Pending (1)'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Listings Grid / Table */}
+            <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-100 text-slate-400 font-semibold text-[11px] bg-slate-50/50">
+                      <th className="py-3.5 px-5 font-semibold">Listing ID & Title</th>
+                      <th className="py-3.5 px-4 font-semibold">Standard & Category</th>
+                      <th className="py-3.5 px-4 font-semibold">Available Volume</th>
+                      <th className="py-3.5 px-4 font-semibold">Unit Price</th>
+                      <th className="py-3.5 px-4 font-semibold">Status</th>
+                      <th className="py-3.5 px-4 font-semibold">Listed Date</th>
+                      <th className="py-3.5 px-5 font-semibold text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {[
+                      {
+                        id: 'CGT-001',
+                        title: 'Afforestation Carbon Credits – Western Ghats',
+                        location: 'Kodagu, Karnataka',
+                        standard: 'Verified Carbon Standard (VM0047)',
+                        category: 'Nature Based',
+                        volume: '500 tons CO₂',
+                        price: '₹2,800',
+                        status: 'active',
+                        date: '12 Jan 2025',
+                        link: '/supplier/listings/CGT-001'
+                      },
+                      {
+                        id: 'CL-002',
+                        title: 'Industrial High-Purity Liquified CO₂',
+                        location: 'Pune Industrial Park',
+                        standard: 'ISO 14064 / Beverage Grade',
+                        category: 'Carbon Capture',
+                        volume: '300 tons CO₂',
+                        price: '₹2,500',
+                        status: 'active',
+                        date: '10 Sep 2025',
+                        link: '/supplier/listings/CL-002'
+                      },
+                      {
+                        id: 'CL-003',
+                        title: 'Bio-based Fermentation Carbon Credits',
+                        location: 'Nashik Bio-Refinery',
+                        standard: 'Gold Standard (Audit in progress)',
+                        category: 'Biogenic Carbon',
+                        volume: '200 tons CO₂',
+                        price: '₹2,700',
+                        status: 'pending',
+                        date: '05 Sep 2025',
+                        link: '/supplier/listings/CL-003'
+                      },
+                      {
+                        id: 'CL-004',
+                        title: 'Direct Air Capture Mineralization',
+                        location: 'Bangalore Tech Zone',
+                        standard: 'Puro.earth Certified',
+                        category: 'Direct Air Capture',
+                        volume: '450 tons CO₂',
+                        price: '₹2,900',
+                        status: 'active',
+                        date: '01 Sep 2025',
+                        link: '/supplier/listings/CL-004'
+                      }
+                    ]
+                      .filter((l) => {
+                        const matchesFilter =
+                          listingStatusFilter === 'all' || l.status === listingStatusFilter;
+                        const matchesSearch =
+                          l.title.toLowerCase().includes(listingSearch.toLowerCase()) ||
+                          l.id.toLowerCase().includes(listingSearch.toLowerCase()) ||
+                          l.standard.toLowerCase().includes(listingSearch.toLowerCase());
+                        return matchesFilter && matchesSearch;
+                      })
+                      .map((item) => (
+                        <tr
+                          key={item.id}
+                          className="hover:bg-slate-50/80 transition-colors group cursor-pointer"
+                        >
+                          <td className="py-4 px-5">
+                            <div className="flex items-start gap-3">
+                              <div className="w-8 h-8 rounded-xl bg-emerald-100 text-[#0e6245] flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+                                <Leaf className="w-4 h-4 fill-current" />
+                              </div>
+                              <div>
+                                <Link
+                                  to={item.link}
+                                  className="font-bold text-slate-900 text-xs hover:text-[#0e6245] flex items-center gap-1.5"
+                                >
+                                  <span>{item.title}</span>
+                                  <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-[#0e6245]" />
+                                </Link>
+                                <span className="font-mono text-[10px] text-slate-400 block mt-0.5">
+                                  #{item.id} • {item.location}
+                                </span>
+                              </div>
+                            </div>
+                          </td>
+
+                          <td className="py-4 px-4">
+                            <span className="font-semibold text-slate-800 block text-[11px]">{item.category}</span>
+                            <span className="text-[10px] text-slate-400">{item.standard}</span>
+                          </td>
+
+                          <td className="py-4 px-4 font-bold text-slate-900">{item.volume}</td>
+
+                          <td className="py-4 px-4">
+                            <span className="font-black text-slate-900 text-xs">{item.price}</span>
+                            <span className="text-[10px] text-slate-400 block">/ ton</span>
+                          </td>
+
+                          <td className="py-4 px-4">
+                            <span
+                              className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold capitalize ${
+                                item.status === 'active'
+                                  ? 'bg-emerald-100 text-emerald-800'
+                                  : 'bg-amber-100 text-amber-800'
+                              }`}
+                            >
+                              {item.status}
+                            </span>
+                          </td>
+
+                          <td className="py-4 px-4 text-slate-500 text-[11px]">{item.date}</td>
+
+                          <td className="py-4 px-5 text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <Link
+                                to={item.link}
+                                className="px-3 py-1 rounded-lg bg-emerald-50 text-[#0e6245] hover:bg-[#0e6245] hover:text-white text-[11px] font-bold transition-all shadow-2xs"
+                              >
+                                View Details
+                              </Link>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate('/supplier/create-listing');
+                                }}
+                                className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors"
+                                title="Edit listing"
+                              >
+                                <Edit className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ----------------- TAB: INVENTORY ----------------- */}
+        {activeTab === 'inventory' && (
+          <div className="space-y-6 animate-fade-in">
+            {/* Header */}
+            <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2 text-[#0e6245]">
+                  <Boxes className="w-5 h-5" />
+                  <span className="text-xs font-bold uppercase tracking-wider">Storage & Supply Warehouse</span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-1">
+                  Carbon Inventory & Facilities
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Real-time stock volumes, tank telemetry, and certified storage allocation.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => showToast('Batch allocation updated for spot marketplace')}
+                  className="bg-[#0e6245] hover:bg-[#074732] text-white font-bold py-2.5 px-4 rounded-full text-xs transition-all shadow-sm cursor-pointer"
+                >
+                  Allocate Spot Batch
+                </button>
+              </div>
+            </div>
+
+            {/* 4 Inventory Metric Cards */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs space-y-1">
+                <div className="flex items-center justify-between text-slate-500 text-[10px] uppercase font-bold">
+                  <span>Available Stock</span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                </div>
+                <div className="text-2xl font-black text-slate-900">1,050 t</div>
+                <div className="text-[10px] text-emerald-600 font-semibold">52% of total inventory</div>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs space-y-1">
+                <div className="flex items-center justify-between text-slate-500 text-[10px] uppercase font-bold">
+                  <span>Reserved in Escrow</span>
+                  <span className="w-2 h-2 rounded-full bg-blue-500" />
+                </div>
+                <div className="text-2xl font-black text-slate-900">600 t</div>
+                <div className="text-[10px] text-blue-600 font-semibold">24% pending contract settlement</div>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs space-y-1">
+                <div className="flex items-center justify-between text-slate-500 text-[10px] uppercase font-bold">
+                  <span>In Logistics Transit</span>
+                  <span className="w-2 h-2 rounded-full bg-cyan-500" />
+                </div>
+                <div className="text-2xl font-black text-slate-900">300 t</div>
+                <div className="text-[10px] text-cyan-600 font-semibold">15% scheduled cryogenic delivery</div>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs space-y-1">
+                <div className="flex items-center justify-between text-slate-500 text-[10px] uppercase font-bold">
+                  <span>Sold & Retired</span>
+                  <span className="w-2 h-2 rounded-full bg-slate-700" />
+                </div>
+                <div className="text-2xl font-black text-slate-900">500 t</div>
+                <div className="text-[10px] text-slate-500 font-semibold">9% permanent retirement verified</div>
+              </div>
+            </div>
+
+            {/* Storage Facilities Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
+                    Tank Farm Alpha
+                  </span>
+                  <span className="text-xs font-bold text-emerald-600">Optimal (90%)</span>
+                </div>
+                <h4 className="font-bold text-slate-900 text-sm">Cryogenic Liquid CO₂</h4>
+                <p className="text-[11px] text-slate-500">
+                  Capacity: 500T • Stored: 450T • Temp: -28°C • Pressure: 18.2 bar • Purity: 99.8%
+                </p>
+                <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                  <div className="bg-emerald-500 h-full rounded-full w-[90%]" />
+                </div>
+              </div>
+
+              <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md">
+                    Facility Bravo
+                  </span>
+                  <span className="text-xs font-bold text-blue-600">Active (87%)</span>
+                </div>
+                <h4 className="font-bold text-slate-900 text-sm">Biogenic Gas Buffer</h4>
+                <p className="text-[11px] text-slate-500">
+                  Capacity: 400T • Stored: 350T • Temp: 22°C • Pressure: 14.5 bar • Purity: 99.4%
+                </p>
+                <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                  <div className="bg-blue-500 h-full rounded-full w-[87%]" />
+                </div>
+              </div>
+
+              <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-purple-700 bg-purple-50 px-2 py-0.5 rounded-md">
+                    Sector Charlie
+                  </span>
+                  <span className="text-xs font-bold text-purple-600">Live (81%)</span>
+                </div>
+                <h4 className="font-bold text-slate-900 text-sm">Western Ghats Forestry Buffer</h4>
+                <p className="text-[11px] text-slate-500">
+                  Total Reserve: 800T • Verified: 650T • Standard: Verra VCS VM0047 • Vintage: 2022-2030
+                </p>
+                <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                  <div className="bg-purple-500 h-full rounded-full w-[81%]" />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ----------------- TAB: ORDERS ----------------- */}
+        {activeTab === 'orders' && (
+          <div className="space-y-6 animate-fade-in">
+            {/* Header */}
+            <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2 text-[#0e6245]">
+                  <ShoppingCart className="w-5 h-5" />
+                  <span className="text-xs font-bold uppercase tracking-wider">Trade Orders & Smart Contracts</span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-1">
+                  Purchase Orders & Escrow Settlements
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Manage buyer purchase commitments, track logistics dispatch, and release escrow funds.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="px-3 py-1 bg-emerald-50 border border-emerald-200 rounded-full text-xs font-bold text-[#0e6245]">
+                  Total Orders: 4
+                </span>
+              </div>
+            </div>
+
+            {/* Orders Table */}
+            <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-100 text-slate-400 font-semibold text-[11px] bg-slate-50/50">
+                      <th className="py-3.5 px-5 font-semibold">Order ID & Buyer</th>
+                      <th className="py-3.5 px-4 font-semibold">Listing Batch</th>
+                      <th className="py-3.5 px-4 font-semibold">Quantity</th>
+                      <th className="py-3.5 px-4 font-semibold">Total Escrow Value</th>
+                      <th className="py-3.5 px-4 font-semibold">Escrow Status</th>
+                      <th className="py-3.5 px-5 font-semibold text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {[
+                      {
+                        id: 'ORD-8492',
+                        buyer: 'EcoFuel Corp',
+                        verified: true,
+                        batch: '#CGT-001 (Western Ghats)',
+                        tons: '500 tons CO₂',
+                        value: '₹ 14,00,000',
+                        status: 'In Escrow',
+                        statusColor: 'bg-blue-100 text-blue-800',
+                        action: 'Release Escrow'
+                      },
+                      {
+                        id: 'ORD-8371',
+                        buyer: 'GreenTransport Ltd',
+                        verified: true,
+                        batch: '#CL-002 (Industrial High-Purity)',
+                        tons: '250 tons CO₂',
+                        value: '₹ 6,25,000',
+                        status: 'Dispatched',
+                        statusColor: 'bg-amber-100 text-amber-800',
+                        action: 'Track Logistics'
+                      },
+                      {
+                        id: 'ORD-8209',
+                        buyer: 'Tata Steel Sustainability',
+                        verified: true,
+                        batch: '#CL-004 (Direct Air Capture)',
+                        tons: '400 tons CO₂',
+                        value: '₹ 11,60,000',
+                        status: 'Completed',
+                        statusColor: 'bg-emerald-100 text-emerald-800',
+                        action: 'Download Certificate'
+                      },
+                      {
+                        id: 'ORD-8115',
+                        buyer: 'CleanAir Global Fund',
+                        verified: false,
+                        batch: '#CL-003 (Bio-Fermentation)',
+                        tons: '100 tons CO₂',
+                        value: '₹ 2,70,000',
+                        status: 'Under Review',
+                        statusColor: 'bg-slate-100 text-slate-800',
+                        action: 'Review Offer'
+                      }
+                    ].map((order) => (
+                      <tr key={order.id} className="hover:bg-slate-50/80 transition-colors">
+                        <td className="py-4 px-5">
+                          <div className="font-bold text-slate-900 font-mono">#{order.id}</div>
+                          <div className="flex items-center gap-1 text-[11px] text-slate-600 font-medium mt-0.5">
+                            <span>{order.buyer}</span>
+                            {order.verified && (
+                              <BadgeCheck className="w-3.5 h-3.5 text-[#0e9f6e] fill-emerald-50 inline" />
+                            )}
+                          </div>
+                        </td>
+
+                        <td className="py-4 px-4 font-medium text-slate-800">{order.batch}</td>
+
+                        <td className="py-4 px-4 font-bold text-slate-900">{order.tons}</td>
+
+                        <td className="py-4 px-4 font-black text-[#0e6245] text-xs">{order.value}</td>
+
+                        <td className="py-4 px-4">
+                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${order.statusColor}`}>
+                            {order.status}
+                          </span>
+                        </td>
+
+                        <td className="py-4 px-5 text-right">
+                          <button
+                            type="button"
+                            onClick={() => showToast(`Action '${order.action}' triggered for ${order.id}`)}
+                            className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-[#0e6245] hover:text-white text-slate-700 text-xs font-bold transition-all cursor-pointer shadow-2xs"
+                          >
+                            {order.action}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ----------------- TAB: TRANSACTIONS ----------------- */}
+        {activeTab === 'transactions' && (
+          <div className="space-y-6 animate-fade-in">
+            {/* Header */}
+            <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2 text-[#0e6245]">
+                  <Receipt className="w-5 h-5" />
+                  <span className="text-xs font-bold uppercase tracking-wider">Financial Ledger & Smart Contracts</span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-1">
+                  Transactions & Payout Ledger
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Transparent escrow releases, verified buyer payments, and banking settlements.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => showToast('Withdrawal initiated to registered HDFC Bank account')}
+                  className="bg-[#0e6245] hover:bg-[#074732] text-white font-bold py-2.5 px-5 rounded-full text-xs transition-all shadow-sm cursor-pointer"
+                >
+                  Withdraw to Bank
+                </button>
+              </div>
+            </div>
+
+            {/* Wallet & Balance Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-1">
+                <span className="text-[11px] font-semibold text-slate-500 block">Total Realized Revenue</span>
+                <div className="text-2xl font-black text-slate-900">₹ 1,58,25,000</div>
+                <span className="text-[10px] text-emerald-600 font-semibold">(~ $192,900 USD) settled</span>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-1">
+                <span className="text-[11px] font-semibold text-slate-500 block">Pending Escrow Funds</span>
+                <div className="text-2xl font-black text-blue-600">₹ 14,00,000</div>
+                <span className="text-[10px] text-slate-400 font-medium">Releasing in 48h on delivery</span>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-1">
+                <span className="text-[11px] font-semibold text-slate-500 block">Available for Withdrawal</span>
+                <div className="text-2xl font-black text-[#0e6245]">₹ 42,50,000</div>
+                <span className="text-[10px] text-slate-400 font-medium">Instant transfer available</span>
+              </div>
+            </div>
+
+            {/* Transactions Table */}
+            <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-100 text-slate-400 font-semibold text-[11px] bg-slate-50/50">
+                      <th className="py-3.5 px-5 font-semibold">Tx ID & Date</th>
+                      <th className="py-3.5 px-4 font-semibold">Buyer Organization</th>
+                      <th className="py-3.5 px-4 font-semibold">Payment Type</th>
+                      <th className="py-3.5 px-4 font-semibold">Gross Amount</th>
+                      <th className="py-3.5 px-4 font-semibold">Platform Fee</th>
+                      <th className="py-3.5 px-4 font-semibold">Net Payout</th>
+                      <th className="py-3.5 px-5 font-semibold text-right">Receipt</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {[
+                      {
+                        tx: 'TX-94021',
+                        date: '12 Sep 2025',
+                        buyer: 'EcoFuel Corp',
+                        type: 'Smart Contract Escrow Deposit',
+                        gross: '₹ 14,00,000',
+                        fee: '₹ 28,000 (2%)',
+                        net: '₹ 13,72,000'
+                      },
+                      {
+                        tx: 'TX-93881',
+                        date: '08 Sep 2025',
+                        buyer: 'Tata Steel Sustainability',
+                        type: 'Direct Settlement Payout',
+                        gross: '₹ 11,60,000',
+                        fee: '₹ 23,200 (2%)',
+                        net: '₹ 11,36,800'
+                      },
+                      {
+                        tx: 'TX-92144',
+                        date: '28 Aug 2025',
+                        buyer: 'GreenTransport Ltd',
+                        type: 'Milestone Escrow Release',
+                        gross: '₹ 6,25,000',
+                        fee: '₹ 12,500 (2%)',
+                        net: '₹ 6,12,500'
+                      }
+                    ].map((tx) => (
+                      <tr key={tx.tx} className="hover:bg-slate-50/80 transition-colors">
+                        <td className="py-4 px-5">
+                          <span className="font-mono font-bold text-slate-900">{tx.tx}</span>
+                          <span className="text-[10px] text-slate-400 block mt-0.5">{tx.date}</span>
+                        </td>
+                        <td className="py-4 px-4 font-bold text-slate-800">{tx.buyer}</td>
+                        <td className="py-4 px-4 text-slate-600">{tx.type}</td>
+                        <td className="py-4 px-4 font-medium text-slate-900">{tx.gross}</td>
+                        <td className="py-4 px-4 text-slate-400">{tx.fee}</td>
+                        <td className="py-4 px-4 font-black text-[#0e6245]">{tx.net}</td>
+                        <td className="py-4 px-5 text-right">
+                          <button
+                            type="button"
+                            onClick={() => showToast(`Invoice downloaded for ${tx.tx}`)}
+                            className="px-3 py-1 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold inline-flex items-center gap-1 shadow-2xs"
+                          >
+                            <Download className="w-3 h-3" />
+                            <span>PDF</span>
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ----------------- TAB: REPORTS ----------------- */}
+        {activeTab === 'reports' && (
+          <div className="space-y-6 animate-fade-in">
+            {/* Header */}
+            <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2 text-[#0e6245]">
+                  <BarChart3 className="w-5 h-5" />
+                  <span className="text-xs font-bold uppercase tracking-wider">Compliance & Audit Verification</span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-1">
+                  Sustainability & MRV Audit Reports
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Automated telemetry verified carbon capture documentation, Puro.earth certificates, and ESG exports.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => showToast('Generated latest ESG carbon audit report')}
+                  className="bg-[#0e6245] hover:bg-[#074732] text-white font-bold py-2.5 px-5 rounded-full text-xs transition-all shadow-sm cursor-pointer"
+                >
+                  Generate Report
+                </button>
+              </div>
+            </div>
+
+            {/* Reports List */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {[
+                {
+                  title: 'Monthly Carbon Capture Verification (August 2025)',
+                  desc: 'Comprehensive telemetry and sensor validation logs verified by DNV GL for spot carbon compliance.',
+                  size: '3.2 MB',
+                  format: 'PDF'
+                },
+                {
+                  title: 'Gold Standard Additionality & Co-Benefits Audit',
+                  desc: 'Western Ghats biodiversity assessment and tribal community economic development review.',
+                  size: '4.8 MB',
+                  format: 'PDF'
+                },
+                {
+                  title: 'Annual Corporate Scope 1 & 2 Emissions Offset Ledger',
+                  desc: 'Full breakdown of verified offsets issued, transferred, and permanently retired.',
+                  size: '1.4 MB',
+                  format: 'CSV'
+                },
+                {
+                  title: 'Continuous IoT Sensor Telemetry Stream Logs (Last 30 Days)',
+                  desc: 'Raw line pressure, gas purity, and capture rate readings at 1-second resolution.',
+                  size: '8.5 MB',
+                  format: 'CSV'
+                }
+              ].map((report, idx) => (
+                <div
+                  key={idx}
+                  className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-5 sm:p-6 flex flex-col justify-between space-y-4"
+                >
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-[#0e6245] border border-emerald-200/70">
+                        {report.format} Document
+                      </span>
+                      <span className="text-[11px] text-slate-400 font-medium">{report.size}</span>
+                    </div>
+                    <h4 className="font-bold text-slate-900 text-sm">{report.title}</h4>
+                    <p className="text-xs text-slate-500 leading-relaxed">{report.desc}</p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => showToast(`Downloaded: ${report.title}`)}
+                    className="w-full py-2.5 rounded-2xl bg-slate-50 hover:bg-[#0e6245] hover:text-white border border-slate-200/80 text-slate-700 font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Download {report.format}</span>
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
 
             {/* ========================================================================= */}
@@ -1005,11 +1865,11 @@ export const SupplierDashboardPage = () => {
 
               </div>
             </div>
+      </main>
 
-
-            {/* ========================================================================= */}
-            {/* 9. FOOTER (WHITE / CLEAN MINIMAL)                                         */}
-            {/* ========================================================================= */}
+      {/* ========================================================================= */}
+      {/* 9. FOOTER (WHITE / CLEAN MINIMAL)                                         */}
+      {/* ========================================================================= */}
             <footer className="bg-white border-t border-slate-100 py-6 px-4 sm:px-8 lg:px-12 text-slate-500 text-xs">
               <div className="max-w-[1536px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
 

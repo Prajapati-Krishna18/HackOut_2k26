@@ -45,10 +45,13 @@ export const AppRoutes = () => {
         <Route path="/" element={<LandingPage />} />
       </Route>
 
-      {/* Public Search Results */}
+      {/* Public Search & AI Match Results */}
       <Route path="/search" element={<SearchResultsPage />} />
       <Route path="/search-results" element={<SearchResultsPage />} />
       <Route path="/marketplace/search" element={<SearchResultsPage />} />
+      <Route path="/ai-match-results" element={<MatchingEnginePage />} />
+      <Route path="/ai-matches" element={<MatchingEnginePage />} />
+      <Route path="/ai-matching" element={<MatchingEnginePage />} />
 
       {/* 2. Authentication & Onboarding Flow */}
       <Route element={<AuthLayout />}>

@@ -159,7 +159,7 @@ export const CreateListingPage = () => {
       setIsSubmitting(false);
       showToast('Carbon credit listing published successfully!');
       setTimeout(() => {
-        navigate('/supplier/dashboard');
+        navigate('/supplier/listings/CGT-001');
       }, 1200);
     }, 1000);
   };

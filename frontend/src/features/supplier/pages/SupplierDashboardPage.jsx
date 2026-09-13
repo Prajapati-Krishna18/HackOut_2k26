@@ -703,9 +703,12 @@ export const SupplierDashboardPage = () => {
                     <tbody className="divide-y divide-slate-100">
 
                       {/* Row 1 */}
-                      <tr className="hover:bg-slate-50/80 transition-colors">
-                        <td className="py-3 font-bold text-slate-900">#CL-001</td>
-                        <td className="py-3 text-slate-700">Captured CO₂</td>
+                      <tr
+                        onClick={() => navigate('/supplier/listings/CGT-001')}
+                        className="hover:bg-slate-50/80 transition-colors cursor-pointer group"
+                      >
+                        <td className="py-3 font-bold text-[#0e6245] group-hover:underline">#CGT-001</td>
+                        <td className="py-3 text-slate-700 font-medium">Afforestation CO₂</td>
                         <td className="py-3 text-slate-700">500 tons</td>
                         <td className="py-3 font-medium text-slate-900">₹2,800</td>
                         <td className="py-3">
@@ -713,9 +716,9 @@ export const SupplierDashboardPage = () => {
                             Active
                           </span>
                         </td>
-                        <td className="py-3 text-slate-500">10 Sep 2025</td>
-                        <td className="py-3 text-right text-slate-400 cursor-pointer hover:text-slate-600">
-                          <MoreVertical className="w-4 h-4 ml-auto" />
+                        <td className="py-3 text-slate-500">12 Jan 2025</td>
+                        <td className="py-3 text-right text-slate-400 group-hover:text-[#0e6245]">
+                          <ArrowRight className="w-3.5 h-3.5 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
                         </td>
                       </tr>
 

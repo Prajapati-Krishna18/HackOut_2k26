@@ -23,6 +23,7 @@ import AdminOnboardingPage from '@/features/admin/pages/AdminOnboardingPage';
 import SupplierDashboardPage from '@/features/supplier/pages/SupplierDashboardPage';
 import SupplierProfilePage from '@/features/supplier/pages/SupplierProfilePage';
 import CreateListingPage from '@/features/supplier/pages/CreateListingPage';
+import ListingDetailPage from '@/features/supplier/pages/ListingDetailPage';
 import BuyerDashboardPage from '@/features/buyer/pages/BuyerDashboardPage';
 import MatchingEnginePage from '@/features/matching-engine/pages/MatchingEnginePage';
 import OpportunityEnginePage from '@/features/opportunity-engine/pages/OpportunityEnginePage';
@@ -61,6 +62,12 @@ export const AppRoutes = () => {
         <Route path="/supplier/create-listing" element={<CreateListingPage />} />
         <Route path="/supplier/listings/create" element={<CreateListingPage />} />
         <Route path="/create-listing" element={<CreateListingPage />} />
+        <Route path="/supplier/listings/:id" element={<ListingDetailPage />} />
+        <Route path="/supplier/listing/:id" element={<ListingDetailPage />} />
+        <Route path="/supplier/listing-details" element={<ListingDetailPage />} />
+        <Route path="/listing-details" element={<ListingDetailPage />} />
+        <Route path="/listings/:id" element={<ListingDetailPage />} />
+        <Route path="/marketplace/listing/:id" element={<ListingDetailPage />} />
       </Route>
 
       {/* 3. Authenticated App Workspaces */}

@@ -50,9 +50,19 @@ export const AppRoutes = () => {
       <Route path="/search" element={<SearchResultsPage />} />
       <Route path="/search-results" element={<SearchResultsPage />} />
       <Route path="/marketplace/search" element={<SearchResultsPage />} />
-      <Route path="/ai-match-results" element={<MatchingEnginePage />} />
+      
+      {/* Public AI Matching Engine Routes */}
+      <Route path="/ai" element={<MatchingEnginePage />} />
+      <Route path="/ai-match" element={<MatchingEnginePage />} />
       <Route path="/ai-matches" element={<MatchingEnginePage />} />
       <Route path="/ai-matching" element={<MatchingEnginePage />} />
+      <Route path="/ai-match-results" element={<MatchingEnginePage />} />
+      <Route path="/matching-engine" element={<MatchingEnginePage />} />
+      <Route path="/matching" element={<MatchingEnginePage />} />
+      <Route path="/buyer/ai-matches" element={<MatchingEnginePage />} />
+      <Route path="/buyer/matching-engine" element={<MatchingEnginePage />} />
+      <Route path="/opportunity-engine" element={<OpportunityEnginePage />} />
+      <Route path="/opportunities" element={<OpportunityEnginePage />} />
 
       {/* 2. Authentication & Onboarding Flow */}
       <Route element={<AuthLayout />}>

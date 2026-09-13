@@ -1630,7 +1630,14 @@ export const LandingPage = () => {
       {isSearchModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-start justify-center p-4 pt-20 overflow-y-auto animate-fade-in">
           <div className="bg-white rounded-3xl max-w-xl w-full p-6 space-y-4 shadow-2xl border border-slate-200">
-            <div className="flex items-center gap-3 border-b border-slate-100 pb-3">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                setIsSearchModalOpen(false);
+                navigate(searchQuery.trim() ? `/search?q=${encodeURIComponent(searchQuery.trim())}` : '/search');
+              }}
+              className="flex items-center gap-3 border-b border-slate-100 pb-3"
+            >
               <Search className="w-5 h-5 text-slate-400" />
               <input 
                 type="text"
@@ -1640,6 +1647,12 @@ export const LandingPage = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none"
               />
+              <button
+                type="submit"
+                className="bg-[#0e6245] text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-xs"
+              >
+                Search
+              </button>
               <button 
                 type="button" 
                 onClick={() => setIsSearchModalOpen(false)}
@@ -1647,7 +1660,7 @@ export const LandingPage = () => {
               >
                 <X className="w-4 h-4" />
               </button>
-            </div>
+            </form>
 
             <div className="space-y-2 text-xs">
               <span className="text-slate-400 font-bold uppercase text-[10px] tracking-wider block">Popular Categories</span>
@@ -1655,19 +1668,17 @@ export const LandingPage = () => {
                 {[
                   'Verra VCS Credits',
                   'Gold Standard GS-ACC',
-                  'Commercial Greenhouses',
                   'Direct Air Capture (DAC)',
-                  'Biochar Agriculture',
-                  'Concrete CO2 Mineralization'
+                  'Biochar (BiCRS)',
+                  'Enhanced Rock Weathering',
+                  'Marine / Blue Carbon'
                 ].map((tag) => (
                   <button
                     key={tag}
                     type="button"
                     onClick={() => {
-                      setSearchQuery(tag);
-                      showToast(`Filtered by ${tag}`);
                       setIsSearchModalOpen(false);
-                      setIsOpportunitiesModalOpen(true);
+                      navigate(`/search?q=${encodeURIComponent(tag)}`);
                     }}
                     className="px-3 py-1.5 bg-slate-100 hover:bg-emerald-50 hover:text-[#0e6245] rounded-xl text-slate-700 font-medium transition-colors cursor-pointer"
                   >

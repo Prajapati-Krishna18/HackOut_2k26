@@ -36,7 +36,7 @@ export const RoleSelectionPage = () => {
     if (selectedRole === USER_ROLES.SUPPLIER) {
       navigate('/supplier/onboarding');
     } else if (selectedRole === USER_ROLES.BUYER) {
-      navigate('/buyer/dashboard');
+      navigate('/buyer/onboarding');
     } else if (selectedRole === USER_ROLES.ADMIN) {
       navigate('/admin/dashboard');
     }

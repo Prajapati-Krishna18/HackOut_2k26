@@ -1,30 +1,37 @@
 import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { env } from '../config/env.js';
 import { logger } from './logger.js';
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 /**
- * Creates and configures Nodemailer transporter
+ * Creates and configures Nodemailer transporter dynamically
  */
 const createTransporter = () => {
-  if (env.SMTP.USER && env.SMTP.PASS) {
-    if (env.SMTP.HOST) {
-      return nodemailer.createTransport({
-        host: env.SMTP.HOST,
-        port: env.SMTP.PORT || 587,
-        secure: env.SMTP.SECURE || false,
-        auth: {
-          user: env.SMTP.USER,
-          pass: env.SMTP.PASS
-        }
-      });
-    } else {
-      // Default to Gmail service if host is omitted
+  // Always load fresh environment variables
+  dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+
+  const host = process.env.SMTP_HOST || env.SMTP.HOST || '';
+  const user = (process.env.SMTP_USER || env.SMTP.USER || '').trim();
+  const pass = (process.env.SMTP_PASS || env.SMTP.PASS || '').trim();
+  const port = parseInt(process.env.SMTP_PORT || env.SMTP.PORT || '465', 10);
+  const secure = process.env.SMTP_SECURE === 'true' || port === 465;
+
+  if (user && pass) {
+    if (host.includes('gmail') || user.includes('@gmail.com')) {
       return nodemailer.createTransport({
         service: 'gmail',
-        auth: {
-          user: env.SMTP.USER,
-          pass: env.SMTP.PASS
-        }
+        auth: { user, pass }
+      });
+    } else if (host) {
+      return nodemailer.createTransport({
+        host,
+        port,
+        secure,
+        auth: { user, pass }
       });
     }
   }

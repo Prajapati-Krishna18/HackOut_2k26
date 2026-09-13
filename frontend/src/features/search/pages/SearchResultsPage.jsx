@@ -1,1122 +1,1121 @@
 import React, { useState, useMemo } from 'react';
-import { useSearchParams, useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   Search,
   Filter,
-  SlidersHorizontal,
-  ArrowUpDown,
-  Grid,
-  List,
   MapPin,
-  ShieldCheck,
-  CheckCircle2,
-  Sparkles,
-  Leaf,
-  ShoppingCart,
   Heart,
-  Eye,
-  ArrowRight,
   ChevronDown,
-  Layers,
-  Globe,
-  DollarSign,
-  Calendar,
   X,
   RotateCcw,
   Check,
-  Building2,
-  TrendingUp,
-  FileCheck,
-  ExternalLink,
   Plus,
-  Scale,
-  Award,
-  Zap
+  Minus,
+  ArrowLeft,
+  ArrowRight,
+  Bell,
+  Sparkles,
+  ShieldCheck,
+  CheckCircle2,
+  Wind,
+  Sun,
+  Droplets,
+  Layers,
+  LayoutDashboard,
+  Store,
+  ShoppingCart,
+  Receipt,
+  FileText,
+  MessageSquare,
+  Globe
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 // Assets
-import biocharImg from '@/assets/industry-algae.jpg';
-import dacImg from '@/assets/industry-greenhouses.jpg';
-import forestImg from '@/assets/forest-canopy.jpg';
-import basaltImg from '@/assets/western-ghats-lake.jpg';
-import streamImg from '@/assets/western-ghats-stream.jpg';
-import sunriseImg from '@/assets/western-ghats-sunrise.jpg';
+import windImg from '@/assets/project-wind.jpg';
+import solarImg from '@/assets/project-solar.jpg';
+import hydroImg from '@/assets/western-ghats-lake.jpg';
+import heroBgImg from '@/assets/western-ghats-sunrise.jpg';
+import forestBannerImg from '@/assets/forest-canopy.jpg';
+import mapBgImg from '@/assets/western-ghats-map.jpg';
 
-// Comprehensive Mock Data for Carbon Credits & Projects Search
-const ALL_LISTINGS = [
+// Initial Project Dataset matching the exact design
+const INITIAL_PROJECTS = [
   {
-    id: 'CS-BC-904',
-    title: 'High-Purity Hardwood Biochar Carbon Removal',
-    supplier: 'TerraChar Sequestration Facilities',
-    supplierVerified: true,
-    location: 'Kodagu, Karnataka, India',
-    region: 'India',
-    method: 'Biochar (BiCRS)',
-    durability: '500+ Years',
-    durabilityCategory: '500+ Years',
-    pricePerTonne: 145,
-    availableTonnes: 12500,
-    mrvStandard: 'Puro.earth CORC',
+    id: 'TN-WIND-01',
+    title: 'Tamil Nadu Wind Energy Project',
+    badge: 'Verified',
+    badgeType: 'verified',
+    category: 'Renewable Energy',
+    typeIcon: 'wind',
+    location: 'Coimbatore, Tamil Nadu, India',
+    region: 'South India',
+    country: 'India',
+    description: 'Generates clean electricity through wind turbines, reducing fossil fuel dependence.',
+    standard: 'Verra (VCS)',
+    sdgs: ['SDG 7', 'SDG 13'],
+    coBenefit: 'Community Benefit',
+    pricePerTon: 2600,
+    availableTons: 1000,
+    image: windImg,
+    coordinates: { top: '78%', left: '46%' },
     vintage: '2025/2026',
-    rating: 'AAA',
-    image: biocharImg,
-    sdgGoals: ['SDG 13: Climate Action', 'SDG 15: Life on Land', 'SDG 8: Decent Work'],
-    description: 'Engineered pyrolysis converting certified sustainable agricultural residues into high-porosity carbon-fixing biochar for agroforestry soil enhancement.',
-    aiMatchScore: 98,
-    isSpotAvailable: true
+    supplier: 'Tamil Nadu Clean Power Corp'
   },
   {
-    id: 'CS-DAC-102',
-    title: 'Geological Basalt Mineralization DAC',
-    supplier: 'GeoCapture Nordics & Deccan',
-    supplierVerified: true,
-    location: 'Deccan Traps, Maharashtra, India',
-    region: 'India',
-    method: 'Direct Air Capture (DAC)',
-    durability: '10,000+ Years',
-    durabilityCategory: '10,000+ Years',
-    pricePerTonne: 290,
-    availableTonnes: 4500,
-    mrvStandard: 'Isometric Certified',
-    vintage: '2026',
-    rating: 'AAA+',
-    image: dacImg,
-    sdgGoals: ['SDG 13: Climate Action', 'SDG 9: Industry & Innovation'],
-    description: 'Ultra-low energy direct air capture system with automated sub-surface injection and permanent calcium-silicate rock mineralization.',
-    aiMatchScore: 96,
-    isSpotAvailable: true
-  },
-  {
-    id: 'CS-FOR-701',
-    title: 'Western Ghats Native Agroforestry Restoration',
-    supplier: 'Sahyadri Biosphere Stewardship Trust',
-    supplierVerified: true,
-    location: 'Wayanad & Coorg, Western Ghats, India',
-    region: 'India',
-    method: 'Forestry & Nature',
-    durability: '100+ Years',
-    durabilityCategory: '100+ Years',
-    pricePerTonne: 65,
-    availableTonnes: 28000,
-    mrvStandard: 'Verra VCS + CCB Gold',
+    id: 'RJ-SOLAR-02',
+    title: 'Rajasthan Solar Power',
+    badge: 'Gold Standard',
+    badgeType: 'gold',
+    category: 'Renewable Energy',
+    typeIcon: 'sun',
+    location: 'Jodhpur, Rajasthan, India',
+    region: 'North India',
+    country: 'India',
+    description: 'Utility-scale solar project supplying clean energy to the grid.',
+    standard: 'Gold Standard',
+    sdgs: ['SDG 7', 'SDG 13'],
+    coBenefit: 'Job Creation',
+    pricePerTon: 2750,
+    availableTons: 750,
+    image: solarImg,
+    coordinates: { top: '35%', left: '32%' },
     vintage: '2025',
-    rating: 'AA+',
-    image: forestImg,
-    sdgGoals: ['SDG 15: Life on Land', 'SDG 6: Clean Water', 'SDG 1: No Poverty'],
-    description: 'Community-led ecological restoration planting 45 native canopy tree species across degraded riparian corridors, verified by high-res LiDAR satellite telemetry.',
-    aiMatchScore: 94,
-    isSpotAvailable: true
+    supplier: 'Thar Solar Parks Ltd'
   },
   {
-    id: 'CS-ERW-301',
-    title: 'Enhanced Rock Weathering (Basalt Cropland Silicate)',
-    supplier: 'Silicate Horizon Earth Labs',
-    supplierVerified: true,
-    location: 'Indo-Gangetic Plain, Punjab, India',
-    region: 'India',
-    method: 'Enhanced Rock Weathering',
-    durability: '1,000+ Years',
-    durabilityCategory: '1,000+ Years',
-    pricePerTonne: 95,
-    availableTonnes: 18500,
-    mrvStandard: 'Isometric Certified',
+    id: 'UK-HYDRO-03',
+    title: 'Himalayan Hydro Power',
+    badge: 'Verified',
+    badgeType: 'verified',
+    category: 'Renewable Energy',
+    typeIcon: 'hydro',
+    location: 'Uttarakhand, India',
+    region: 'North India',
+    country: 'India',
+    description: 'Run-of-river hydro project generating clean and reliable energy.',
+    standard: 'Verra (VCS)',
+    sdgs: ['SDG 7', 'SDG 6'],
+    coBenefit: 'Biodiversity',
+    pricePerTon: 2900,
+    availableTons: 500,
+    image: hydroImg,
+    coordinates: { top: '24%', left: '42%' },
+    vintage: '2026',
+    supplier: 'Himalayan Eco-Hydel Grid'
+  },
+  {
+    id: 'MH-WIND-04',
+    title: 'Maharashtra Wind Farm',
+    badge: 'Verified',
+    badgeType: 'verified',
+    category: 'Renewable Energy',
+    typeIcon: 'wind',
+    location: 'Satara, Maharashtra, India',
+    region: 'West India',
+    country: 'India',
+    description: "Large-scale wind farm contributing to India's clean energy goals.",
+    standard: 'Climate Action Reserve (CAR)',
+    sdgs: ['SDG 7', 'SDG 13'],
+    coBenefit: 'Local Employment',
+    pricePerTon: 2500,
+    availableTons: 1200,
+    image: windImg,
+    coordinates: { top: '56%', left: '36%' },
     vintage: '2025/2026',
-    rating: 'AAA',
-    image: basaltImg,
-    sdgGoals: ['SDG 13: Climate Action', 'SDG 2: Zero Hunger'],
-    description: 'Fine-milled volcanic basalt spreading on agricultural farmlands accelerating atmospheric CO2 drawdown through natural chemical carbonation.',
-    aiMatchScore: 92,
-    isSpotAvailable: true
+    supplier: 'Sahyadri Wind Energy Co'
   },
   {
-    id: 'CS-BLU-502',
-    title: 'Coastal Mangrove Blue Carbon & Estuary Sequestration',
-    supplier: 'Sundarbans Marine Delta Conservation',
-    supplierVerified: true,
-    location: 'Sundarbans, West Bengal, India',
-    region: 'India',
-    method: 'Marine / Blue Carbon',
-    durability: '100+ Years',
-    durabilityCategory: '100+ Years',
-    pricePerTonne: 78,
-    availableTonnes: 14200,
-    mrvStandard: 'Gold Standard / Verra',
+    id: 'GJ-SOLAR-05',
+    title: 'Gujarat Solar Initiative',
+    badge: 'Verified',
+    badgeType: 'verified',
+    category: 'Renewable Energy',
+    typeIcon: 'sun',
+    location: 'Kutch, Gujarat, India',
+    region: 'West India',
+    country: 'India',
+    description: 'Solar project helping industrial consumers transition to clean energy.',
+    standard: 'Verra (VCS)',
+    sdgs: ['SDG 7', 'SDG 9'],
+    coBenefit: 'Community Development',
+    pricePerTon: 2650,
+    availableTons: 900,
+    image: solarImg,
+    coordinates: { top: '44%', left: '26%' },
     vintage: '2025',
-    rating: 'AA',
-    image: streamImg,
-    sdgGoals: ['SDG 14: Life Below Water', 'SDG 13: Climate Action'],
-    description: 'High-density saline mangrove reforestation providing storm surge resilience and deep anaerobic soil carbon storage.',
-    aiMatchScore: 89,
-    isSpotAvailable: false
-  },
-  {
-    id: 'CS-MET-605',
-    title: 'Anaerobic Dairy Biogas & Methane Pyrolysis',
-    supplier: 'GreenGrid BioEnergy Cooperative',
-    supplierVerified: true,
-    location: 'Anand, Gujarat, India',
-    region: 'India',
-    method: 'Methane Capture & Utilization',
-    durability: '500+ Years',
-    durabilityCategory: '500+ Years',
-    pricePerTonne: 110,
-    availableTonnes: 8600,
-    mrvStandard: 'Puro.earth CORC',
-    vintage: '2026',
-    rating: 'AAA',
-    image: sunriseImg,
-    sdgGoals: ['SDG 7: Affordable Clean Energy', 'SDG 12: Responsible Consumption'],
-    description: 'Capturing enteric & agricultural fugitive methane, converting methane into green hydrogen and solid carbon black for circular tire manufacturing.',
-    aiMatchScore: 87,
-    isSpotAvailable: true
-  },
-  {
-    id: 'CS-IND-408',
-    title: 'Direct Point-Source Flue Gas Mineralization',
-    supplier: 'EcoCement Carbon Solutions',
-    supplierVerified: true,
-    location: 'Surat Industrial Corridor, Gujarat, India',
-    region: 'India',
-    method: 'Industrial Point Source',
-    durability: '10,000+ Years',
-    durabilityCategory: '10,000+ Years',
-    pricePerTonne: 165,
-    availableTonnes: 9200,
-    mrvStandard: 'Puro.earth CORC',
-    vintage: '2025/2026',
-    rating: 'AAA',
-    image: biocharImg,
-    sdgGoals: ['SDG 9: Industry & Infrastructure', 'SDG 11: Sustainable Cities'],
-    description: 'Post-combustion CO2 scrubbing with lime kiln waste slurry producing lightweight carbonated concrete aggregates for green construction.',
-    aiMatchScore: 85,
-    isSpotAvailable: true
-  },
-  {
-    id: 'CS-DAC-209',
-    title: 'Solar-Powered Modular Direct Air Capture (Southeast Asia)',
-    supplier: 'EquatorAir Clean Tech',
-    supplierVerified: true,
-    location: 'Sarawak, Malaysia',
-    region: 'Southeast Asia',
-    method: 'Direct Air Capture (DAC)',
-    durability: '10,000+ Years',
-    durabilityCategory: '10,000+ Years',
-    pricePerTonne: 310,
-    availableTonnes: 3200,
-    mrvStandard: 'Isometric Certified',
-    vintage: '2026',
-    rating: 'AAA+',
-    image: dacImg,
-    sdgGoals: ['SDG 13: Climate Action', 'SDG 7: Clean Energy'],
-    description: 'Tropical humidity direct air capture powered 100% by colocated floating solar arrays with ultra-stable saline aquifer injection.',
-    aiMatchScore: 84,
-    isSpotAvailable: true
+    supplier: 'Rann Green Power Ltd'
   }
 ];
 
 export const SearchResultsPage = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { user } = useAuth();
 
   // Search Query
-  const initialQuery = searchParams.get('q') || '';
-  const [searchQuery, setSearchQuery] = useState(initialQuery);
+  const [searchQuery, setSearchQuery] = useState('renewable energy');
 
-  // Active Method Filter Chip
-  const [activeMethod, setActiveMethod] = useState('All');
+  // Filter States
+  const [selectedTypes, setSelectedTypes] = useState(['Renewable Energy']);
+  const [minPrice, setMinPrice] = useState(500);
+  const [maxPrice, setMaxPrice] = useState(5000);
+  const [selectedRegion, setSelectedRegion] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedStandards, setSelectedStandards] = useState(['Verra (VCS)']);
+  const [selectedCoBenefits, setSelectedCoBenefits] = useState([]);
 
-  // Filters State
-  const [selectedStandards, setSelectedStandards] = useState([]);
-  const [selectedRegions, setSelectedRegions] = useState([]);
-  const [selectedDurabilities, setSelectedDurabilities] = useState([]);
-  const [maxPrice, setMaxPrice] = useState(400);
-  const [onlySpotAvailable, setOnlySpotAvailable] = useState(false);
-  const [onlyVerifiedSuppliers, setOnlyVerifiedSuppliers] = useState(false);
+  // Sorting
+  const [sortBy, setSortBy] = useState('Relevance');
 
-  // Sort Option
-  const [sortBy, setSortBy] = useState('relevance'); // 'relevance' | 'price-asc' | 'price-desc' | 'durability' | 'volume'
+  // Favorites
+  const [favoriteIds, setFavoriteIds] = useState([]);
 
-  // View Mode: 'grid' | 'list' | 'map'
-  const [viewMode, setViewMode] = useState('grid');
+  // Active Map Pin highlight
+  const [activePinId, setActivePinId] = useState(null);
 
-  // Saved / Favorited Listings (IDs)
-  const [savedListingIds, setSavedListingIds] = useState(['CS-BC-904']);
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
 
-  // Comparison Dock (IDs)
-  const [comparedListingIds, setComparedListingIds] = useState([]);
-  const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
+  // Modal Detail State
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [purchaseQuantity, setPurchaseQuantity] = useState(50);
+  const [isOrdered, setIsOrdered] = useState(false);
 
-  // Quick Purchase / Offtake Order Modal State
-  const [purchaseModalListing, setPurchaseModalListing] = useState(null);
-  const [orderQuantity, setOrderQuantity] = useState(100);
-  const [beneficiaryName, setBeneficiaryName] = useState(user?.name || 'GreenFuture Solutions');
-  const [isOrderSubmitted, setIsOrderSubmitted] = useState(false);
-
-  // Toast Notification
-  const [toastText, setToastText] = useState(null);
-
-  const showToast = (text) => {
-    setToastText(text);
-    setTimeout(() => setToastText(null), 3500);
+  // Toast
+  const [toastMessage, setToastMessage] = useState(null);
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3500);
   };
 
-  // Available Filter Options
-  const methodsList = [
-    'All',
-    'Biochar (BiCRS)',
-    'Direct Air Capture (DAC)',
-    'Enhanced Rock Weathering',
-    'Forestry & Nature',
-    'Marine / Blue Carbon',
-    'Methane Capture & Utilization',
-    'Industrial Point Source'
-  ];
-
-  const standardsList = [
-    'Puro.earth CORC',
-    'Isometric Certified',
-    'Verra VCS + CCB Gold',
-    'Gold Standard / Verra'
-  ];
-
-  const regionsList = ['India', 'Southeast Asia', 'Global'];
-  const durabilitiesList = ['10,000+ Years', '1,000+ Years', '500+ Years', '100+ Years'];
-
-  // Handle Search Submit
-  const handleSearchSubmit = (e) => {
-    if (e) e.preventDefault();
-    setSearchParams(searchQuery ? { q: searchQuery } : {});
-    showToast(`Searching for "${searchQuery || 'all carbon credits'}"...`);
-  };
-
-  // Toggle Checkbox in Filters
-  const toggleArrayItem = (list, setList, item) => {
-    setList((prev) =>
-      prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
+  // Filter Toggle Helpers
+  const toggleType = (type) => {
+    setSelectedTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
     );
   };
 
-  // Reset All Filters
+  const toggleStandard = (std) => {
+    setSelectedStandards((prev) =>
+      prev.includes(std) ? prev.filter((s) => s !== std) : [...prev, std]
+    );
+  };
+
+  const toggleCoBenefit = (benefit) => {
+    setSelectedCoBenefits((prev) =>
+      prev.includes(benefit) ? prev.filter((b) => b !== benefit) : [...prev, benefit]
+    );
+  };
+
   const resetFilters = () => {
-    setSearchQuery('');
-    setActiveMethod('All');
-    setSelectedStandards([]);
-    setSelectedRegions([]);
-    setSelectedDurabilities([]);
-    setMaxPrice(400);
-    setOnlySpotAvailable(false);
-    setOnlyVerifiedSuppliers(false);
-    setSortBy('relevance');
-    setSearchParams({});
+    setSearchQuery('renewable energy');
+    setSelectedTypes(['Renewable Energy']);
+    setMinPrice(500);
+    setMaxPrice(5000);
+    setSelectedRegion('');
+    setSelectedCountry('');
+    setSelectedStandards(['Verra (VCS)']);
+    setSelectedCoBenefits([]);
+    setSortBy('Relevance');
     showToast('Filters reset to default.');
   };
 
-  // Toggle Save to Favorites
+  const clearAllFilters = () => {
+    setSelectedTypes([]);
+    setMinPrice(500);
+    setMaxPrice(5000);
+    setSelectedRegion('');
+    setSelectedCountry('');
+    setSelectedStandards([]);
+    setSelectedCoBenefits([]);
+    showToast('All filters cleared.');
+  };
+
   const toggleFavorite = (id, e) => {
     if (e) e.stopPropagation();
-    setSavedListingIds((prev) => {
+    setFavoriteIds((prev) => {
       const exists = prev.includes(id);
       if (exists) {
-        showToast('Removed from Watchlist.');
+        showToast('Removed from favorites.');
         return prev.filter((item) => item !== id);
       } else {
-        showToast('Saved to Watchlist!');
+        showToast('Saved to favorites!');
         return [...prev, id];
       }
     });
   };
 
-  // Toggle Compare
-  const toggleCompare = (id, e) => {
-    if (e) e.stopPropagation();
-    setComparedListingIds((prev) => {
-      if (prev.includes(id)) {
-        return prev.filter((item) => item !== id);
-      }
-      if (prev.length >= 3) {
-        showToast('You can compare up to 3 listings simultaneously.');
-        return prev;
-      }
-      showToast('Added to Comparison Dock!');
-      return [...prev, id];
-    });
-  };
-
-  // Filtered and Sorted Listings
-  const filteredListings = useMemo(() => {
-    return ALL_LISTINGS.filter((item) => {
-      // 1. Text Query Search
+  // Search Filter Calculation
+  const filteredProjects = useMemo(() => {
+    return INITIAL_PROJECTS.filter((project) => {
+      // 1. Text Search Query
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
-        const matchesQuery =
-          item.title.toLowerCase().includes(q) ||
-          item.supplier.toLowerCase().includes(q) ||
-          item.method.toLowerCase().includes(q) ||
-          item.location.toLowerCase().includes(q) ||
-          item.id.toLowerCase().includes(q) ||
-          item.mrvStandard.toLowerCase().includes(q);
-        if (!matchesQuery) return false;
+        const matches =
+          project.title.toLowerCase().includes(q) ||
+          project.category.toLowerCase().includes(q) ||
+          project.location.toLowerCase().includes(q) ||
+          project.standard.toLowerCase().includes(q) ||
+          project.description.toLowerCase().includes(q);
+        if (!matches) return false;
       }
 
-      // 2. Method Chip
-      if (activeMethod !== 'All' && item.method !== activeMethod) {
+      // 2. Project Types
+      if (selectedTypes.length > 0 && !selectedTypes.includes(project.category)) {
         return false;
       }
 
-      // 3. Standards Filter
-      if (selectedStandards.length > 0 && !selectedStandards.includes(item.mrvStandard)) {
+      // 3. Standards
+      if (selectedStandards.length > 0 && !selectedStandards.includes(project.standard)) {
         return false;
       }
 
-      // 4. Region Filter
-      if (selectedRegions.length > 0 && !selectedRegions.includes(item.region)) {
+      // 4. Region
+      if (selectedRegion && project.region !== selectedRegion) {
         return false;
       }
 
-      // 5. Durability Filter
-      if (
-        selectedDurabilities.length > 0 &&
-        !selectedDurabilities.includes(item.durabilityCategory)
-      ) {
+      // 5. Country
+      if (selectedCountry && project.country !== selectedCountry) {
         return false;
       }
 
-      // 6. Max Price
-      if (item.pricePerTonne > maxPrice) {
+      // 6. Price Range
+      if (project.pricePerTon < minPrice || project.pricePerTon > maxPrice) {
         return false;
       }
 
-      // 7. Spot availability
-      if (onlySpotAvailable && !item.isSpotAvailable) {
-        return false;
-      }
-
-      // 8. Verified Supplier
-      if (onlyVerifiedSuppliers && !item.supplierVerified) {
+      // 7. Co-Benefits
+      if (selectedCoBenefits.length > 0 && !selectedCoBenefits.includes(project.coBenefit)) {
         return false;
       }
 
       return true;
     }).sort((a, b) => {
-      if (sortBy === 'price-asc') return a.pricePerTonne - b.pricePerTonne;
-      if (sortBy === 'price-desc') return b.pricePerTonne - a.pricePerTonne;
-      if (sortBy === 'volume') return b.availableTonnes - a.availableTonnes;
-      if (sortBy === 'durability') {
-        const durScore = (d) => (d.includes('10,000') ? 4 : d.includes('1,000') ? 3 : d.includes('500') ? 2 : 1);
-        return durScore(b.durability) - durScore(a.durability);
-      }
-      return b.aiMatchScore - a.aiMatchScore; // default 'relevance'
+      if (sortBy === 'Price: Low to High') return a.pricePerTon - b.pricePerTon;
+      if (sortBy === 'Price: High to Low') return b.pricePerTon - a.pricePerTon;
+      if (sortBy === 'Available Volume') return b.availableTons - a.availableTons;
+      return 0; // Default Relevance
     });
   }, [
     searchQuery,
-    activeMethod,
+    selectedTypes,
     selectedStandards,
-    selectedRegions,
-    selectedDurabilities,
+    selectedRegion,
+    selectedCountry,
+    minPrice,
     maxPrice,
-    onlySpotAvailable,
-    onlyVerifiedSuppliers,
+    selectedCoBenefits,
     sortBy
   ]);
 
-  // Open Quick Purchase Modal
-  const handleOpenPurchaseModal = (listing, e) => {
-    if (e) e.stopPropagation();
-    setPurchaseModalListing(listing);
-    setOrderQuantity(Math.min(100, listing.availableTonnes));
-    setIsOrderSubmitted(false);
+  const handleSearchSubmit = (e) => {
+    if (e) e.preventDefault();
+    showToast(`Showing results for "${searchQuery}"`);
   };
 
-  // Complete Order
   const handleConfirmOrder = () => {
-    setIsOrderSubmitted(true);
+    setIsOrdered(true);
     setTimeout(() => {
-      showToast(`Purchase order executed for ${orderQuantity} tCO2e of ${purchaseModalListing.id}!`);
+      showToast(`Order confirmed for ${purchaseQuantity} tons of ${selectedProject.title}!`);
       setTimeout(() => {
-        setPurchaseModalListing(null);
-        setIsOrderSubmitted(false);
-      }, 1500);
+        setSelectedProject(null);
+        setIsOrdered(false);
+      }, 1200);
     }, 1000);
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#f8fafc] font-sans text-slate-800 selection:bg-[#10b981] selection:text-white flex flex-col">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-800 font-sans flex flex-col selection:bg-[#0E6245] selection:text-white">
       
-      {/* Toast Notification */}
-      {toastText && (
-        <div className="fixed bottom-6 right-6 z-50 bg-[#0a4833] text-white px-4 py-2.5 rounded-xl shadow-xl text-xs font-semibold flex items-center gap-2 animate-bounce">
+      {/* Floating Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 bg-[#0E6245] text-white px-4 py-3 rounded-xl shadow-2xl text-xs font-semibold flex items-center gap-2 animate-bounce">
           <CheckCircle2 className="w-4 h-4 text-emerald-300" />
-          <span>{toastText}</span>
+          <span>{toastMessage}</span>
         </div>
       )}
 
       {/* ========================================================================= */}
-      {/* 1. TOP HEADER SEARCH & FILTER BAR                                         */}
+      {/* 1. TOP NAVBAR                                                             */}
       {/* ========================================================================= */}
-      <section className="bg-white border-b border-slate-200/90 sticky top-0 z-40 shadow-2xs">
-        <div className="max-w-7xl w-full mx-auto px-4 sm:px-8 py-3.5 space-y-3">
+      <header className="w-full bg-white border-b border-slate-200 sticky top-0 z-40">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 h-16 flex items-center justify-between">
           
-          {/* Main Search Input Form */}
-          <div className="flex items-center gap-3">
-            <Link to="/" className="flex items-center gap-2 shrink-0 group">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#0e6245] to-[#10b981] flex items-center justify-center text-white shadow-xs">
-                <Leaf className="w-4 h-4 fill-current" />
+          {/* Logo & Slogan */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link to="/" className="flex items-center gap-2 group">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#0E6245] to-[#22c55e] flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform">
+                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current" stroke="currentColor" strokeWidth="1">
+                  <path d="M12 2C6.5 2 2 6.5 2 12c0 3.5 1.8 6.6 4.5 8.4C8 21.5 10 22 12 22c5.5 0 10-4.5 10-10 0-5.5-4.5-10-10-10zm-1 16.5c-3.5 0-6.5-2.5-7-6 .5.5 1.5 1 2.5 1 3 0 5-2 6-4 1 2 3 4 6 4 1 0 2-.5 2.5-1-.5 3.5-3.5 6-7 6z" />
+                </svg>
               </div>
-              <span className="text-lg font-black tracking-tight text-slate-900 hidden sm:inline">
-                Carbon<span className="text-[#10b981]">X</span>
-              </span>
+              <div className="flex flex-col">
+                <span className="text-xl font-extrabold tracking-tight text-slate-900 leading-none">
+                  Carbon<span className="text-[#0E6245]">X</span>
+                </span>
+                <span className="text-[10px] text-slate-400 font-medium tracking-tight mt-0.5">
+                  Cleaner Industries. Brighter Tomorrows.
+                </span>
+              </div>
+            </Link>
+          </div>
+
+          {/* Center Navigation Links */}
+          <nav className="hidden md:flex items-center gap-1 sm:gap-4 lg:gap-6 h-full text-xs font-semibold text-slate-600">
+            <Link
+              to="/buyer/dashboard"
+              className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:text-[#0E6245] transition-colors"
+            >
+              <LayoutDashboard className="w-3.5 h-3.5 text-slate-400" />
+              <span>Dashboard</span>
+            </Link>
+            
+            <Link
+              to="/marketplace"
+              className="relative flex items-center gap-1.5 px-2 py-1.5 text-[#0E6245] font-bold h-full border-b-2 border-[#0E6245]"
+            >
+              <Store className="w-3.5 h-3.5 text-[#0E6245]" />
+              <span>Marketplace</span>
             </Link>
 
-            {/* Input Search Form */}
-            <form onSubmit={handleSearchSubmit} className="flex-1 relative flex items-center">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
+            <Link
+              to="/orders"
+              className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:text-[#0E6245] transition-colors"
+            >
+              <ShoppingCart className="w-3.5 h-3.5 text-slate-400" />
+              <span>Orders</span>
+            </Link>
+
+            <Link
+              to="/transactions"
+              className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:text-[#0E6245] transition-colors"
+            >
+              <Receipt className="w-3.5 h-3.5 text-slate-400" />
+              <span>Transactions</span>
+            </Link>
+
+            <Link
+              to="/reports"
+              className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:text-[#0E6245] transition-colors"
+            >
+              <FileText className="w-3.5 h-3.5 text-slate-400" />
+              <span>Reports</span>
+            </Link>
+
+            <Link
+              to="/messages"
+              className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:text-[#0E6245] transition-colors"
+            >
+              <MessageSquare className="w-3.5 h-3.5 text-slate-400" />
+              <span>Messages</span>
+            </Link>
+          </nav>
+
+          {/* Right User & Notification Controls */}
+          <div className="flex items-center gap-3 sm:gap-4">
+            {/* Notification Bell */}
+            <button
+              type="button"
+              onClick={() => showToast('You have 3 unread credit updates.')}
+              className="relative p-2 rounded-full hover:bg-slate-100 text-slate-600 transition-colors cursor-pointer"
+            >
+              <Bell className="w-4 h-4" />
+              <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center">
+                3
+              </span>
+            </button>
+
+            {/* User Capsule */}
+            <div className="flex items-center gap-2.5 pl-2 border-l border-slate-200">
+              <div className="w-8 h-8 rounded-full bg-[#0E4833] text-white font-bold text-xs flex items-center justify-center shadow-xs">
+                KP
+              </div>
+              <div className="hidden sm:flex flex-col text-left">
+                <span className="text-xs font-bold text-slate-900 leading-tight">
+                  Krishna Prajapati
+                </span>
+                <span className="text-[10px] text-slate-500 font-medium">Buyer</span>
+              </div>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 cursor-pointer hidden sm:block" />
+            </div>
+          </div>
+
+        </div>
+      </header>
+
+      {/* ========================================================================= */}
+      {/* 2. HERO SEARCH HEADER                                                     */}
+      {/* ========================================================================= */}
+      <section className="relative w-full bg-slate-900 overflow-hidden py-10 sm:py-12 border-b border-slate-200">
+        {/* Mountain Forest Background with gradient overlay */}
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-70"
+          style={{ backgroundImage: `url(${heroBgImg})` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-emerald-950/80 via-teal-900/60 to-emerald-950/80" />
+
+        <div className="relative max-w-[1440px] mx-auto px-4 sm:px-8 space-y-6">
+          
+          {/* Header Texts & Right Callout */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
+                Search Results
+              </h1>
+              <p className="text-xs sm:text-sm text-emerald-100/90 font-medium">
+                Find verified carbon credits that match your needs.
+              </p>
+            </div>
+
+            {/* Right Aesthetic Badges */}
+            <div className="flex items-center gap-4 self-start md:self-auto">
+              {/* Slant script styling */}
+              <div className="hidden lg:block text-right">
+                <span className="block text-emerald-200 font-serif italic text-xs tracking-wider">
+                  Cleaner Choices
+                </span>
+                <span className="block text-emerald-100 font-serif italic text-sm font-semibold tracking-wide">
+                  Brighter Tomorrows
+                </span>
+              </div>
+
+              {/* Translucent Green Pill */}
+              <div className="bg-[#0e6245]/60 backdrop-blur-md border border-emerald-400/30 rounded-2xl px-3.5 py-2 flex items-center gap-2.5 text-white shadow-lg">
+                <div className="w-7 h-7 rounded-full bg-emerald-400/20 flex items-center justify-center text-emerald-300 shrink-0">
+                  <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" stroke="currentColor">
+                    <path d="M12 2C6.5 2 2 6.5 2 12c0 3.5 1.8 6.6 4.5 8.4C8 21.5 10 22 12 22c5.5 0 10-4.5 10-10 0-5.5-4.5-10-10-10zm-1 16.5c-3.5 0-6.5-2.5-7-6 .5.5 1.5 1 2.5 1 3 0 5-2 6-4 1 2 3 4 6 4 1 0 2-.5 2.5-1-.5 3.5-3.5 6-7 6z" />
+                  </svg>
+                </div>
+                <div className="text-[11px] leading-tight font-medium text-emerald-100">
+                  Together<br />
+                  <span className="font-bold text-white">for a Low Carbon Future.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Big Integrated Search Input Bar */}
+          <form onSubmit={handleSearchSubmit} className="max-w-2xl w-full">
+            <div className="bg-white rounded-xl shadow-xl p-1.5 flex items-center gap-2 border border-white/20">
+              <Search className="w-4 h-4 text-slate-400 ml-2.5 shrink-0" />
               <input
                 type="text"
-                placeholder="Search credits by method (Biochar, DAC, ERW), MRV standard (Puro, Verra), or project ID..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-24 py-2 bg-slate-50 hover:bg-slate-100/80 focus:bg-white border border-slate-200 focus:border-[#0e6245] focus:ring-2 focus:ring-emerald-100 rounded-xl text-xs sm:text-sm text-slate-900 outline-none transition-all shadow-2xs"
+                placeholder="Search credits (e.g., renewable energy, solar, wind)..."
+                className="w-full bg-transparent text-xs sm:text-sm text-slate-800 placeholder-slate-400 outline-none px-2 font-medium"
               />
               {searchQuery && (
                 <button
                   type="button"
-                  onClick={() => {
-                    setSearchQuery('');
-                    setSearchParams({});
-                  }}
-                  className="absolute right-16 p-1 text-slate-400 hover:text-slate-600 rounded-full"
+                  onClick={() => setSearchQuery('')}
+                  className="text-slate-400 hover:text-slate-600 p-1 rounded-full cursor-pointer"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <X className="w-4 h-4" />
                 </button>
               )}
               <button
                 type="submit"
-                className="absolute right-1.5 bg-[#0e6245] hover:bg-[#0b5038] text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-xs transition-colors flex items-center gap-1 cursor-pointer"
+                className="bg-[#0E6245] hover:bg-[#0b5038] text-white font-bold text-xs sm:text-sm px-5 py-2.5 rounded-lg shadow-sm transition-colors cursor-pointer shrink-0"
               >
-                <span>Search</span>
+                Search
               </button>
-            </form>
-
-            {/* Right Action Links */}
-            <div className="flex items-center gap-2 shrink-0">
-              <Link
-                to="/buyer/onboarding"
-                className="text-xs font-bold text-slate-600 hover:text-[#0e6245] px-2.5 py-1.5 rounded-lg hover:bg-slate-50 transition-colors hidden md:block"
-              >
-                My Profile
-              </Link>
-              <Link
-                to="/marketplace"
-                className="bg-[#eef8f2] hover:bg-[#e1f3e8] text-[#0e6245] text-xs font-bold px-3 py-1.5 rounded-xl border border-emerald-200 transition-colors flex items-center gap-1.5 shadow-2xs"
-              >
-                <ShoppingCart className="w-3.5 h-3.5" />
-                <span>Orders</span>
-              </Link>
             </div>
-          </div>
-
-          {/* Quick Method Filter Chips (Horizontal Scrollable) */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar text-xs">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider shrink-0 flex items-center gap-1">
-              <Layers className="w-3 h-3 text-slate-400" />
-              Category:
-            </span>
-            {methodsList.map((method) => {
-              const isActive = activeMethod === method;
-              return (
-                <button
-                  key={method}
-                  type="button"
-                  onClick={() => setActiveMethod(method)}
-                  className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
-                    isActive
-                      ? 'bg-[#0e6245] text-white font-bold shadow-xs'
-                      : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
-                  }`}
-                >
-                  {method}
-                </button>
-              );
-            })}
-          </div>
+          </form>
 
         </div>
       </section>
 
       {/* ========================================================================= */}
-      {/* 2. SUB-HEADER BAR: RESULTS COUNT, SORTING, VIEW TOGGLES                    */}
+      {/* 3. THREE-COLUMN MAIN WORKSPACE                                            */}
       {/* ========================================================================= */}
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 py-3 flex flex-wrap items-center justify-between gap-3 border-b border-slate-200/60">
-        
-        {/* Results Counter & Breadcrumbs */}
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-slate-900">
-            {filteredListings.length} {filteredListings.length === 1 ? 'Listing' : 'Listings'} Found
-          </span>
-          {searchQuery && (
-            <span className="text-xs text-slate-500">
-              for <span className="font-semibold text-emerald-800">"{searchQuery}"</span>
-            </span>
-          )}
-          {activeMethod !== 'All' && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[10px] font-bold border border-emerald-200">
-              {activeMethod}
-              <X className="w-2.5 h-2.5 cursor-pointer" onClick={() => setActiveMethod('All')} />
-            </span>
-          )}
-        </div>
-
-        {/* Right Controls: Sort Dropdown & View Mode Switcher */}
-        <div className="flex items-center gap-3">
-          {/* Sort Dropdown */}
-          <div className="flex items-center gap-1.5 text-xs text-slate-600">
-            <span className="font-semibold hidden sm:inline">Sort By:</span>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs font-semibold text-slate-800 outline-none cursor-pointer focus:border-[#0e6245]"
-            >
-              <option value="relevance">AI Best Match (Relevance)</option>
-              <option value="price-asc">Price: Low to High</option>
-              <option value="price-desc">Price: High to Low</option>
-              <option value="durability">Highest Durability (10,000+ yrs)</option>
-              <option value="volume">Available Volume (tCO2e)</option>
-            </select>
-          </div>
-
-          {/* Grid / List / Map View Switcher */}
-          <div className="flex items-center bg-white border border-slate-200 rounded-lg p-0.5 shadow-2xs">
-            <button
-              type="button"
-              onClick={() => setViewMode('grid')}
-              className={`p-1.5 rounded-md transition-colors ${
-                viewMode === 'grid' ? 'bg-[#0e6245] text-white' : 'text-slate-500 hover:text-slate-800'
-              }`}
-              title="Grid View"
-            >
-              <Grid className="w-3.5 h-3.5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode('list')}
-              className={`p-1.5 rounded-md transition-colors ${
-                viewMode === 'list' ? 'bg-[#0e6245] text-white' : 'text-slate-500 hover:text-slate-800'
-              }`}
-              title="List View"
-            >
-              <List className="w-3.5 h-3.5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode('map')}
-              className={`p-1.5 rounded-md transition-colors ${
-                viewMode === 'map' ? 'bg-[#0e6245] text-white' : 'text-slate-500 hover:text-slate-800'
-              }`}
-              title="Map View"
-            >
-              <Globe className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </div>
-
-      </div>
-
-      {/* ========================================================================= */}
-      {/* 3. MAIN WORKSPACE: FILTER SIDEBAR (LEFT) + RESULTS GRID (RIGHT)            */}
-      {/* ========================================================================= */}
-      <main className="w-full max-w-7xl mx-auto px-4 sm:px-8 py-5 flex-1">
+      <main className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 py-6 flex-1">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
           {/* ===================================================================== */}
-          {/* LEFT SIDEBAR: FILTERS PANEL (3 cols)                                  */}
+          {/* LEFT COLUMN: FILTERS (Col span 3)                                    */}
           {/* ===================================================================== */}
-          <aside className="lg:col-span-3 bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs space-y-5">
+          <aside className="lg:col-span-3 bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs space-y-6">
             
-            {/* Filter Title & Reset */}
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div className="flex items-center gap-2 text-slate-900 font-bold text-xs sm:text-sm">
-                <SlidersHorizontal className="w-4 h-4 text-[#0e6245]" />
-                <span>Filter Listings</span>
+            {/* Header: Filters + Clear All */}
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
+                <Filter className="w-4 h-4 text-[#0E6245]" />
+                <span>Filters</span>
               </div>
               <button
                 type="button"
-                onClick={resetFilters}
-                className="text-[11px] font-semibold text-[#0e6245] hover:underline flex items-center gap-1 cursor-pointer"
+                onClick={clearAllFilters}
+                className="text-xs font-semibold text-[#0E6245] hover:underline cursor-pointer"
               >
-                <RotateCcw className="w-3 h-3" />
-                <span>Reset</span>
+                Clear All
               </button>
             </div>
 
-            {/* Filter Section 1: Price Range ($/tCO2e) */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">
-                  Max Price / Tonne
-                </label>
-                <span className="text-xs font-black text-[#0e6245]">${maxPrice}</span>
-              </div>
-              <input
-                type="range"
-                min={50}
-                max={400}
-                step={10}
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(Number(e.target.value))}
-                className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0e6245]"
-              />
-              <div className="flex justify-between text-[10px] text-slate-400 font-medium">
-                <span>$50/t</span>
-                <span>$200/t</span>
-                <span>$400/t</span>
-              </div>
-            </div>
-
-            {/* Filter Section 2: MRV Standards */}
-            <div className="space-y-2 pt-2 border-t border-slate-100">
-              <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider">
-                MRV Registry Standards
-              </label>
-              <div className="space-y-1.5 text-xs text-slate-700">
-                {standardsList.map((std) => (
-                  <label key={std} className="flex items-center gap-2 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={selectedStandards.includes(std)}
-                      onChange={() => toggleArrayItem(selectedStandards, setSelectedStandards, std)}
-                      className="w-3.5 h-3.5 text-[#0e6245] rounded border-slate-300 focus:ring-[#0e6245] accent-[#0e6245]"
-                    />
-                    <span className="text-[11px]">{std}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Filter Section 3: Durability Tier */}
-            <div className="space-y-2 pt-2 border-t border-slate-100">
-              <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider">
-                Durability / Permanence
-              </label>
-              <div className="space-y-1.5 text-xs text-slate-700">
-                {durabilitiesList.map((dur) => (
-                  <label key={dur} className="flex items-center gap-2 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={selectedDurabilities.includes(dur)}
-                      onChange={() => toggleArrayItem(selectedDurabilities, setSelectedDurabilities, dur)}
-                      className="w-3.5 h-3.5 text-[#0e6245] rounded border-slate-300 focus:ring-[#0e6245] accent-[#0e6245]"
-                    />
-                    <span className="text-[11px]">{dur}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Filter Section 4: Geographic Region */}
-            <div className="space-y-2 pt-2 border-t border-slate-100">
-              <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider">
-                Geographic Region
-              </label>
-              <div className="space-y-1.5 text-xs text-slate-700">
-                {regionsList.map((reg) => (
-                  <label key={reg} className="flex items-center gap-2 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={selectedRegions.includes(reg)}
-                      onChange={() => toggleArrayItem(selectedRegions, setSelectedRegions, reg)}
-                      className="w-3.5 h-3.5 text-[#0e6245] rounded border-slate-300 focus:ring-[#0e6245] accent-[#0e6245]"
-                    />
-                    <span className="text-[11px]">{reg}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Filter Section 5: Verification & Spot Toggles */}
-            <div className="space-y-2 pt-2 border-t border-slate-100">
-              <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider">
-                Listing Availability
-              </label>
+            {/* Filter Section: Project Type */}
+            <div className="space-y-2.5">
+              <h3 className="text-xs font-bold text-slate-900">Project Type</h3>
               <div className="space-y-2 text-xs text-slate-700">
-                <label className="flex items-center gap-2 cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    checked={onlySpotAvailable}
-                    onChange={(e) => setOnlySpotAvailable(e.target.checked)}
-                    className="w-3.5 h-3.5 text-[#0e6245] rounded border-slate-300 focus:ring-[#0e6245] accent-[#0e6245]"
-                  />
-                  <span className="text-[11px] font-semibold text-emerald-800">
-                    Immediate Spot Delivery
-                  </span>
-                </label>
-
-                <label className="flex items-center gap-2 cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    checked={onlyVerifiedSuppliers}
-                    onChange={(e) => setOnlyVerifiedSuppliers(e.target.checked)}
-                    className="w-3.5 h-3.5 text-[#0e6245] rounded border-slate-300 focus:ring-[#0e6245] accent-[#0e6245]"
-                  />
-                  <span className="text-[11px]">Verified Registry Suppliers</span>
-                </label>
+                {[
+                  'Afforestation / Reforestation',
+                  'Renewable Energy',
+                  'Methane Capture',
+                  'Clean Cookstoves',
+                  'Sustainable Agriculture'
+                ].map((type) => {
+                  const isChecked = selectedTypes.includes(type);
+                  return (
+                    <label
+                      key={type}
+                      className="flex items-center gap-2.5 cursor-pointer select-none text-xs text-slate-600 hover:text-slate-900"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={() => toggleType(type)}
+                        className="w-4 h-4 rounded border-slate-300 text-[#0E6245] focus:ring-[#0E6245] accent-[#0E6245] cursor-pointer"
+                      />
+                      <span>{type}</span>
+                    </label>
+                  );
+                })}
               </div>
+            </div>
+
+            {/* Filter Section: Price Range (per ton) */}
+            <div className="space-y-3 pt-3 border-t border-slate-100">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-bold text-slate-900">Price Range (per ton)</h3>
+              </div>
+              
+              {/* Green Slider Bar */}
+              <div className="space-y-2">
+                <input
+                  type="range"
+                  min={500}
+                  max={5000}
+                  step={50}
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(Number(e.target.value))}
+                  className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0E6245]"
+                />
+                <div className="flex justify-between text-xs font-semibold text-slate-500">
+                  <span>₹500</span>
+                  <span className="text-[#0E6245] font-bold">₹{maxPrice.toLocaleString('en-IN')}</span>
+                  <span>₹5,000</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Filter Section: Location */}
+            <div className="space-y-2.5 pt-3 border-t border-slate-100">
+              <h3 className="text-xs font-bold text-slate-900">Location</h3>
+              <div className="space-y-2">
+                <div className="relative">
+                  <select
+                    value={selectedRegion}
+                    onChange={(e) => setSelectedRegion(e.target.value)}
+                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-700 font-medium appearance-none cursor-pointer focus:border-[#0E6245] outline-none"
+                  >
+                    <option value="">Select Region</option>
+                    <option value="North India">North India</option>
+                    <option value="South India">South India</option>
+                    <option value="West India">West India</option>
+                    <option value="East India">East India</option>
+                  </select>
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-3 pointer-events-none" />
+                </div>
+
+                <div className="relative">
+                  <select
+                    value={selectedCountry}
+                    onChange={(e) => setSelectedCountry(e.target.value)}
+                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-700 font-medium appearance-none cursor-pointer focus:border-[#0E6245] outline-none"
+                  >
+                    <option value="">Select Country</option>
+                    <option value="India">India</option>
+                    <option value="Global">Global</option>
+                  </select>
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-3 pointer-events-none" />
+                </div>
+              </div>
+            </div>
+
+            {/* Filter Section: Certification Standard */}
+            <div className="space-y-2.5 pt-3 border-t border-slate-100">
+              <h3 className="text-xs font-bold text-slate-900">Certification Standard</h3>
+              <div className="space-y-2 text-xs text-slate-700">
+                {[
+                  'Verra (VCS)',
+                  'Gold Standard',
+                  'Climate Action Reserve (CAR)',
+                  'Plan Vivo'
+                ].map((std) => {
+                  const isChecked = selectedStandards.includes(std);
+                  return (
+                    <label
+                      key={std}
+                      className="flex items-center gap-2.5 cursor-pointer select-none text-xs text-slate-600 hover:text-slate-900"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={() => toggleStandard(std)}
+                        className="w-4 h-4 rounded border-slate-300 text-[#0E6245] focus:ring-[#0E6245] accent-[#0E6245] cursor-pointer"
+                      />
+                      <span>{std}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Filter Section: Co-benefits */}
+            <div className="space-y-2.5 pt-3 border-t border-slate-100">
+              <h3 className="text-xs font-bold text-slate-900">Co-benefits</h3>
+              <div className="space-y-2 text-xs text-slate-700">
+                {[
+                  'Biodiversity',
+                  'Community Development',
+                  'Clean Water',
+                  'Air Quality',
+                  'Job Creation',
+                  'Local Employment',
+                  'Community Benefit'
+                ].map((benefit) => {
+                  const isChecked = selectedCoBenefits.includes(benefit);
+                  return (
+                    <label
+                      key={benefit}
+                      className="flex items-center gap-2.5 cursor-pointer select-none text-xs text-slate-600 hover:text-slate-900"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={() => toggleCoBenefit(benefit)}
+                        className="w-4 h-4 rounded border-slate-300 text-[#0E6245] focus:ring-[#0E6245] accent-[#0E6245] cursor-pointer"
+                      />
+                      <span>{benefit}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Reset Filters Button */}
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="w-full py-2.5 px-4 rounded-xl border border-slate-300 hover:border-slate-400 bg-white text-slate-700 font-bold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-2xs"
+              >
+                <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
+                <span>Reset Filters</span>
+              </button>
             </div>
 
           </aside>
 
           {/* ===================================================================== */}
-          {/* RIGHT MAIN: SEARCH RESULTS & CARDS (9 cols)                           */}
+          {/* CENTER COLUMN: SEARCH RESULTS (Col span 6)                             */}
           {/* ===================================================================== */}
-          <div className="lg:col-span-9 space-y-4">
+          <div className="lg:col-span-6 space-y-4">
             
-            {/* AI Smart Match Callout Card */}
-            <div className="bg-gradient-to-r from-emerald-900 via-teal-900 to-emerald-950 rounded-2xl p-4 sm:p-5 text-white shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center shrink-0 border border-emerald-400/30">
-                  <Sparkles className="w-5 h-5" />
-                </div>
-                <div className="space-y-0.5">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold uppercase tracking-wider text-emerald-300">
-                      AI Procurement Assistant
-                    </span>
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/30 text-emerald-200 text-[10px] font-bold">
-                      98.4% Match
-                    </span>
-                  </div>
-                  <h3 className="text-sm sm:text-base font-bold text-white">
-                    Optimized Portfolio Recommendation for India & Asia Decarbonization
-                  </h3>
-                  <p className="text-xs text-emerald-200/80 leading-relaxed max-w-xl">
-                    Combining Biochar (500+ yrs permanence) and Basalt Mineralization achieves maximum durability with an average price of <strong className="text-white">$145/tCO2e</strong>.
-                  </p>
-                </div>
+            {/* Header: Results Info & Sort By */}
+            <div className="flex flex-wrap items-center justify-between gap-3 bg-transparent pb-1">
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 leading-tight">
+                  Showing results for "{searchQuery || 'all carbon credits'}"
+                </h2>
+                <p className="text-xs text-slate-500 font-medium mt-0.5">
+                  124 carbon credits found
+                </p>
               </div>
 
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveMethod('Biochar (BiCRS)');
-                  showToast('Filtered by top AI recommended Biochar portfolio.');
-                }}
-                className="bg-[#10b981] hover:bg-[#059669] text-white font-bold text-xs py-2 px-3.5 rounded-xl transition-all shadow-xs shrink-0 flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <span>Apply AI Filter</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
+              {/* Sort By Dropdown */}
+              <div className="flex items-center gap-2 text-xs text-slate-600">
+                <span className="font-semibold text-slate-500">Sort by</span>
+                <div className="relative">
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="bg-white border border-slate-200 rounded-lg pl-3 pr-7 py-1.5 text-xs font-semibold text-slate-800 outline-none cursor-pointer focus:border-[#0E6245] shadow-2xs"
+                  >
+                    <option value="Relevance">Relevance</option>
+                    <option value="Price: Low to High">Price: Low to High</option>
+                    <option value="Price: High to Low">Price: High to Low</option>
+                    <option value="Available Volume">Available Volume</option>
+                  </select>
+                  <ChevronDown className="w-3 h-3 text-slate-400 absolute right-2.5 top-2.5 pointer-events-none" />
+                </div>
+              </div>
             </div>
 
-            {/* Empty State */}
-            {filteredListings.length === 0 && (
-              <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center space-y-4 shadow-xs">
-                <div className="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
-                  <Search className="w-6 h-6" />
-                </div>
-                <div className="space-y-1 max-w-md mx-auto">
-                  <h3 className="text-base font-bold text-slate-800">No matching carbon credits found</h3>
-                  <p className="text-xs text-slate-500">
-                    Try loosening your price filters or searching with general terms such as "Biochar", "DAC", or "Western Ghats".
+            {/* Results Cards List */}
+            <div className="space-y-3.5">
+              {filteredProjects.length === 0 ? (
+                <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center space-y-3">
+                  <div className="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+                    <Search className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-sm font-bold text-slate-800">No matching credits found</h3>
+                  <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                    Try relaxing your filters or search for another term like "solar", "wind", or "hydro".
                   </p>
+                  <button
+                    type="button"
+                    onClick={resetFilters}
+                    className="px-4 py-2 bg-[#0E6245] text-white text-xs font-bold rounded-lg shadow-sm"
+                  >
+                    Reset All Filters
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={resetFilters}
-                  className="bg-[#0e6245] hover:bg-[#0b5038] text-white text-xs font-bold py-2 px-4 rounded-xl shadow-xs transition-colors cursor-pointer"
-                >
-                  Reset All Filters
-                </button>
-              </div>
-            )}
-
-            {/* =================================================================== */}
-            {/* VIEW MODE: GRID VIEW                                                */}
-            {/* =================================================================== */}
-            {viewMode === 'grid' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {filteredListings.map((item) => {
-                  const isSaved = savedListingIds.includes(item.id);
-                  const isCompared = comparedListingIds.includes(item.id);
-
+              ) : (
+                filteredProjects.map((project) => {
+                  const isFavorited = favoriteIds.includes(project.id);
                   return (
                     <div
-                      key={item.id}
-                      className="bg-white rounded-2xl border border-slate-200 hover:border-emerald-300/80 shadow-xs hover:shadow-md transition-all overflow-hidden flex flex-col justify-between group"
+                      key={project.id}
+                      className="bg-white rounded-2xl border border-slate-200 hover:border-emerald-300 hover:shadow-md transition-all p-3.5 sm:p-4 flex flex-col sm:flex-row gap-4 relative group"
                     >
-                      {/* Card Thumbnail Image & Badges */}
-                      <div className="relative h-44 w-full overflow-hidden bg-slate-100">
+                      {/* Left: Thumbnail with Verified / Gold Standard Badge */}
+                      <div className="relative w-full sm:w-44 h-36 sm:h-32 rounded-xl overflow-hidden shrink-0 bg-slate-100">
                         <img
-                          src={item.image}
-                          alt={item.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          src={project.image}
+                          alt={project.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-black/30 pointer-events-none" />
-
-                        {/* Top Left: MRV Standard Badge */}
-                        <div className="absolute top-3 left-3 flex items-center gap-1.5">
-                          <span className="px-2.5 py-1 rounded-lg bg-emerald-950/80 backdrop-blur-md text-emerald-300 border border-emerald-400/40 text-[10px] font-bold shadow-xs flex items-center gap-1">
-                            <ShieldCheck className="w-3 h-3 text-emerald-400" />
-                            <span>{item.mrvStandard}</span>
-                          </span>
-                          <span className="px-2 py-1 rounded-lg bg-white/90 backdrop-blur-md text-slate-800 text-[10px] font-black">
-                            {item.rating}
-                          </span>
-                        </div>
-
-                        {/* Top Right: Watchlist & Compare Action Icons */}
-                        <div className="absolute top-3 right-3 flex items-center gap-1.5">
-                          <button
-                            type="button"
-                            onClick={(e) => toggleCompare(item.id, e)}
-                            className={`p-1.5 rounded-lg backdrop-blur-md transition-all cursor-pointer ${
-                              isCompared
-                                ? 'bg-[#0e6245] text-white shadow-xs'
-                                : 'bg-white/85 text-slate-700 hover:bg-white'
-                            }`}
-                            title="Compare"
-                          >
-                            <Scale className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={(e) => toggleFavorite(item.id, e)}
-                            className={`p-1.5 rounded-lg backdrop-blur-md transition-all cursor-pointer ${
-                              isSaved
-                                ? 'bg-rose-500 text-white shadow-xs'
-                                : 'bg-white/85 text-slate-700 hover:bg-white hover:text-rose-500'
-                            }`}
-                            title="Save"
-                          >
-                            <Heart className={`w-3.5 h-3.5 ${isSaved ? 'fill-white' : ''}`} />
-                          </button>
-                        </div>
-
-                        {/* Bottom Overlay: Location & ID */}
-                        <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between text-white text-[11px]">
-                          <div className="flex items-center gap-1 font-medium truncate max-w-[70%]">
-                            <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                            <span className="truncate">{item.location}</span>
-                          </div>
-                          <span className="font-mono text-[10px] text-emerald-300 font-bold">
-                            {item.id}
-                          </span>
+                        {/* Top-Left Badge */}
+                        <div className="absolute top-2 left-2">
+                          {project.badgeType === 'gold' ? (
+                            <span className="px-2.5 py-0.5 rounded-md bg-[#FEF3C7] text-[#92400E] text-[10px] font-bold border border-amber-200 shadow-xs">
+                              Gold Standard
+                            </span>
+                          ) : (
+                            <span className="px-2.5 py-0.5 rounded-md bg-[#E0F7FA] text-[#0E7490] text-[10px] font-bold border border-cyan-200 shadow-xs">
+                              Verified
+                            </span>
+                          )}
                         </div>
                       </div>
 
-                      {/* Card Content Area */}
-                      <div className="p-4 space-y-3 flex-1 flex flex-col justify-between">
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-bold text-[#0e6245] uppercase tracking-wider">
-                              {item.method}
+                      {/* Middle: Details */}
+                      <div className="flex-1 flex flex-col justify-between space-y-2">
+                        <div>
+                          {/* Title */}
+                          <h3 className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-[#0E6245] transition-colors leading-tight">
+                            {project.title}
+                          </h3>
+
+                          {/* Subheading: Category & Location */}
+                          <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-500 font-medium mt-1">
+                            <span className="flex items-center gap-1 text-slate-600">
+                              {project.typeIcon === 'wind' && <Wind className="w-3 h-3 text-[#0E6245]" />}
+                              {project.typeIcon === 'sun' && <Sun className="w-3 h-3 text-amber-500" />}
+                              {project.typeIcon === 'hydro' && <Droplets className="w-3 h-3 text-cyan-600" />}
+                              <span>{project.category}</span>
                             </span>
-                            <span className="text-[10px] font-semibold text-slate-400">
-                              Vintage {item.vintage}
+                            <span>•</span>
+                            <span className="flex items-center gap-1 text-slate-600">
+                              <MapPin className="w-3 h-3 text-slate-400" />
+                              <span>{project.location}</span>
                             </span>
                           </div>
 
-                          <h3 className="text-sm font-bold text-slate-900 leading-snug group-hover:text-[#0e6245] transition-colors line-clamp-2">
-                            {item.title}
-                          </h3>
-
-                          <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
-                            {item.description}
+                          {/* Description */}
+                          <p className="text-xs text-slate-500 leading-relaxed line-clamp-2 mt-1">
+                            {project.description}
                           </p>
                         </div>
 
-                        {/* Specs Strip */}
-                        <div className="grid grid-cols-2 gap-2 p-2.5 bg-slate-50 rounded-xl text-xs">
-                          <div>
-                            <span className="text-[10px] text-slate-400 block">Permanence</span>
-                            <span className="font-bold text-emerald-800 text-[11px]">{item.durability}</span>
-                          </div>
-                          <div>
-                            <span className="text-[10px] text-slate-400 block">Available Tonnes</span>
-                            <span className="font-bold text-slate-800 text-[11px]">{item.availableTonnes.toLocaleString()} tCO2e</span>
-                          </div>
-                        </div>
+                        {/* Badges / SDG Tags Row */}
+                        <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                          {/* Standard Pill */}
+                          <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 text-[10px] font-semibold border border-blue-100">
+                            {project.standard}
+                          </span>
 
-                        {/* Pricing & CTA Buttons */}
-                        <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
-                          <div>
-                            <div className="flex items-baseline gap-0.5">
-                              <span className="text-lg font-black text-slate-900">${item.pricePerTonne}</span>
-                              <span className="text-[10px] text-slate-400 font-medium">/ tCO2e</span>
-                            </div>
-                            <span className="text-[9px] text-emerald-600 font-semibold block">
-                              {item.isSpotAvailable ? '● Spot Available' : '○ Forward 2026'}
+                          {/* SDG Tags */}
+                          {project.sdgs.map((sdg) => (
+                            <span
+                              key={sdg}
+                              className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 text-[10px] font-semibold border border-emerald-100"
+                            >
+                              {sdg}
                             </span>
-                          </div>
+                          ))}
 
-                          <div className="flex items-center gap-1.5">
-                            <Link
-                              to={`/marketplace/listing/${item.id}`}
-                              className="border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold px-2.5 py-1.5 rounded-xl transition-colors"
-                            >
-                              Details
-                            </Link>
-                            <button
-                              type="button"
-                              onClick={(e) => handleOpenPurchaseModal(item, e)}
-                              className="bg-[#0e6245] hover:bg-[#0b5038] text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-xs transition-colors flex items-center gap-1 cursor-pointer"
-                            >
-                              <ShoppingCart className="w-3 h-3" />
-                              <span>Buy</span>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* =================================================================== */}
-            {/* VIEW MODE: LIST VIEW                                                */}
-            {/* =================================================================== */}
-            {viewMode === 'list' && (
-              <div className="space-y-3">
-                {filteredListings.map((item) => {
-                  const isSaved = savedListingIds.includes(item.id);
-                  const isCompared = comparedListingIds.includes(item.id);
-
-                  return (
-                    <div
-                      key={item.id}
-                      className="bg-white rounded-2xl border border-slate-200 hover:border-emerald-300 p-4 shadow-xs hover:shadow-sm transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 group"
-                    >
-                      {/* Left: Thumbnail & Main Info */}
-                      <div className="flex items-start gap-4 flex-1">
-                        <div className="w-24 h-24 rounded-xl overflow-hidden bg-slate-100 shrink-0 relative">
-                          <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
-                          <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/70 text-white font-black text-[9px]">
-                            {item.rating}
+                          {/* Co-Benefit Tag */}
+                          <span className="px-2 py-0.5 rounded-md bg-teal-50 text-teal-800 text-[10px] font-semibold border border-teal-100">
+                            {project.coBenefit}
                           </span>
                         </div>
-
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2">
-                            <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 text-[10px] font-bold border border-emerald-200">
-                              {item.mrvStandard}
-                            </span>
-                            <span className="text-[10px] text-[#0e6245] font-bold uppercase">
-                              {item.method}
-                            </span>
-                          </div>
-
-                          <h3 className="text-sm font-bold text-slate-900 group-hover:text-[#0e6245] transition-colors">
-                            {item.title}
-                          </h3>
-
-                          <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-500">
-                            <span className="flex items-center gap-1">
-                              <MapPin className="w-3 h-3 text-slate-400" />
-                              {item.location}
-                            </span>
-                            <span>•</span>
-                            <span className="font-semibold text-emerald-700">{item.durability} Permanence</span>
-                            <span>•</span>
-                            <span>{item.availableTonnes.toLocaleString()} tCO2e Available</span>
-                          </div>
-                        </div>
                       </div>
 
-                      {/* Right: Pricing & CTA */}
-                      <div className="flex sm:flex-col items-end justify-between w-full sm:w-auto gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
-                        <div className="text-left sm:text-right">
-                          <span className="text-xl font-black text-slate-900">${item.pricePerTonne}</span>
-                          <span className="text-xs text-slate-400"> / tCO2e</span>
+                      {/* Right: Pricing, Tons, Favorite & View Details */}
+                      <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-between border-t sm:border-t-0 sm:border-l border-slate-100 pt-3 sm:pt-0 sm:pl-4 shrink-0 sm:min-w-[125px]">
+                        
+                        {/* Top Right Heart Icon */}
+                        <button
+                          type="button"
+                          onClick={(e) => toggleFavorite(project.id, e)}
+                          className="p-1 text-slate-400 hover:text-red-500 transition-colors self-start sm:self-end cursor-pointer"
+                        >
+                          <Heart
+                            className={`w-4 h-4 ${
+                              isFavorited ? 'fill-red-500 text-red-500' : 'text-slate-400'
+                            }`}
+                          />
+                        </button>
+
+                        {/* Price & Volume */}
+                        <div className="text-right">
+                          <div className="text-sm sm:text-base font-extrabold text-slate-900 leading-none">
+                            ₹ {project.pricePerTon.toLocaleString('en-IN')}{' '}
+                            <span className="text-xs font-normal text-slate-500">/ ton</span>
+                          </div>
+                          <div className="text-[11px] text-slate-400 font-medium mt-0.5">
+                            {project.availableTons.toLocaleString('en-IN')} tons available
+                          </div>
                         </div>
 
-                        <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={(e) => toggleFavorite(item.id, e)}
-                            className={`p-2 rounded-xl border transition-colors cursor-pointer ${
-                              isSaved ? 'bg-rose-50 border-rose-200 text-rose-600' : 'border-slate-200 text-slate-500 hover:bg-slate-50'
-                            }`}
-                          >
-                            <Heart className={`w-3.5 h-3.5 ${isSaved ? 'fill-rose-500 text-rose-500' : ''}`} />
-                          </button>
-                          <Link
-                            to={`/marketplace/listing/${item.id}`}
-                            className="border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold px-3 py-2 rounded-xl transition-colors"
-                          >
-                            Details
-                          </Link>
-                          <button
-                            type="button"
-                            onClick={(e) => handleOpenPurchaseModal(item, e)}
-                            className="bg-[#0e6245] hover:bg-[#0b5038] text-white text-xs font-bold px-4 py-2 rounded-xl shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
-                          >
-                            <ShoppingCart className="w-3.5 h-3.5" />
-                            <span>Buy</span>
-                          </button>
-                        </div>
+                        {/* View Details Button */}
+                        <button
+                          type="button"
+                          onClick={() => setSelectedProject(project)}
+                          className="w-full sm:w-auto px-4 py-1.5 rounded-lg border border-[#0E6245] text-[#0E6245] hover:bg-[#0E6245] hover:text-white font-bold text-xs transition-colors cursor-pointer text-center"
+                        >
+                          View Details
+                        </button>
+
                       </div>
                     </div>
                   );
-                })}
+                })
+              )}
+            </div>
+
+            {/* Bottom Pagination */}
+            <div className="flex items-center justify-center gap-1.5 pt-4 pb-6">
+              <button
+                type="button"
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 font-semibold text-xs flex items-center gap-1 cursor-pointer transition-colors shadow-2xs"
+              >
+                <ArrowLeft className="w-3 h-3" />
+                <span>Previous</span>
+              </button>
+
+              {[1, 2, 3, 4, 5].map((pageNum) => (
+                <button
+                  key={pageNum}
+                  type="button"
+                  onClick={() => setCurrentPage(pageNum)}
+                  className={`w-8 h-8 rounded-lg font-bold text-xs transition-colors cursor-pointer ${
+                    currentPage === pageNum
+                      ? 'bg-[#0E6245] text-white shadow-xs'
+                      : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              ))}
+
+              <span className="text-xs text-slate-400 font-bold px-1">...</span>
+
+              <button
+                type="button"
+                onClick={() => setCurrentPage(25)}
+                className={`w-8 h-8 rounded-lg font-bold text-xs transition-colors cursor-pointer ${
+                  currentPage === 25
+                    ? 'bg-[#0E6245] text-white'
+                    : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                25
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCurrentPage((p) => Math.min(25, p + 1))}
+                className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 font-semibold text-xs flex items-center gap-1 cursor-pointer transition-colors shadow-2xs"
+              >
+                <span>Next</span>
+                <ArrowRight className="w-3 h-3" />
+              </button>
+            </div>
+
+          </div>
+
+          {/* ===================================================================== */}
+          {/* RIGHT COLUMN: WIDGETS (Col span 3)                                    */}
+          {/* ===================================================================== */}
+          <div className="lg:col-span-3 space-y-4">
+            
+            {/* Widget 1: Project Locations Map Card */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-slate-900 font-bold text-xs">
+                  <MapPin className="w-3.5 h-3.5 text-[#0E6245]" />
+                  <span>Project Locations</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => showToast('Displaying full interactive map view.')}
+                  className="text-[11px] font-semibold text-[#0E6245] hover:underline cursor-pointer"
+                >
+                  View Map
+                </button>
               </div>
-            )}
 
-            {/* =================================================================== */}
-            {/* VIEW MODE: MAP VIEW (Interactive Geospatial Representation)        */}
-            {/* =================================================================== */}
-            {viewMode === 'map' && (
-              <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs space-y-4 p-4">
-                <div className="relative w-full h-96 bg-slate-900 rounded-xl overflow-hidden flex items-center justify-center">
-                  <img
-                    src={biocharImg}
-                    alt="Map Backdrop"
-                    className="w-full h-full object-cover opacity-25"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent pointer-events-none" />
+              {/* Map Canvas with Green Cluster Bubble Pins */}
+              <div className="relative w-full h-44 rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
+                <img
+                  src={mapBgImg}
+                  alt="Project Locations Map"
+                  className="w-full h-full object-cover opacity-85"
+                />
 
-                  {/* Simulated Map Markers */}
-                  <div className="absolute inset-0 p-8 flex flex-wrap items-center justify-around">
-                    {filteredListings.slice(0, 5).map((listing, i) => (
-                      <div
-                        key={listing.id}
-                        onClick={() => handleOpenPurchaseModal(listing)}
-                        className="bg-white/95 backdrop-blur-md rounded-xl p-2.5 shadow-lg border border-emerald-400/50 cursor-pointer hover:scale-110 transition-all max-w-[200px] space-y-1"
-                      >
-                        <div className="flex items-center justify-between gap-1">
-                          <span className="text-[10px] font-bold text-emerald-800 truncate">{listing.title}</span>
-                          <span className="text-[10px] font-black text-slate-900">${listing.pricePerTonne}</span>
-                        </div>
-                        <div className="text-[9px] text-slate-500 flex items-center gap-1 truncate">
-                          <MapPin className="w-2.5 h-2.5 text-emerald-600" />
-                          <span>{listing.location}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                {/* Cluster Bubble 1: North India (12) */}
+                <div
+                  onClick={() => {
+                    setSelectedRegion('North India');
+                    showToast('Filtered: North India projects');
+                  }}
+                  className="absolute top-[28%] left-[42%] w-7 h-7 rounded-full bg-[#0E6245] text-white font-bold text-xs flex items-center justify-center shadow-lg border-2 border-white cursor-pointer hover:scale-110 transition-transform"
+                  title="12 North India Projects"
+                >
+                  12
+                </div>
 
-                  <div className="absolute bottom-4 left-4 bg-black/70 backdrop-blur-md text-white text-[11px] font-medium px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-2">
-                    <Globe className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>Real-time Satellite Telemetry & Sensor Nodes Active</span>
+                {/* Cluster Bubble 2: East India (8) */}
+                <div
+                  onClick={() => {
+                    setSelectedRegion('East India');
+                    showToast('Filtered: East India projects');
+                  }}
+                  className="absolute top-[42%] left-[64%] w-6 h-6 rounded-full bg-[#0E6245] text-white font-bold text-[11px] flex items-center justify-center shadow-lg border-2 border-white cursor-pointer hover:scale-110 transition-transform"
+                  title="8 East India Projects"
+                >
+                  8
+                </div>
+
+                {/* Cluster Bubble 3: West India (15) */}
+                <div
+                  onClick={() => {
+                    setSelectedRegion('West India');
+                    showToast('Filtered: West India projects');
+                  }}
+                  className="absolute top-[52%] left-[30%] w-7 h-7 rounded-full bg-[#0E6245] text-white font-bold text-xs flex items-center justify-center shadow-lg border-2 border-white cursor-pointer hover:scale-110 transition-transform"
+                  title="15 West India Projects"
+                >
+                  15
+                </div>
+
+                {/* Cluster Bubble 4: South India (6) */}
+                <div
+                  onClick={() => {
+                    setSelectedRegion('South India');
+                    showToast('Filtered: South India projects');
+                  }}
+                  className="absolute top-[72%] left-[48%] w-6 h-6 rounded-full bg-[#0E6245] text-white font-bold text-[11px] flex items-center justify-center shadow-lg border-2 border-white cursor-pointer hover:scale-110 transition-transform"
+                  title="6 South India Projects"
+                >
+                  6
+                </div>
+
+                {/* Map Zoom Controls */}
+                <div className="absolute bottom-2 right-2 flex flex-col bg-white rounded-md shadow-md border border-slate-200 overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => showToast('Zoomed in')}
+                    className="p-1 hover:bg-slate-100 text-slate-700 border-b border-slate-200"
+                  >
+                    <Plus className="w-3 h-3" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => showToast('Zoomed out')}
+                    className="p-1 hover:bg-slate-100 text-slate-700"
+                  >
+                    <Minus className="w-3 h-3" />
+                  </button>
+                </div>
+
+              </div>
+            </div>
+
+            {/* Widget 2: Related Searches */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs space-y-3">
+              <div className="flex items-center gap-2 text-slate-900 font-bold text-xs">
+                <Search className="w-3.5 h-3.5 text-[#0E6245]" />
+                <span>Related Searches</span>
+              </div>
+
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  'solar energy',
+                  'wind energy',
+                  'hydro power',
+                  'renewable energy india',
+                  'verified carbon credits',
+                  'gold standard projects'
+                ].map((term) => (
+                  <button
+                    key={term}
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery(term);
+                      showToast(`Searching for "${term}"`);
+                    }}
+                    className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-emerald-50 hover:text-[#0E6245] hover:border-emerald-200 border border-slate-200 text-slate-600 text-[11px] font-medium transition-all cursor-pointer"
+                  >
+                    {term}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Widget 3: Impact Banner Card */}
+            <div className="relative rounded-2xl overflow-hidden text-white p-5 shadow-lg space-y-3 bg-emerald-950">
+              {/* Forest Background Image */}
+              <div
+                className="absolute inset-0 bg-cover bg-center opacity-40"
+                style={{ backgroundImage: `url(${forestBannerImg})` }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-emerald-950 via-emerald-900/80 to-transparent" />
+
+              <div className="relative z-10 space-y-2">
+                <h3 className="text-base font-extrabold leading-snug text-white">
+                  Every Search Supports a Cleaner Tomorrow.
+                </h3>
+                <p className="text-xs text-emerald-100/90 leading-relaxed">
+                  Choose verified projects. Make a real impact.
+                </p>
+
+                <div className="pt-2 flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigate('/marketplace');
+                      showToast('Navigating to marketplace...');
+                    }}
+                    className="px-4 py-2 rounded-xl bg-white hover:bg-emerald-50 text-slate-900 font-bold text-xs flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
+                  >
+                    <span>Start Investing</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-[#0E6245]" />
+                  </button>
+
+                  {/* Leaf Icon Decoration */}
+                  <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white">
+                    <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" stroke="currentColor">
+                      <path d="M12 2C6.5 2 2 6.5 2 12c0 3.5 1.8 6.6 4.5 8.4C8 21.5 10 22 12 22c5.5 0 10-4.5 10-10 0-5.5-4.5-10-10-10zm-1 16.5c-3.5 0-6.5-2.5-7-6 .5.5 1.5 1 2.5 1 3 0 5-2 6-4 1 2 3 4 6 4 1 0 2-.5 2.5-1-.5 3.5-3.5 6-7 6z" />
+                    </svg>
                   </div>
                 </div>
               </div>
-            )}
 
-            {/* Pagination Controls */}
-            <div className="pt-4 flex items-center justify-between text-xs text-slate-500">
-              <span>Showing 1 to {filteredListings.length} of {filteredListings.length} items</span>
-              <div className="flex items-center gap-1">
-                <button type="button" disabled className="px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-400 font-semibold cursor-not-allowed">
-                  Previous
-                </button>
-                <button type="button" className="px-3 py-1.5 rounded-lg bg-[#0e6245] text-white font-bold shadow-xs">
-                  1
-                </button>
-                <button type="button" disabled className="px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-400 font-semibold cursor-not-allowed">
-                  Next
-                </button>
-              </div>
             </div>
 
           </div>
@@ -1125,200 +1124,121 @@ export const SearchResultsPage = () => {
       </main>
 
       {/* ========================================================================= */}
-      {/* 4. COMPARISON DOCK (Floating bottom bar when items are selected)           */}
+      {/* 4. DETAIL & QUICK ORDER MODAL                                             */}
       {/* ========================================================================= */}
-      {comparedListingIds.length > 0 && (
-        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40 bg-slate-900/95 text-white backdrop-blur-md border border-emerald-500/40 rounded-2xl px-5 py-3 shadow-2xl flex items-center gap-4 animate-slide-up">
-          <div className="flex items-center gap-2">
-            <Scale className="w-4 h-4 text-emerald-400" />
-            <span className="text-xs font-bold">
-              {comparedListingIds.length} {comparedListingIds.length === 1 ? 'Project' : 'Projects'} Selected for Comparison
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setIsCompareModalOpen(true)}
-              className="bg-[#10b981] hover:bg-[#059669] text-white font-bold text-xs px-3.5 py-1.5 rounded-xl transition-all shadow-xs cursor-pointer"
-            >
-              Compare Side-by-Side
-            </button>
-            <button
-              type="button"
-              onClick={() => setComparedListingIds([])}
-              className="text-slate-400 hover:text-white p-1 rounded-lg"
-              title="Clear Comparison"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 5. SIDE-BY-SIDE COMPARISON MODAL                                          */}
-      {/* ========================================================================= */}
-      {isCompareModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl border border-slate-200 max-w-4xl w-full p-6 space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div className="flex items-center gap-2 text-slate-900 font-bold text-base">
-                <Scale className="w-5 h-5 text-[#0e6245]" />
-                <span>Side-by-Side Carbon Project Comparison</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsCompareModalOpen(false)}
-                className="p-1 text-slate-400 hover:text-slate-700 rounded-full"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-3 gap-4">
-              {comparedListingIds.map((id) => {
-                const item = ALL_LISTINGS.find((l) => l.id === id);
-                if (!item) return null;
-
-                return (
-                  <div key={item.id} className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3">
-                    <img src={item.image} alt={item.title} className="w-full h-28 object-cover rounded-xl" />
-                    <h4 className="text-xs font-bold text-slate-900 leading-snug">{item.title}</h4>
-                    <div className="space-y-1 text-[11px] text-slate-600 border-t border-slate-200/80 pt-2">
-                      <p><strong>Method:</strong> {item.method}</p>
-                      <p><strong>Permanence:</strong> {item.durability}</p>
-                      <p><strong>Price:</strong> ${item.pricePerTonne} / tCO2e</p>
-                      <p><strong>MRV Standard:</strong> {item.mrvStandard}</p>
-                      <p><strong>Vintage:</strong> {item.vintage}</p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsCompareModalOpen(false);
-                        handleOpenPurchaseModal(item);
-                      }}
-                      className="w-full bg-[#0e6245] text-white text-xs font-bold py-1.5 rounded-lg shadow-xs"
-                    >
-                      Buy This Credit
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 6. QUICK PURCHASE / OFFTAKE ORDER MODAL                                   */}
-      {/* ========================================================================= */}
-      {purchaseModalListing && (
-        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl border border-slate-200 max-w-lg w-full p-6 space-y-4 shadow-2xl relative">
+      {selectedProject && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-200">
             
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center">
-                  <ShoppingCart className="w-3.5 h-3.5" />
-                </div>
-                <h3 className="text-sm sm:text-base font-bold text-slate-900">
-                  Instant Carbon Offtake Order
-                </h3>
-              </div>
+            {/* Modal Image Header */}
+            <div className="relative h-44 w-full bg-slate-900">
+              <img
+                src={selectedProject.image}
+                alt={selectedProject.title}
+                className="w-full h-full object-cover opacity-80"
+              />
               <button
                 type="button"
-                onClick={() => setPurchaseModalListing(null)}
-                className="p-1 text-slate-400 hover:text-slate-700 rounded-full"
+                onClick={() => setSelectedProject(null)}
+                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/70 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
+              <div className="absolute bottom-3 left-4">
+                <span className="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-md text-[#0E6245] font-bold text-xs shadow-sm">
+                  {selectedProject.standard}
+                </span>
+              </div>
             </div>
 
-            {!isOrderSubmitted ? (
-              <div className="space-y-4">
-                {/* Project Summary */}
-                <div className="p-3 bg-slate-50 border border-slate-200/80 rounded-2xl space-y-1">
-                  <span className="text-[10px] font-bold text-[#0e6245] uppercase tracking-wider">
-                    {purchaseModalListing.mrvStandard}
+            {/* Modal Body */}
+            <div className="p-6 space-y-4">
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">
+                  {selectedProject.title}
+                </h3>
+                <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
+                  <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                  <span>{selectedProject.location}</span>
+                </p>
+              </div>
+
+              <p className="text-xs text-slate-600 leading-relaxed">
+                {selectedProject.description}
+              </p>
+
+              {/* Price & Quantity Calculation */}
+              <div className="bg-slate-50 rounded-xl p-3 border border-slate-200/80 space-y-3">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-slate-500 font-medium">Price per Tonne</span>
+                  <span className="font-bold text-slate-900">
+                    ₹ {selectedProject.pricePerTon.toLocaleString('en-IN')}
                   </span>
-                  <h4 className="text-xs font-bold text-slate-900">{purchaseModalListing.title}</h4>
-                  <p className="text-[11px] text-slate-500 font-mono">ID: {purchaseModalListing.id}</p>
                 </div>
 
-                {/* Tonnage Selector Slider */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs">
-                    <label className="font-semibold text-slate-700">Procurement Volume</label>
-                    <span className="font-black text-[#0e6245] text-sm">{orderQuantity.toLocaleString()} tCO2e</span>
-                  </div>
-                  <input
-                    type="range"
-                    min={10}
-                    max={Math.min(5000, purchaseModalListing.availableTonnes)}
-                    step={10}
-                    value={orderQuantity}
-                    onChange={(e) => setOrderQuantity(Number(e.target.value))}
-                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0e6245]"
-                  />
-                  <div className="flex justify-between text-[10px] text-slate-400">
-                    <span>10 tCO2e</span>
-                    <span>2,500 tCO2e</span>
-                    <span>5,000 tCO2e</span>
-                  </div>
-                </div>
-
-                {/* Retirement Beneficiary */}
-                <div className="space-y-1">
-                  <label className="block text-[11px] font-semibold text-slate-700">
-                    Retirement Beneficiary Name (For ESG Certificate)
-                  </label>
-                  <input
-                    type="text"
-                    value={beneficiaryName}
-                    onChange={(e) => setBeneficiaryName(e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 outline-none focus:border-[#0e6245]"
-                  />
-                </div>
-
-                {/* Cost Calculation Summary */}
-                <div className="p-3 bg-emerald-50/70 border border-emerald-200/80 rounded-2xl space-y-1.5 text-xs">
-                  <div className="flex justify-between text-slate-600">
-                    <span>Base Price (${purchaseModalListing.pricePerTonne} × {orderQuantity})</span>
-                    <span>${(purchaseModalListing.pricePerTonne * orderQuantity).toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between text-slate-600">
-                    <span>Escrow & Registry Verification Fee (1.5%)</span>
-                    <span>${((purchaseModalListing.pricePerTonne * orderQuantity) * 0.015).toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between font-black text-slate-900 pt-1 border-t border-emerald-200 text-sm">
-                    <span>Total Settlement Amount</span>
-                    <span className="text-[#0e6245]">
-                      ${((purchaseModalListing.pricePerTonne * orderQuantity) * 1.015).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-slate-500 font-medium">Order Quantity (Tons)</span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setPurchaseQuantity((q) => Math.max(10, q - 10))}
+                      className="w-6 h-6 rounded bg-white border border-slate-300 font-bold text-slate-700 flex items-center justify-center hover:bg-slate-100"
+                    >
+                      -
+                    </button>
+                    <span className="w-12 text-center font-bold text-slate-900">
+                      {purchaseQuantity}
                     </span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setPurchaseQuantity((q) => Math.min(selectedProject.availableTons, q + 10))
+                      }
+                      className="w-6 h-6 rounded bg-white border border-slate-300 font-bold text-slate-700 flex items-center justify-center hover:bg-slate-100"
+                    >
+                      +
+                    </button>
                   </div>
                 </div>
 
+                <div className="pt-2 border-t border-slate-200 flex justify-between items-center text-sm font-bold text-slate-900">
+                  <span>Total Estimated Cost</span>
+                  <span className="text-[#0E6245]">
+                    ₹ {(selectedProject.pricePerTon * purchaseQuantity).toLocaleString('en-IN')}
+                  </span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedProject(null)}
+                  className="flex-1 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-bold text-xs hover:bg-slate-50 transition-colors"
+                >
+                  Cancel
+                </button>
                 <button
                   type="button"
                   onClick={handleConfirmOrder}
-                  className="w-full bg-[#0e6245] hover:bg-[#0b5038] text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition-all text-xs flex items-center justify-center gap-2 cursor-pointer"
+                  disabled={isOrdered}
+                  className="flex-1 py-2.5 rounded-xl bg-[#0E6245] hover:bg-[#0b5038] text-white font-bold text-xs transition-colors shadow-sm flex items-center justify-center gap-1.5"
                 >
-                  <ShieldCheck className="w-4 h-4" />
-                  <span>Execute Order & Mint Certificate</span>
+                  {isOrdered ? (
+                    <>
+                      <CheckCircle2 className="w-4 h-4 text-emerald-300 animate-spin" />
+                      <span>Confirming...</span>
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart className="w-4 h-4" />
+                      <span>Purchase Credits</span>
+                    </>
+                  )}
                 </button>
               </div>
-            ) : (
-              <div className="py-8 text-center space-y-3">
-                <div className="w-12 h-12 rounded-full bg-emerald-100 text-[#0e6245] flex items-center justify-center mx-auto animate-bounce">
-                  <CheckCircle2 className="w-7 h-7" />
-                </div>
-                <h4 className="text-base font-bold text-slate-900">Order Dispatched to Escrow!</h4>
-                <p className="text-xs text-slate-500 max-w-xs mx-auto">
-                  Registry smart contract minted. Certificate assigned to <strong>{beneficiaryName}</strong>.
-                </p>
-              </div>
-            )}
+
+            </div>
 
           </div>
         </div>

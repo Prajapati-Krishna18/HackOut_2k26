@@ -187,6 +187,16 @@ export const MatchingEnginePage = () => {
   });
   const [isEditCriteriaOpen, setIsEditCriteriaOpen] = useState(false);
 
+  // AI Matching Architecture Info Modal
+  const [isAiInfoModalOpen, setIsAiInfoModalOpen] = useState(false);
+  const [activeModalTab, setActiveModalTab] = useState('algorithm'); // 'algorithm' | 'opportunities' | 'pricing' | 'trust' | 'simulator'
+
+  // Live Simulator State
+  const [simPurity, setSimPurity] = useState(96.5);
+  const [simQuantity, setSimQuantity] = useState(1200);
+  const [simDistance, setSimDistance] = useState(140);
+  const [simTrust, setSimTrust] = useState(94);
+
   // Selected Project for Detail Modal
   const [selectedProject, setSelectedProject] = useState(null);
   const [purchaseQuantity, setPurchaseQuantity] = useState(50);
@@ -865,8 +875,8 @@ export const MatchingEnginePage = () => {
 
               <button
                 type="button"
-                onClick={() => showToast('AI algorithm documentation opened.')}
-                className="w-full py-2 px-3 rounded-xl bg-white hover:bg-emerald-50 text-slate-800 font-bold text-xs border border-emerald-200 transition-colors flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer"
+                onClick={() => setIsAiInfoModalOpen(true)}
+                className="w-full py-2 px-3 rounded-xl bg-white hover:bg-emerald-50 text-slate-800 font-bold text-xs border border-emerald-200 transition-colors flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer active:scale-95"
               >
                 <span>Learn More About AI Matching</span>
                 <ArrowRight className="w-3.5 h-3.5 text-[#0E6245]" />
@@ -1118,6 +1128,379 @@ export const MatchingEnginePage = () => {
                 Save Changes
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {/* ========================================================================= */}
+      {/* 6. AI MATCHING ENGINE INFO & SIMULATOR MODAL                             */}
+      {/* ========================================================================= */}
+      {isAiInfoModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-200">
+            
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-emerald-950 via-teal-900 to-emerald-950 text-white p-5 flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-emerald-300 border border-emerald-400/30">
+                  <BrainCircuit className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                    <span>CarbonSphere AI Matching Engine</span>
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold uppercase tracking-wide border border-emerald-400/30">
+                      Explainable AI
+                    </span>
+                  </h3>
+                  <p className="text-xs text-emerald-200/80 font-medium">
+                    Multi-Variable Compatibility, Opportunity Detection & Price Prediction
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsAiInfoModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-white/20 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Navigation Tabs */}
+            <div className="flex items-center border-b border-slate-200 bg-slate-50 px-4 pt-2 gap-2 overflow-x-auto shrink-0 no-scrollbar">
+              {[
+                { id: 'algorithm', label: 'Matching Algorithm', icon: Sparkles },
+                { id: 'simulator', label: 'Live Simulator', icon: Target },
+                { id: 'opportunities', label: 'Opportunity Engine', icon: Sprout },
+                { id: 'pricing', label: 'Price Prediction', icon: Coins },
+                { id: 'trust', label: 'Trust Engine', icon: ShieldCheck }
+              ].map((tab) => {
+                const Icon = tab.icon;
+                const isActive = activeModalTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveModalTab(tab.id)}
+                    className={`flex items-center gap-1.5 px-3 py-2 text-xs font-bold whitespace-nowrap rounded-t-lg transition-colors cursor-pointer ${
+                      isActive
+                        ? 'bg-white text-[#0E6245] border-t-2 border-l border-r border-[#0E6245] shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    <Icon className="w-3.5 h-3.5" />
+                    <span>{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Modal Body Content */}
+            <div className="p-5 sm:p-6 overflow-y-auto space-y-5 text-slate-800 text-xs flex-1">
+              
+              {/* TAB 1: MATCHING ALGORITHM */}
+              {activeModalTab === 'algorithm' && (
+                <div className="space-y-4">
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5 space-y-1.5">
+                    <span className="text-xs font-bold text-emerald-950 uppercase tracking-wide">
+                      Master Compatibility Formula
+                    </span>
+                    <div className="text-xs font-mono font-bold text-emerald-900 bg-white/80 p-2.5 rounded-lg border border-emerald-300/60 leading-relaxed">
+                      Compatibility Score = (30% × Purity Match) + (25% × Quantity Match) + (20% × Distance Match) + (15% × Trust Score) + (10% × Historical Success Rate)
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-1 shadow-2xs">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-slate-900">1. Purity Match (30%)</span>
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-800">Weight: 0.30</span>
+                      </div>
+                      <p className="text-slate-600 leading-relaxed text-[11px]">
+                        Evaluates biogenic CO₂ concentration against industrial tolerance. 100% awarded if supplier purity exceeds required threshold.
+                      </p>
+                    </div>
+
+                    <div className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-1 shadow-2xs">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-slate-900">2. Quantity Match (25%)</span>
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">Weight: 0.25</span>
+                      </div>
+                      <p className="text-slate-600 leading-relaxed text-[11px]">
+                        Fulfillment capacity ratio. Ideal match (100 pts) when supplier can fulfill 100%–150% of buyer batch demand without deficit.
+                      </p>
+                    </div>
+
+                    <div className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-1 shadow-2xs">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-slate-900">3. Distance Logistics (20%)</span>
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">Weight: 0.20</span>
+                      </div>
+                      <p className="text-slate-600 leading-relaxed text-[11px]">
+                        Haversine great-circle calculation minimizing transportation emissions. Scores highest (100 pts) within 50 km pipeline corridor.
+                      </p>
+                    </div>
+
+                    <div className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-1 shadow-2xs">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-slate-900">4. Trust Score (15%)</span>
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-purple-100 text-purple-800">Weight: 0.15</span>
+                      </div>
+                      <p className="text-slate-600 leading-relaxed text-[11px]">
+                        Multi-variable supplier rating covering registry verification (40%), historical deliveries (25%), and on-time SLA rates.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="border border-slate-200 rounded-xl p-3.5 space-y-2">
+                    <span className="font-bold text-slate-900 block">Match Classification Tiers</span>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
+                      <div className="bg-emerald-100/70 border border-emerald-300 rounded-lg p-2 font-bold text-emerald-900">
+                        Score ≥ 90<br /><span className="text-[10px] font-semibold text-emerald-700">Excellent Match</span>
+                      </div>
+                      <div className="bg-teal-100/70 border border-teal-300 rounded-lg p-2 font-bold text-teal-900">
+                        Score 75 - 89<br /><span className="text-[10px] font-semibold text-teal-700">Good Match</span>
+                      </div>
+                      <div className="bg-amber-100/70 border border-amber-300 rounded-lg p-2 font-bold text-amber-900">
+                        Score 60 - 74<br /><span className="text-[10px] font-semibold text-amber-700">Moderate Match</span>
+                      </div>
+                      <div className="bg-rose-100/70 border border-rose-300 rounded-lg p-2 font-bold text-rose-900">
+                        Score &lt; 60<br /><span className="text-[10px] font-semibold text-rose-700">Low Compatibility</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 2: LIVE SIMULATOR */}
+              {activeModalTab === 'simulator' && (
+                <div className="space-y-4">
+                  <p className="text-slate-600">
+                    Test the live scoring engine by adjusting parameters below to see the Compatibility Score and explainable AI reasons update in real-time.
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    {/* Sliders */}
+                    <div className="space-y-3.5">
+                      <div>
+                        <div className="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                          <span>Supplier CO₂ Purity:</span>
+                          <span className="text-[#0E6245]">{simPurity}%</span>
+                        </div>
+                        <input
+                          type="range"
+                          min={80}
+                          max={99.9}
+                          step={0.1}
+                          value={simPurity}
+                          onChange={(e) => setSimPurity(Number(e.target.value))}
+                          className="w-full h-1.5 bg-slate-200 rounded-lg accent-[#0E6245]"
+                        />
+                      </div>
+
+                      <div>
+                        <div className="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                          <span>Available Quantity:</span>
+                          <span className="text-[#0E6245]">{simQuantity} tons</span>
+                        </div>
+                        <input
+                          type="range"
+                          min={100}
+                          max={3000}
+                          step={50}
+                          value={simQuantity}
+                          onChange={(e) => setSimQuantity(Number(e.target.value))}
+                          className="w-full h-1.5 bg-slate-200 rounded-lg accent-[#0E6245]"
+                        />
+                      </div>
+
+                      <div>
+                        <div className="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                          <span>Logistics Distance:</span>
+                          <span className="text-[#0E6245]">{simDistance} km</span>
+                        </div>
+                        <input
+                          type="range"
+                          min={10}
+                          max={600}
+                          step={10}
+                          value={simDistance}
+                          onChange={(e) => setSimDistance(Number(e.target.value))}
+                          className="w-full h-1.5 bg-slate-200 rounded-lg accent-[#0E6245]"
+                        />
+                      </div>
+
+                      <div>
+                        <div className="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                          <span>Supplier Trust Score:</span>
+                          <span className="text-[#0E6245]">{simTrust}/100</span>
+                        </div>
+                        <input
+                          type="range"
+                          min={50}
+                          max={100}
+                          step={1}
+                          value={simTrust}
+                          onChange={(e) => setSimTrust(Number(e.target.value))}
+                          className="w-full h-1.5 bg-slate-200 rounded-lg accent-[#0E6245]"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Live Result Box */}
+                    {(() => {
+                      const pScore = simPurity >= 94.0 ? 100 : Math.max(30, Math.round(100 - (94.0 - simPurity) * 10));
+                      const qScore = simQuantity >= 1000 ? 100 : Math.round((simQuantity / 1000) * 100);
+                      const dScore = simDistance <= 50 ? 100 : simDistance <= 150 ? 92 : Math.max(30, Math.round(100 - (simDistance / 600) * 70));
+                      const tScore = simTrust;
+                      const hScore = 90;
+
+                      const calculatedScore = Math.round(
+                        pScore * 0.30 + qScore * 0.25 + dScore * 0.20 + tScore * 0.15 + hScore * 0.10
+                      );
+
+                      const level =
+                        calculatedScore >= 90
+                          ? 'Excellent'
+                          : calculatedScore >= 75
+                          ? 'Good'
+                          : calculatedScore >= 60
+                          ? 'Moderate'
+                          : 'Low';
+
+                      return (
+                        <div className="bg-white border border-emerald-200 rounded-xl p-4 flex flex-col justify-between space-y-3 shadow-xs">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-slate-500 uppercase">Simulated Result</span>
+                            <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">
+                              {level} Match
+                            </span>
+                          </div>
+
+                          <div className="text-center py-2">
+                            <div className="text-3xl font-black text-[#0E6245]">{calculatedScore}%</div>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">
+                              Compatibility Score
+                            </span>
+                          </div>
+
+                          <div className="space-y-1 text-[11px] text-slate-600">
+                            <div className="flex justify-between">
+                              <span>Purity Sub-Score:</span>
+                              <strong className="text-slate-800">{pScore}/100</strong>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Quantity Sub-Score:</span>
+                              <strong className="text-slate-800">{qScore}/100</strong>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Distance Sub-Score:</span>
+                              <strong className="text-slate-800">{dScore}/100</strong>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Trust Sub-Score:</span>
+                              <strong className="text-slate-800">{tScore}/100</strong>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 3: CARBON OPPORTUNITY ENGINE */}
+              {activeModalTab === 'opportunities' && (
+                <div className="space-y-3">
+                  <p className="text-slate-600">
+                    If no direct buyer exists, the <strong>Carbon Opportunity Engine</strong> matches raw CO₂ purity streams to viable off-take industries:
+                  </p>
+
+                  <div className="space-y-2">
+                    {[
+                      { name: 'Food & Beverage Carbonation', purity: '≥ 99.5%', price: '₹4,800 - ₹5,600 / ton', desc: 'Liquid CO₂ for beverage bottling, flash freezing, and ISBT-grade food packaging.' },
+                      { name: 'Greenhouse Horticulture Enrichment', purity: '≥ 94.0%', price: '₹3,200 - ₹4,000 / ton', desc: 'Accelerates crop growth in automated commercial greenhouses (+22% YoY demand growth).' },
+                      { name: 'Synthetic E-Fuels & Power-to-X', purity: '≥ 96.0%', price: '₹4,200 - ₹5,100 / ton', desc: 'Catalytic hydrogenation with green hydrogen to produce e-methanol & SAF (+48% YoY).' },
+                      { name: 'Concrete Curing & Mineralization', purity: '≥ 85.0%', price: '₹2,300 - ₹3,100 / ton', desc: 'Direct CO₂ injection during concrete mixing permanently sequestering CaCO₃.' }
+                    ].map((item, idx) => (
+                      <div key={idx} className="bg-slate-50 border border-slate-200 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-slate-900">{item.name}</span>
+                            <span className="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                              {item.purity}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-slate-500 mt-0.5">{item.desc}</p>
+                        </div>
+                        <span className="font-bold text-[#0E6245] shrink-0 text-xs">{item.price}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 4: PRICE PREDICTION ENGINE */}
+              {activeModalTab === 'pricing' && (
+                <div className="space-y-3">
+                  <p className="text-slate-600">
+                    Our <strong>Price Prediction Model</strong> computes dynamic spot prices considering historical deal logs, purity premiums, volume economies, and freight allowances:
+                  </p>
+
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2">
+                    <span className="font-bold text-slate-900 block">Dynamic Pricing Multipliers:</span>
+                    <ul className="space-y-1 text-slate-600 text-[11px] list-disc pl-4">
+                      <li><strong>Purity Premium:</strong> Streams with &gt; 99% purity command up to a +65% market premium over industrial flue gas.</li>
+                      <li><strong>Volume Discounts:</strong> Bulk orders &gt; 1,000 tons automatically receive volume tier discounts (4%–18%).</li>
+                      <li><strong>Freight Adjustments:</strong> Accounts for regional logistics distance (~₹1.50 per ton-km over 100 km).</li>
+                    </ul>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 5: TRUST ENGINE */}
+              {activeModalTab === 'trust' && (
+                <div className="space-y-3">
+                  <p className="text-slate-600">
+                    The <strong>Trust Score Engine</strong> computes an immutable reliability rating from 0 to 100 based on 5 verification vectors:
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div className="border border-slate-200 rounded-xl p-3 space-y-1">
+                      <span className="font-bold text-slate-900">40% Verification Status</span>
+                      <p className="text-[11px] text-slate-500">Gold Standard, Verra VCS, or Puro.earth CORC registry audit.</p>
+                    </div>
+                    <div className="border border-slate-200 rounded-xl p-3 space-y-1">
+                      <span className="font-bold text-slate-900">25% Transaction History</span>
+                      <p className="text-[11px] text-slate-500">Ratio of successfully settled smart contracts without disputes.</p>
+                    </div>
+                    <div className="border border-slate-200 rounded-xl p-3 space-y-1">
+                      <span className="font-bold text-slate-900">15% On-Time Delivery</span>
+                      <p className="text-[11px] text-slate-500">Adherence to scheduled dispatch and IoT custody transfer SLAs.</p>
+                    </div>
+                    <div className="border border-slate-200 rounded-xl p-3 space-y-1">
+                      <span className="font-bold text-slate-900">20% Reviews & Consistency</span>
+                      <p className="text-[11px] text-slate-500">Verified buyer ratings and telemetry purity consistency.</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+            </div>
+
+            {/* Modal Footer */}
+            <div className="border-t border-slate-200 p-4 bg-slate-50 flex items-center justify-between shrink-0">
+              <span className="text-[11px] text-slate-400 font-medium">
+                CarbonSphere v2.0 • AI Recommendation Engine
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsAiInfoModalOpen(false)}
+                className="px-4 py-2 rounded-xl bg-[#0E6245] hover:bg-[#0b5038] text-white font-bold text-xs shadow-sm cursor-pointer"
+              >
+                Got It
+              </button>
+            </div>
+
           </div>
         </div>
       )}
